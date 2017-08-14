@@ -11,3 +11,8 @@ Make a leading effect on your object, with class Motion
 Sketch loadPixels_2Darray
 --
 Create a 2D arrayPixel of your window
+
+
+Sketches texture
+--
+Few sketches to manipulate texture with the PShape, Pgraphics and the PShader.
