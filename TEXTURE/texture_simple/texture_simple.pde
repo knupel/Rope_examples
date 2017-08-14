@@ -26,10 +26,12 @@ void plan(iVec2 pos, iVec2 size, PImage src){
   /*
   NORMAL
   */
+  
   vertex(pos.x,        pos.y,        0,0);
   vertex(pos.x,        pos.y+size.y, 0,uv.v);
   vertex(pos.x+size.x, pos.y+size.y, uv.u,uv.v);
   vertex(pos.x+size.x, pos.y,        uv.u,0);
+  
 
 
   /*
