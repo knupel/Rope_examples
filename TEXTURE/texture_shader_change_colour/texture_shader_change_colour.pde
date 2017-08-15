@@ -13,12 +13,10 @@ void draw() {
   background(0);
   println(frameRate);
   iVec2 pos = iVec2(0);
-  iVec2 size = iVec2(img.width, img.height);
   iVec2 pos_mouse = iVec2(mouseX,mouseY);
   
-  img = effect(img).copy() ;
-   
-  PGraphics p = plan(size,img,P2D);
+  PImage img_result = change_colour(img).copy(); 
+  PGraphics p = plan(img_result,P2D);
   image(p);
 }
 
@@ -27,12 +25,11 @@ void draw() {
 SHADER part
 */
 PShader shader ;
-
 void shader_setup() {
 	shader = loadShader("shader/pix_color.glsl");
 }
 
-PImage effect(PImage src) {
+PImage change_colour(PImage src) {
 	Vec4 c = Vec4(1);
 	c.x = map(mouseX, 0,width, 0,1);
 	c.y = map(mouseY, 0,height, 0,1);
@@ -49,9 +46,10 @@ PImage effect(PImage src) {
 Put your result on PGraphics
 */
 PGraphics pg ;
-PGraphics plan(iVec2 size, PImage src, String renderer){
+PGraphics plan(PImage src, String renderer){
 	pg = createGraphics(src.width, src.height,renderer);
 	iVec2 uv = iVec2(src.width, src.height);
+  iVec2 size = iVec2(src.width, src.height); 
 
   pg.beginDraw();
   pg.noStroke(); 
@@ -72,19 +70,3 @@ PGraphics plan(iVec2 size, PImage src, String renderer){
   pg.endDraw();
   return pg ;  
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
