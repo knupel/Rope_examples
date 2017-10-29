@@ -15,9 +15,10 @@ void draw() {
   iVec2 pos = iVec2(0);
   iVec2 pos_mouse = iVec2(mouseX,mouseY);
   
-  PImage img_result = change_colour(img).copy(); 
-  PGraphics p = plan(img_result,P2D);
-  image(p);
+  // PImage img_result = change_colour(img).copy(); 
+  // PGraphics p = plan(img_result,P2D);
+  change_colour(img); 
+  image(img);
 }
 
 
