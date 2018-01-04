@@ -3,7 +3,7 @@ ROPE - Romanesco processing environment –
 * Copyleft (c) 2014-2017 
 * Stan le Punk > http://stanlepunk.xyz/
 Rope UTILS  2015 – 2017
-v 1.36.0
+v 1.37.2
 Rope – Romanesco Processing Environment – 
 * @author Stan le Punk
 * @see https://github.com/StanLepunK/Rope
@@ -477,13 +477,13 @@ PImage loadImageBMP(String fileName) {
 
 /**
 ROPE IMAGE
-v 0.4.0
+v 0.5.0
 */
 
 
 /**
 PImage manager library
-v 0.4.0
+v 0.4.1
 */
 class ROPImage_Manager {
   ArrayList<ROPImage> library ;
@@ -583,11 +583,19 @@ class ROPImage_Manager {
     }
   }
 
+  public String get_name() {
+    return get_name(which_img);
+  }
+
   public String get_name(int target) {
-    if(library.size() > 0) {
-      return library.get(target).get_name() ;
+    if(library != null && library.size() > 0) {
+      if(target < library.size()) {
+        return library.get(target).get_name() ;
+      } else return null ;
     } else return null ;
   }
+
+
 
   public int get_rank(String target_name) {
     if(library.size() > 0) {
@@ -603,6 +611,7 @@ class ROPImage_Manager {
     } else return -1;
   }
 
+
   public PImage get() {
     if(library != null && library.size() > 0 ) {
       if(which_img < library.size()) return library.get(which_img).img; 
@@ -611,7 +620,7 @@ class ROPImage_Manager {
   }
 
   public PImage get(int target){
-    if(target < library.size()) {
+    if(library != null && target < library.size()) {
       return library.get(target).img;
     } else return null;
   }
@@ -657,31 +666,68 @@ class ROPImage_Manager {
     public PImage get_image() {
       return img ;
     }
-
-
   }
 }
 
 /**
 resize image
-v 0.0.1
+v 0.0.2
 */
 /**
 * resize your picture proportionaly to the window sketch of the a specificic PGraphics
 */
 void image_resize(PImage src) {
-  image_resize(src,g);
+  image_resize(src,g, true);
 }
 
+void image_resize(PImage src, boolean fullfit) {
+  image_resize(src,g,fullfit);
+}
 
-void image_resize(PImage src, PGraphics pg) {
+void image_resize(PImage src, PGraphics pg, boolean fullfit) {
   float ratio_w = pg.width / (float)src.width;
   float ratio_h = pg.height / (float)src.height;
-  if(ratio_w > ratio_h) {
-    src.resize(ceil(src.width *ratio_w), ceil(src.height *ratio_w));
+  if(!fullfit) {
+    if(ratio_w > ratio_h) {
+      src.resize(ceil(src.width *ratio_w), ceil(src.height *ratio_w));
+    } else {
+      src.resize(ceil(src.width *ratio_h), ceil(src.height *ratio_h));  
+    }
   } else {
-    src.resize(ceil(src.width *ratio_h), ceil(src.height *ratio_h));  
+    if(ratio_w > ratio_h) {
+      src.resize(ceil(src.width *ratio_h), ceil(src.height *ratio_h));
+    } else {
+      src.resize(ceil(src.width *ratio_w), ceil(src.height *ratio_w));  
+    }
   }
+}
+
+/**
+copy window
+v 0.0.1
+*/
+PImage image_copy_window(PImage src, int where) {
+  return image_copy_window(src, g, where);
+}
+
+PImage image_copy_window(PImage src, PGraphics pg, int where) {
+  int x = 0 ;
+  int y = 0 ;
+  if(where == CENTER) {
+    x = (src.width -pg.width) /2 ;
+    y = (src.height -pg.height) /2 ;   
+  } else if(where == LEFT) {
+    y = (src.height -pg.height) /2 ; 
+  } else if(where == RIGHT) { 
+    x = src.width -pg.width ;
+    y = (src.height -pg.height) /2 ;   
+  } else if(where == TOP) {
+    x = (src.width -pg.width) /2 ;   
+  } else if(where == BOTTOM) { 
+    x = (src.width -pg.width) /2 ;
+    y = src.height -pg.height;   
+  }  
+  return src.get(x, y, pg.width, pg.height); 
 }
 
 

@@ -13,8 +13,8 @@ void setup() {
   //fullScreen(P2D) ;
   img_joconde = loadImage("petite_joconde.jpg");
   img_puros_girl = loadImage("petite_puros_girl.jpg");
-  // img_resize = img_joconde.copy();
-  img_resize = img_puros_girl.copy();
+  img_resize = img_joconde.copy();
+ // img_resize = img_puros_girl.copy();
   /*
   img_1 = loadImage("RioCarnaval.jpg");
   img_1 = loadImage("banc_public.jpg");
@@ -22,8 +22,10 @@ void setup() {
 }
 
 void draw() { 
- image_resize(img_resize);
- image(img_resize, BOTTOM);
+ //  image_resize(img_resize);
+ //image_resize(img_resize,false);
+ image_resize(img_resize,g,true);
+ image(img_resize, LEFT);
  //image(img_puros_girl);
 }
 
