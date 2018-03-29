@@ -1,10 +1,11 @@
 /**
 ROPE - Romanesco processing environment – 
-* Copyleft (c) 2014-2017 
+* Copyleft (c) 2014-2018 
 * Stan le Punk > http://stanlepunk.xyz/
-Rope UTILS  2015 – 2017
-v 1.37.0
+Rope UTILS  2015 – 2018
+v 1.39.0
 Rope – Romanesco Processing Environment – 
+Processing 3.3.7
 * @author Stan le Punk
 * @see https://github.com/StanLepunK/Rope
 */
@@ -118,19 +119,19 @@ class Constant_list {
 
 /**
 FOLDER & FILE MANAGER
-v 0.1.0
+v 0.2.0
 */
 /*
-FILE PART
+INOUT PART
 */
 String selected_path_input = null;
 boolean input_selected_is;
 
-void select_file() {
-  select_file("");
+void select_input() {
+  select_input("");
 }
 
-void select_file(String message) {
+void select_input(String message) {
   // folder_selected_is = true ;
   selectInput(message, "input_selected");
 }
@@ -145,6 +146,18 @@ void input_selected(File selection) {
   }
 }
 
+boolean input_selected_is() {
+  return input_selected_is;
+}
+
+void reset_input_selection() {
+  input_selected_is = false;
+}
+
+String selected_path_input() {
+  return selected_path_input;
+}
+
 
 /*
 FOLDER PART
@@ -157,7 +170,6 @@ void select_folder() {
 }
 
 void select_folder(String message) {
-  // folder_selected_is = true ;
   selectFolder(message, "folder_selected");
 }
 
@@ -203,12 +215,17 @@ ArrayList<File> get_files() {
   return files ;
 }
 
-void explore_folder(String path_folder, boolean check_sub_folder, String... extension) {
-  if(folder_selected_is && path_folder != ("")) {
+void explore_folder(String path_folder, String... extension) {
+  explore_folder(path_folder, false, extension);
+
+}
+
+void explore_folder(String path, boolean check_sub_folder, String... extension) {
+  if((folder_selected_is || input_selected_is) && path != ("")) {
     count_selection++ ;
     set_media_list();
  
-    ArrayList allFiles = list_files(path_folder, check_sub_folder);
+    ArrayList allFiles = list_files(path, check_sub_folder);
   
     String fileName = "";
     int count_pertinent_file = 0 ;
@@ -229,6 +246,7 @@ void explore_folder(String path_folder, boolean check_sub_folder, String... exte
     }
     // to don't loop with this void
     folder_selected_is = false ;
+    input_selected_is = false ;
   }
 }
 
@@ -241,14 +259,16 @@ ArrayList list_files(String dir, boolean check_sub_folder) {
   if(check_sub_folder) { 
     explore_directory(fileList, dir);
   } else {
-    File file = new File(dir);
-    File[] subfiles = file.listFiles();
-    // println(subfiles.length);
-    for(int i = 0 ; i < subfiles.length ; i++) {
-      // println(subfiles[i]);
-      fileList.add(subfiles[i]);
+    if(folder_selected_is) {
+      File file = new File(dir);
+      File[] subfiles = file.listFiles();
+      for(int i = 0 ; i < subfiles.length ; i++) {
+        fileList.add(subfiles[i]);
+      }
+    } else if(input_selected_is) {
+      File file = new File(dir);
+      fileList.add(file);
     }
-
   }
   return fileList;
 }
@@ -483,7 +503,7 @@ v 0.5.0
 
 /**
 PImage manager library
-v 0.4.0
+v 0.4.1
 */
 class ROPImage_Manager {
   ArrayList<ROPImage> library ;
@@ -583,11 +603,19 @@ class ROPImage_Manager {
     }
   }
 
+  public String get_name() {
+    return get_name(which_img);
+  }
+
   public String get_name(int target) {
-    if(library.size() > 0) {
-      return library.get(target).get_name() ;
+    if(library != null && library.size() > 0) {
+      if(target < library.size()) {
+        return library.get(target).get_name() ;
+      } else return null ;
     } else return null ;
   }
+
+
 
   public int get_rank(String target_name) {
     if(library.size() > 0) {
@@ -603,6 +631,7 @@ class ROPImage_Manager {
     } else return -1;
   }
 
+
   public PImage get() {
     if(library != null && library.size() > 0 ) {
       if(which_img < library.size()) return library.get(which_img).img; 
@@ -611,7 +640,7 @@ class ROPImage_Manager {
   }
 
   public PImage get(int target){
-    if(target < library.size()) {
+    if(library != null && target < library.size()) {
       return library.get(target).img;
     } else return null;
   }
@@ -662,23 +691,34 @@ class ROPImage_Manager {
 
 /**
 resize image
-v 0.0.1
+v 0.0.2
 */
 /**
 * resize your picture proportionaly to the window sketch of the a specificic PGraphics
 */
 void image_resize(PImage src) {
-  image_resize(src,g);
+  image_resize(src,g, true);
 }
 
+void image_resize(PImage src, boolean fullfit) {
+  image_resize(src,g,fullfit);
+}
 
-void image_resize(PImage src, PGraphics pg) {
+void image_resize(PImage src, PGraphics pg, boolean fullfit) {
   float ratio_w = pg.width / (float)src.width;
   float ratio_h = pg.height / (float)src.height;
-  if(ratio_w > ratio_h) {
-    src.resize(ceil(src.width *ratio_w), ceil(src.height *ratio_w));
+  if(!fullfit) {
+    if(ratio_w > ratio_h) {
+      src.resize(ceil(src.width *ratio_w), ceil(src.height *ratio_w));
+    } else {
+      src.resize(ceil(src.width *ratio_h), ceil(src.height *ratio_h));  
+    }
   } else {
-    src.resize(ceil(src.width *ratio_h), ceil(src.height *ratio_h));  
+    if(ratio_w > ratio_h) {
+      src.resize(ceil(src.width *ratio_h), ceil(src.height *ratio_h));
+    } else {
+      src.resize(ceil(src.width *ratio_w), ceil(src.height *ratio_w));  
+    }
   }
 }
 
@@ -1602,6 +1642,77 @@ void level(PGraphics p, PImage tex, float... ratio) {
 
 
 
+/**
+DISPLAY
+v 0.1.0
+*/
+void set_window_on_other_display(iVec2 size, iVec2 pos_screen, iVec2 pos_display) {
+  int new_w = size.x;
+  int new_h = size.y;
+  int temp_w = get_display_size(1).x;
+  int temp_h = get_display_size(1).y;
+
+  int offset_x = pos_screen.x ;
+  int offset_y = pos_screen.y;
+  int dx = pos_display.x ;
+  int dy = pos_display.y;
+
+  surface.setSize(new_w,new_h);
+  surface.setLocation(offset_x +dx, offset_y +dy);
+}
+
+/**
+check display
+*/
+iVec2 get_display_size() {
+  return get_display_size(sketchDisplay() -1);
+}
+
+
+iVec2 get_display_size(int which_display) {
+  GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+  GraphicsDevice[] awtDevices = environment.getScreenDevices();
+  int target = 0 ;
+  if(which_display < awtDevices.length) {
+    target = which_display ; 
+  } else {
+    printErr("No display match with your request, instead we use the current display");
+    target = sketchDisplay() -1;
+  }
+  GraphicsDevice awtDisplayDevice = awtDevices[target];
+  Rectangle display = awtDisplayDevice.getDefaultConfiguration().getBounds();
+  return iVec2((int)display.getWidth(), (int)display.getHeight());
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
 CANVAS
@@ -1718,9 +1829,9 @@ void alpha_canvas(int target, float change) {
 
 /**
 show canvas
-v 0.0.3
+v 0.0.4
 */
-boolean fullscreen_is = false ;
+boolean fullscreen_canvas_is = false ;
 iVec2 show_pos ;
 /**
 Add to set the center of the canvas in relation with the window
@@ -1728,7 +1839,7 @@ Add to set the center of the canvas in relation with the window
 int offset_canvas_x = 0 ;
 int offset_canvas_y = 0 ;
 void set_show() {
-  if(!fullscreen_is) {
+  if(!fullscreen_canvas_is) {
     surface.setSize(get_canvas().width, get_canvas().height);
   } else {
     offset_canvas_x = width/2 - (get_canvas().width/2);
@@ -1750,7 +1861,7 @@ int get_offset_canvas_y() {
 }
 
 void show_canvas(int num) {
-  if(fullscreen_is) {
+  if(fullscreen_canvas_is) {
     image(get_canvas(num), show_pos);
   } else {
     image(get_canvas(num));
@@ -2681,6 +2792,25 @@ void background_rope(Vec2 c) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
 TABLE METHOD 
 v 0.0.3.1
@@ -2767,59 +2897,117 @@ void write_row(TableRow row, String col_name, Object o) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
 print
-v 0.0.7
+v 0.1.2
 */
 // util variable
 
-// print 
-void printErr(Object... obj_list) {
+// print Err
+void printErr(Object... obj) {
   String message= ("");
-  for(int i = 0 ; i < obj_list.length ; i++) {
-    String data = obj_list[i].toString();
-    message += data + " " ;
+  for(int i = 0 ; i < obj.length ; i++) {
+    message = write_print_message(message, obj[i], obj.length, i);
   }
-  System.err.println(message+System.getProperty("line.separator"));
+  System.err.println(message);
 }
-
 
 // print tempo
-void printErrTempo(int tempo, Object var) {
-  if(frameCount%tempo == 0 || frameCount <= 1) {
-    System.err.println(var+System.getProperty("line.separator"));
+void printErrTempo(int tempo, Object... obj) {
+  if(frameCount%tempo == 0 || frameCount <= 1) {
+    String message= ("");
+    for(int i = 0 ; i < obj.length ; i++) {
+      message = write_print_message(message, obj[i], obj.length, i);
+    }
+    System.err.println(message);
+    // System.err.println(message+"/n"); // don't work for unknow reason
+    // System.err.println(message+System.lineSeparator());
   }
 }
 
-void printTempo(int tempo, Object... var) {
-  if(frameCount%tempo == 0 || frameCount <= 1) {
-    println(var+System.getProperty("line.separator"));
+void printTempo(int tempo, Object... obj) {
+  if(frameCount%tempo == 0 || frameCount <= 1) {
+    String message= ("");
+    for(int i = 0 ; i < obj.length ; i++) {
+      message = write_print_message(message, obj[i], obj.length, i);
+    }
+    println(message);
   }
 }
 
-void printArrayTempo(int tempo, Object[] var) {
-  if(frameCount%tempo == 0 || frameCount <= 1) {
-    printArray(var);
+
+
+// local method
+String write_print_message(String message, Object obj, int length, int i) {
+  if(i == length -1) {
+    return message += obj.toString() ;
+  } else {
+    return message += obj.toString() + " ";
+  }
+}
+
+
+void printArrayTempo(int tempo, Object[] obj) {
+  if(frameCount%tempo == 0 || frameCount <= 1) {
+    printArray(obj);
   }
 }
 
 void printArrayTempo(int tempo, float[] var) {
-  if(frameCount%tempo == 0 || frameCount <= 10) {
+  if(frameCount%tempo == 0 || frameCount <= 10) {
     printArray(var);
   }
 }
 
 void printArrayTempo(int tempo, int[] var) {
-  if(frameCount%tempo == 0 || frameCount <= 1) {
+  if(frameCount%tempo == 0 || frameCount <= 10) {
     printArray(var);
   }
 }
 
 void printArrayTempo(int tempo, String[] var) {
-  if(frameCount%tempo == 0 || frameCount <= 1) {
+  if(frameCount%tempo == 0 || frameCount <= 10) {
     printArray(var);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3404,7 +3592,7 @@ public class Info_Vec_dict extends Info_dict {
 
 
 /**
-Info 0.1.0.1
+Info 0.1.0.2
 
 */
 interface Info {
@@ -3464,7 +3652,7 @@ class Info_int extends Info_method {
 
 
   // get
-  int [] get_all() {
+  int [] get() {
     int [] list = new int[]{a,b,c,d,e,f,g} ;
     return list ;
   }
@@ -3572,7 +3760,7 @@ class Info_String extends Info_method {
 
 
   // get
-  String [] get_all() {
+  String [] get() {
     String [] list = new String[]{a,b,c,d,e,f,g} ;
     return list ;
   }
@@ -3680,7 +3868,7 @@ class Info_float extends Info_method {
   }
 
   // get
-  float [] get_all() {
+  float [] get() {
     float [] list = new float[]{a,b,c,d,e,f,g} ;
     return list ;
   }
@@ -3792,7 +3980,7 @@ class Info_Vec extends Info_method {
 
 
   // get
-  Vec [] get_all() {
+  Vec [] get() {
     Vec [] list = new Vec[]{a,b,c,d,e,f,g} ;
     return list ;
   }
@@ -3906,7 +4094,7 @@ class Info_Object extends Info_method {
 
 
   // get
-  Object [] get_all() {
+  Object [] get() {
     Object [] list = new Object []{a,b,c,d,e,f,g} ;
     return list ;
   }
@@ -4241,13 +4429,10 @@ int [][] loadPixels_array_2D() {
 
 
 
-
 /**
 CHECK
-
+v 0.2.3
 */
-
-
 /**
 Check renderer
 */
@@ -4255,6 +4440,10 @@ boolean renderer_P3D() {
   if(get_renderer_name(getGraphics()).equals("processing.opengl.PGraphics3D")) return true ; else return false ;
 }
 
+
+String get_renderer_name() {
+  return get_renderer_name(g);
+}
 
 String get_renderer_name(final PGraphics graph) {
   try {
@@ -4270,12 +4459,6 @@ String get_renderer_name(final PGraphics graph) {
   }
   return "Unknown";
 }
-
-
-
-
-
-
 
 
 /**
@@ -4521,6 +4704,27 @@ boolean research_in_String(String research, String target) {
 /**
 String file utils
 */
+/**
+* remove element of the sketch path
+*/
+String sketchPath(int minus) {
+  minus = abs(minus);
+  String [] element = split(sketchPath(),"/");
+  String new_path ="" ;
+  if(minus < element.length ) {
+    for(int i = 0 ; i < element.length -minus ; i++) {
+      new_path +="/";
+      new_path +=element[i];
+    }
+    return new_path; 
+  } else {
+    printErr("The number of path elements is lower that elements must be remove, instead a data folder is used");
+    return sketchPath()+"/data";
+  }  
+}
+
+
+
 // remove the path of your file
 String file_name(String s) {
   String file_name = "" ;

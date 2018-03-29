@@ -40,27 +40,16 @@ void setup() {
 
 }
 
-void keyPressed() {
-  final int k = keyCode;
-  if (k == 'S') {
-    if (looping)  {
-      noLoop();
-    } else {
-      loop();
-    }
-  }
-}
+
 
 
 void draw() {
   background_rope(0, 0, 0) ;
-
   // print_info_by_ID() ;
   // print_info_by_list() ;
 
   // choice display mode
   svg.mode(CORNER) ;
-
   // variable common to the 2D and 3D vertex
 
   /**
@@ -84,26 +73,35 @@ void draw() {
   //layer_svg() ;
   
   // ID_svg_2D(pos_2D, scale_2D, jitter_2D, ID) ;
-Vec3 pos_temp = Vec3(pos.x, pos.y, 0) ;
-Vec3 value = Vec3(30,5,0) ;
+  Vec3 pos_temp = Vec3(pos.x, pos.y, 0) ;
+  Vec3 value = Vec3(30,5,0) ;
   add_value_to_points(pos_temp, value) ;
-  
-
 }
 
 
 
 
 
-
-
+/**
+keyPressed
+*/
+void keyPressed() {
+  final int k = keyCode;
+  if (k == 'S') {
+    if (looping)  {
+      noLoop();
+    } else {
+      loop();
+    }
+  }
+}
 
 /**
 FULL SVG
 */
 void full_svg(Vec2 pos, Vec2 scale, Vec2 jitter) {
   svg.pos(pos) ;
- svg.scaling(scale) ;
+  svg.scaling(scale) ;
   svg.jitter(jitter) ;
   // svg.stroke(255,0,0) ;
   // svg.noFill() ;
@@ -167,8 +165,6 @@ void layer_svg() {
   svg.pos(width/2, height/2) ;
   svg.draw("DROITE") ;
   svg.stop() ;
-  
-
 }
 
 
