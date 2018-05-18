@@ -24,6 +24,7 @@ void draw() {
       for(int x = 0 ; x < pix[0].length ; x++) {
         if(x%2 == 0) {
           stroke(pix[y][x]) ;
+          strokeWeight(3);
           point(x,y) ;
         }
       }

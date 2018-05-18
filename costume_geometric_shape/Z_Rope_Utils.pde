@@ -2786,37 +2786,37 @@ void printErr(Object... obj_list) {
 
 // print tempo
 void printErrTempo(int tempo, Object var) {
-  if(frameCount%tempo == 0 || frameCount <= 1) {
+  if(frameCount%tempo == 0 || frameCount <= 1) {
     System.err.println(var+System.getProperty("line.separator"));
   }
 }
 
 void printTempo(int tempo, Object... var) {
-  if(frameCount%tempo == 0 || frameCount <= 1) {
+  if(frameCount%tempo == 0 || frameCount <= 1) {
     println(var+System.getProperty("line.separator"));
   }
 }
 
 void printArrayTempo(int tempo, Object[] var) {
-  if(frameCount%tempo == 0 || frameCount <= 1) {
+  if(frameCount%tempo == 0 || frameCount <= 1) {
     printArray(var);
   }
 }
 
 void printArrayTempo(int tempo, float[] var) {
-  if(frameCount%tempo == 0 || frameCount <= 10) {
+  if(frameCount%tempo == 0 || frameCount <= 10) {
     printArray(var);
   }
 }
 
 void printArrayTempo(int tempo, int[] var) {
-  if(frameCount%tempo == 0 || frameCount <= 1) {
+  if(frameCount%tempo == 0 || frameCount <= 1) {
     printArray(var);
   }
 }
 
 void printArrayTempo(int tempo, String[] var) {
-  if(frameCount%tempo == 0 || frameCount <= 1) {
+  if(frameCount%tempo == 0 || frameCount <= 1) {
     printArray(var);
   }
 }
