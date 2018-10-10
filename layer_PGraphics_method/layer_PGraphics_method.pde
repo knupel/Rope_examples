@@ -11,7 +11,6 @@ guide to code here:
 PImage img;
 void setup() {
   size(300,300,P3D);
-  img = loadImage("jpg file/banc_public_small.jpg");
   init_layer(width,height,2);
 }
 
