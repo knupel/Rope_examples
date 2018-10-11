@@ -1,13 +1,16 @@
 /**
-ROPE - Romanesco processing environment – 
-* Copyleft (c) 2014-2017 
+Rope UTILS 
+v 1.47.5
+* Copyleft (c) 2014-2018 
 * Stan le Punk > http://stanlepunk.xyz/
-Rope UTILS  2015 – 2017
-v 1.29.5.0
 Rope – Romanesco Processing Environment – 
+Processing 3.4
 * @author Stan le Punk
 * @see https://github.com/StanLepunK/Rope
 */
+
+
+
 
 /**
 print Constants
@@ -15,13 +18,10 @@ v 0.0.3
 */
 
 Constant_list processing_constants_list = new Constant_list(PConstants.class);
-Constant_list rope_constants_list = new Constant_list(Rope_Constants.class);
-
-
-
+Constant_list rope_constants_list = new Constant_list(rope.core.RConstants.class);
 public void print_constants_rope() {
   if(rope_constants_list == null) {
-    rope_constants_list = new Constant_list(Rope_Constants.class);
+    rope_constants_list = new Constant_list(rope.core.RConstants.class);
   }
   println("ROPE CONSTANTS");
   for(String s: rope_constants_list.list()){
@@ -34,7 +34,7 @@ public void print_constants_processing() {
     processing_constants_list = new Constant_list(PConstants.class);
   }
   println("PROCESSING CONSTANTS");
-  for(String s: processing_constants_list.list()){
+  for(String s: processing_constants_list.list()) {
     println(s);
   }
 } 
@@ -45,7 +45,7 @@ public void print_constants() {
   }
 
   if(rope_constants_list == null) {
-    rope_constants_list = new Constant_list(Rope_Constants.class);
+    rope_constants_list = new Constant_list(rope.core.RConstants.class);
   }
 
   println("ROPE CONSTANTS");
@@ -114,15 +114,75 @@ class Constant_list {
 
 
 /**
-SELECT FOLDER
-v 0.0.1
+FOLDER & FILE MANAGER
+v 0.3.0
 */
-String selected_path_Folder = null;
-boolean folder_selected_is;
-void select_folder(String message) {
+/*
+INOUT PART
+*/
+String selected_path_input = null;
+boolean input_selected_is;
+
+void select_input() {
+  select_input("");
+}
+
+void select_input(String message) {
   // folder_selected_is = true ;
+  selectInput(message, "input_selected");
+}
+
+void input_selected(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    println("Input path is:" +selection.getAbsolutePath());
+    selected_path_input = selection.getAbsolutePath();
+    input_selected_is = true;
+  }
+}
+
+boolean input_selected_is() {
+  return input_selected_is;
+}
+
+void reset_input_selection() {
+  input_selected_is = false;
+}
+
+String input() {
+  return selected_path_input;
+}
+
+
+/*
+FOLDER PART
+*/
+String selected_path_folder = null;
+boolean folder_selected_is;
+
+void select_folder() {
+  select_folder("");
+}
+
+void select_folder(String message) {
   selectFolder(message, "folder_selected");
 }
+
+
+/**
+* this method is called by method select_folder(), and the method name must be the same as named
+*/
+void folder_selected(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    println("Folder path is:" +selection.getAbsolutePath());
+    selected_path_folder = selection.getAbsolutePath();
+    folder_selected_is = true;
+  }
+}
+
 
 boolean folder_selected_is() {
   return folder_selected_is;
@@ -132,19 +192,142 @@ void reset_folder_selection() {
   folder_selected_is = false;
 }
 
-String selected_path_folder() {
-  return selected_path_Folder;
+String folder() {
+  return selected_path_folder;
 }
 
-void folder_selected(File selection) {
-  if (selection == null) {
-    println("Window was closed or the user hit cancel.");
-  } else {
-    println("Folder path is:" +selection.getAbsolutePath());
-    selected_path_Folder = selection.getAbsolutePath();
-    folder_selected_is = true;
+
+// check what's happen in the selected folder
+ArrayList <File> files;
+int count_selection;
+
+void set_media_list() {
+  if(files == null) files = new ArrayList<File>(); else files.clear();
+}
+
+
+
+ArrayList<File> get_files() {
+  return files ;
+}
+
+
+String [] get_files_sort() {
+  if(files != null) {
+    String [] list = new String [files.size()];
+    for(int i = 0 ; i < get_files().size() ; i++) {
+      File f = get_files().get(i);
+      list[i] = f.getAbsolutePath();
+    }
+    Arrays.sort(list);
+    return list;
+
+  } else return null ;
+
+}
+
+void explore_folder(String path_folder, String... extension) {
+  explore_folder(path_folder, false, extension);
+
+}
+
+void explore_folder(String path, boolean check_sub_folder, String... extension) {
+  if((folder_selected_is || input_selected_is) && path != ("")) {
+    count_selection++ ;
+    set_media_list();
+ 
+    ArrayList allFiles = list_files(path, check_sub_folder);
+  
+    String fileName = "";
+    int count_pertinent_file = 0 ;
+  
+    for (int i = 0; i < allFiles.size(); i++) {
+      File f = (File) allFiles.get(i);   
+      fileName = f.getName(); 
+      // Add it to the list if it's not a directory
+      if (f.isDirectory() == false) {
+        for(int k = 0 ; k < extension.length ; k++) {
+          if (extension(fileName).equals(extension[k])) {
+            count_pertinent_file += 1 ;
+            println(count_pertinent_file, "/", i, f.getName());
+            files.add(f);
+          }
+        }
+      }
+    }
+    // to don't loop with this void
+    folder_selected_is = false ;
+    input_selected_is = false ;
   }
 }
+
+
+
+
+// Method to get a list of all files in a directory and all subdirectories
+ArrayList list_files(String dir, boolean check_sub_folder) {
+  ArrayList fileList = new ArrayList(); 
+  if(check_sub_folder) { 
+    explore_directory(fileList, dir);
+  } else {
+    if(folder_selected_is) {
+      File file = new File(dir);
+      File[] subfiles = file.listFiles();
+      for(int i = 0 ; i < subfiles.length ; i++) {
+        fileList.add(subfiles[i]);
+      }
+    } else if(input_selected_is) {
+      File file = new File(dir);
+      fileList.add(file);
+    }
+  }
+  return fileList;
+}
+
+// Recursive function to traverse subdirectories
+void explore_directory(ArrayList list_file, String dir) {
+  File file = new File(dir);
+  if (file.isDirectory()) {
+    list_file.add(file);  // include directories in the list
+
+    File[] subfiles = file.listFiles();
+    for (int i = 0; i < subfiles.length; i++) {
+      // Call this function on all files in this directory
+      explore_directory(list_file, subfiles[i].getAbsolutePath());
+    }
+  } else {
+    list_file.add(file);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
 SAVE LOAD  FRAME Rope
 v 0.3.1
@@ -325,12 +508,264 @@ PImage loadImageBMP(String fileName) {
 
 /**
 ROPE IMAGE
-v 0.1.0
+v 0.5.1
 */
+/**
+PImage manager library
+v 0.4.2
+*/
+class ROPImage_Manager {
+  ArrayList<ROPImage> library ;
+  int which_img;
+
+  private void build() {
+    if(library == null) {
+      library = new ArrayList<ROPImage>();
+    }
+  }
+
+  public void load(String... path_img) {
+    build();
+    for(int i = 0 ; i <path_img.length ; i++) {
+      //Image img = loadImage(img_src[i]);
+      ROPImage rop_img = new ROPImage(path_img[i]);
+      //println(img.width, img_src[i]);
+      library.add(rop_img);
+    }  
+  }
+
+  public void add(PImage img_src) {
+    build();
+    ROPImage rop_img = new ROPImage(img_src);
+    library.add(rop_img);
+  }
+
+  public void add(PImage img_src, String name) {
+    build();
+    ROPImage rop_img = new ROPImage(img_src, name);
+    library.add(rop_img);
+  }
+
+  public void clear() {
+    if(library != null) {
+      library.clear();
+    }
+  }
+
+  public ArrayList<ROPImage> list() {
+    return library;
+  }
+
+  public void select(int which_one) {
+    which_img = which_one ;
+  }
+
+  public void select(String target_name) {
+    if(library.size() > 0) {
+      for(int i = 0 ; i < library.size() ; i++) {
+        if(target_name.equals(library.get(i).name)) {
+          which_img = i ;
+          break ;
+        }
+      }
+    } else {
+      printErr("the String target name don't match with any name of image library") ;
+    }
+  }
+
+
+  public int size() {
+    if(library != null) {
+      return library.size() ;
+    } else return -1 ;  
+  }
+
+  public void set(PImage src_img, int target) {
+    build();
+    if(target < library.size()) {
+      if(src_img.width == get(target).width && src_img.height == get(target).height){
+        get(target).pixels = src_img.pixels ;
+        get(target).updatePixels();
+      } else {
+        get(target).resize(src_img.width, src_img.height);
+        get(target).pixels = src_img.pixels ;
+        get(target).updatePixels();
+      }
+    } else {
+      printErr("Neither target image match with your request");
+    }
+  }
+
+  public void set(PImage src_img, String target_name) {
+    build();
+    if(library.size() > 0) {
+      if(src_img.width == get(target_name).width && src_img.height == get(target_name).height){
+        get(target_name).pixels = src_img.pixels ;
+        get(target_name).updatePixels();
+      } else {
+        get(target_name).resize(src_img.width, src_img.height);
+        get(target_name).pixels = src_img.pixels ;
+        get(target_name).updatePixels();
+      }
+    } else {
+      printErr("Neither target image match with your request");
+    }
+  }
+
+  public String get_name() {
+    return get_name(which_img);
+  }
+
+  public String get_name(int target) {
+    if(library != null && library.size() > 0) {
+      if(target < library.size()) {
+        return library.get(target).get_name() ;
+      } else return null ;
+    } else return null ;
+  }
+
+
+
+  public int get_rank(String target_name) {
+    if(library != null && library.size() > 0) {
+      int rank = 0 ;
+      for(int i = 0 ; i < library.size() ; i++) {
+        String final_name = target_name.split("/")[target_name.split("/").length -1].split("\\.")[0] ;
+        if(final_name.equals(library.get(i).name) ) {
+          rank = i ;
+          break;
+        } 
+      }
+      return rank;
+    } else return -1;
+  }
+
+
+  public PImage get() {
+    if(library != null && library.size() > 0 ) {
+      if(which_img < library.size()) return library.get(which_img).img; 
+      else return library.get(0).img; 
+    } else return null ;
+  }
+
+  public PImage get(int target){
+    if(library != null && target < library.size()) {
+      return library.get(target).img;
+    } else return null;
+  }
+
+  public PImage get(String target_name){
+    if(library.size() > 0) {
+      int target = 0 ;
+      for(int i = 0 ; i < library.size() ; i++) {
+        String final_name = target_name.split("/")[target_name.split("/").length -1].split("\\.")[0] ;
+        if(final_name.equals(library.get(i).name) ) {
+          target = i ;
+          break;
+        } 
+      }
+      return get(target);
+    } else return null;
+  }
+
+
+  // private class
+  private class ROPImage {
+    private PImage img ;
+    private String name = "no name" ;
+
+    private ROPImage(String path) {
+      this.name = path.split("/")[path.split("/").length -1].split("\\.")[0] ;
+      this.img = loadImage(path);
+    }
+
+    private ROPImage(PImage img) {
+      this.img = img;
+    }
+
+    private ROPImage(PImage img, String name) {
+      this.img = img;
+      this.name = name;
+    }
+
+    public String get_name() {
+      return name ;
+    }
+
+    public PImage get_image() {
+      return img ;
+    }
+  }
+}
+
+/**
+resize image
+v 0.0.2
+*/
+/**
+* resize your picture proportionaly to the window sketch of the a specificic PGraphics
+*/
+void image_resize(PImage src) {
+  image_resize(src,g,true);
+}
+
+void image_resize(PImage src, boolean fullfit) {
+  image_resize(src,g,fullfit);
+}
+
+void image_resize(PImage src, PGraphics pg, boolean fullfit) {
+  float ratio_w = pg.width / (float)src.width;
+  float ratio_h = pg.height / (float)src.height;
+  if(!fullfit) {
+    if(ratio_w > ratio_h) {
+      src.resize(ceil(src.width *ratio_w), ceil(src.height *ratio_w));
+    } else {
+      src.resize(ceil(src.width *ratio_h), ceil(src.height *ratio_h));  
+    }
+  } else {
+    if(ratio_w > ratio_h) {
+      src.resize(ceil(src.width *ratio_h), ceil(src.height *ratio_h));
+    } else {
+      src.resize(ceil(src.width *ratio_w), ceil(src.height *ratio_w));  
+    }
+  }
+}
+
+/**
+copy window
+v 0.0.1
+*/
+PImage image_copy_window(PImage src, int where) {
+  return image_copy_window(src, g, where);
+}
+
+PImage image_copy_window(PImage src, PGraphics pg, int where) {
+  int x = 0 ;
+  int y = 0 ;
+  if(where == CENTER) {
+    x = (src.width -pg.width) /2 ;
+    y = (src.height -pg.height) /2 ;   
+  } else if(where == LEFT) {
+    y = (src.height -pg.height) /2 ; 
+  } else if(where == RIGHT) { 
+    x = src.width -pg.width ;
+    y = (src.height -pg.height) /2 ;   
+  } else if(where == TOP) {
+    x = (src.width -pg.width) /2 ;   
+  } else if(where == BOTTOM) { 
+    x = (src.width -pg.width) /2 ;
+    y = src.height -pg.height;   
+  }  
+  return src.get(x, y, pg.width, pg.height); 
+}
+
+
+
 
 /**
 IMAGE
-v 0.1.3.1
+v 0.2.0
+2016-2018
 */
 
 /**
@@ -338,12 +773,116 @@ v 0.1.3.1
 * @see other method in Vec mini library
 */
 void image(PImage img) {
-  image(img, 0, 0);
+  if(img != null) image(img, 0, 0);
+  else printErr("Object PImage pass to method image() is null");
+}
+
+void image(PImage img, int what) {
+  float x = 0 ;
+  float y = 0 ;
+  int w = img.width;
+  int h = img.height;
+  int where = CENTER;
+  if(what == r.FIT || what == LANDSCAPE || what == PORTRAIT || what == SCREEN) {
+    float ratio = 1.;
+    int diff_w = width-w;
+    int diff_h = height-h;
+    if(what == r.FIT) {
+      if(diff_w > diff_h) {
+        ratio = (float)height / (float)h;
+      } else {
+        ratio = (float)width / (float)w;
+      }
+    } else if(what == SCREEN) {
+      if(diff_w > diff_h) {
+        ratio = (float)width / (float)w;
+      } else {
+        ratio = (float)height/ (float)h;
+      }
+    } else if(what == PORTRAIT) {
+      ratio = (float)height / (float)h;
+    } else if(what == LANDSCAPE) {
+      ratio = (float)width / (float)w;
+    }
+    w *= ratio;
+    h *= ratio;
+  } else {
+    where = what;
+  }
+
+  if(where == CENTER) {
+    x = (width /2.) -(w /2.);
+    y = (height /2.) -(h /2.);   
+  } else if(where == LEFT) {
+    x = 0;
+    y = (height /2.) -(h /2.);
+  } else if(where == RIGHT) {
+    x = width -w;
+    y = (height /2.) -(h /2.);
+  } else if(where == TOP) {
+    x = (width /2.) -(w /2.);
+    y = 0;
+  } else if(where == BOTTOM) {
+    x = (width /2.) -(w /2.);
+    y = height -h; 
+  }
+  image(img,x,y,w,h);
 }
 
 void image(PImage img, float coor) {
-  image(img, coor, coor);
+  if(img != null) image(img, coor, coor);
+  else printErr("Object PImage pass to method image() is null");
 }
+
+void image(PImage img, iVec pos) {
+  if(pos instanceof iVec2) {
+    image(img, Vec2(pos.x, pos.y));
+  } else if(pos instanceof iVec3) {
+    image(img, Vec3(pos.x, pos.y, pos.z));
+  }
+}
+
+void image(PImage img, iVec pos, iVec2 size) {
+  if(pos instanceof iVec2) {
+    image(img, Vec2(pos.x, pos.y), Vec2(size.x, size.y));
+  } else if(pos instanceof iVec3) {
+    image(img, Vec3(pos.x, pos.y, pos.z), Vec2(size.x, size.y));
+  } 
+}
+
+void image(PImage img, Vec pos) {
+  if(pos instanceof Vec2) {
+    Vec2 p = (Vec2) pos ;
+    image(img, p.x, p.y) ;
+  } else if(pos instanceof Vec3) {
+    Vec3 p = (Vec3) pos ;
+    start_matrix() ;
+    translate(p) ;
+    image(img, 0,0) ;
+    stop_matrix() ;
+  }
+}
+
+void image(PImage img, Vec pos, Vec2 size) {
+  if(pos instanceof Vec2) {
+    Vec2 p = (Vec2) pos ;
+    image(img, p.x, p.y, size.x, size.y) ;
+  } else if(pos instanceof Vec3) {
+    Vec3 p = (Vec3) pos ;
+    start_matrix() ;
+    translate(p) ;
+    image(img, 0,0, size.x, size.y) ;
+    stop_matrix() ;
+  }
+}
+
+
+
+
+
+
+
+
 
 /**
 * For the future need to use shader to do that...but in the future !
@@ -465,24 +1004,180 @@ PImage paste_vertical(PImage img, int entry, int [] array_pix) {
 
 
 /**
-SHADER 
-v 0.1.1
+SHADER filter
+v 0.6.0
 few method manipulate image with the shader to don't slower Processing
 part
 */
 PShader rope_shader_level, rope_shader_mix, rope_shader_blend, rope_shader_overlay, rope_shader_multiply;
-void shader_rope_setup() {
-  rope_shader_level = loadShader("shader/rope_frag_level.glsl");
-  rope_shader_mix = loadShader("shader/rope_frag_mix.glsl");
-  rope_shader_blend = loadShader("shader/rope_frag_blend.glsl");
-  rope_shader_overlay = loadShader("shader/rope_frag_overlay.glsl");
-  rope_shader_multiply = loadShader("shader/rope_frag_multiply.glsl");
+PShader rope_shader_gaussian_blur ;
+PShader rope_shader_resize ;
+
+String shader_folder_path = null;
+void shader_folder_filter(String path) {
+  shader_folder_path = path;
 }
 
 /**
-multiply
-v 0.0.1
+Gaussian blur
+pass x2 vertical and horizontal
+
 */
+void blur(PImage tex, float intensity) {
+  blur(tex, intensity);
+}
+
+void blur(PGraphics p, PImage tex, float intensity) {
+  set_blur(intensity) ;
+  // temp
+  if(temp_gaussian_blur == null) {
+    temp_gaussian_blur = createImage(tex.width, tex.height, ARGB);
+    tex.loadPixels() ;
+    temp_gaussian_blur.pixels = tex.pixels;
+    temp_gaussian_blur.updatePixels();
+  }
+  if(temp_gaussian_blur.width != tex.width || temp_gaussian_blur.height != tex.height) {
+    temp_gaussian_blur.resize(tex.width, tex.height);
+    tex.loadPixels() ;
+    temp_gaussian_blur.pixels = tex.pixels;
+    temp_gaussian_blur.updatePixels();
+  }
+
+  reset_blur(tex);
+
+  if(rope_shader_gaussian_blur == null) {
+    if(shader_folder_path != null) {
+      rope_shader_gaussian_blur = loadShader(shader_folder_path+"rope_filter_gaussian_blur.glsl");
+    } else {
+      rope_shader_gaussian_blur = loadShader("shader/filter/rope_filter_gaussian_blur.glsl");
+    }  
+  }
+  
+  if(pass_rope_1 == null) {
+    if(p == null) pass_rope_1 = createGraphics(tex.width,tex.height,P2D);
+    else pass_rope_1 = createGraphics(p.width,p.height,P2D);
+  }
+  if(pass_rope_2 == null) {
+    if(p == null) pass_rope_2 = createGraphics(tex.width,tex.height,P2D);
+    else pass_rope_2 = createGraphics(p.width,p.height,P2D);
+  }
+
+
+  if(p != null) {
+    rope_shader_gaussian_blur.set("PGraphics_renderer_is",true);
+    float ratio_x = (float)p.width / (float)tex.width ;
+    float ratio_y = (float)p.height / (float)tex.height ;
+    rope_shader_gaussian_blur.set("wh_renderer_ratio",ratio_x, ratio_y);
+  }
+
+  rope_shader_gaussian_blur.set("blurSize", size_gaussian_blur_rope);
+  rope_shader_gaussian_blur.set("sigma", sigma_gaussian_blur_rope);
+
+
+  
+  // Applying the blur shader along the vertical direction   
+  rope_shader_gaussian_blur.set("horizontalPass", true);
+  pass_rope_1.beginDraw();            
+  pass_rope_1.shader(rope_shader_gaussian_blur);
+  pass_rope_1.image(tex, 0, 0); 
+  pass_rope_1.endDraw();
+
+  // Applying the blur shader along the horizontal direction        
+  rope_shader_gaussian_blur.set("horizontalPass", false);
+   pass_rope_2.beginDraw();            
+   pass_rope_2.shader(rope_shader_gaussian_blur);  
+   pass_rope_2.image(pass_rope_1, 0, 0);
+   pass_rope_2.endDraw(); 
+
+  if(p == null) {
+     pass_rope_2.loadPixels() ;
+    tex.pixels =  pass_rope_2.pixels ;
+    tex.updatePixels() ;
+  } else {
+     pass_rope_2.loadPixels();
+    p.pixels =  pass_rope_2.pixels;
+    p.updatePixels();
+
+  }
+}
+
+/*
+util blur
+*/
+PGraphics pass_rope_1, pass_rope_2;
+PImage temp_gaussian_blur ;
+void reset_blur(PImage tex) {
+  if(temp_gaussian_blur != null) {
+    temp_gaussian_blur.loadPixels() ;
+    tex.pixels = temp_gaussian_blur.pixels;
+    tex.updatePixels();
+  }
+}
+
+int size_gaussian_blur_rope = 7 ;
+float sigma_gaussian_blur_rope = 3f ;
+
+void set_blur(float intensity) {
+  size_gaussian_blur_rope = floor(intensity) ;
+  sigma_gaussian_blur_rope = intensity *.5 ;
+}
+
+
+
+
+
+
+
+  
+/**
+multiply
+
+*/
+/**
+* size
+*/
+/**
+void multiply_size(int w1, int h1, int w2, int h2) {
+  if(rope_shader_multiply == null) rope_shader_multiply = loadShader("shader/filter/rope_filter_multiply.glsl");
+  rope_shader_multiply.set("wh_renderer_ratio",(float)w2 / (float)w1, (float)h2 / (float)h1);
+}
+
+void multiply_size(int w, int h) {
+  if(rope_shader_multiply == null) rope_shader_multiply = loadShader("shader/filter/rope_filter_multiply.glsl");
+  rope_shader_multiply.set("wh_renderer_ratio",1f/w, 1f/h);
+}
+*/
+
+void set_multiply_shader() {
+  if(rope_shader_multiply == null) {
+    if(shader_folder_path != null) {
+      rope_shader_multiply = loadShader(shader_folder_path+"rope_filter_multiply.glsl");
+    } else {
+      rope_shader_multiply = loadShader("shader/filter/rope_filter_multiply.glsl");
+    }  
+  }
+}
+/**
+* flip 
+*/
+void multiply_flip_tex(boolean bx_tex, boolean by_tex) {
+  multiply_flip(bx_tex,by_tex,false,false);
+}
+
+void multiply_flip_inc(boolean bx_inc, boolean by_inc) {
+  multiply_flip(false,false,bx_inc,by_inc);
+}
+
+void multiply_flip(boolean bx, boolean by) {
+  multiply_flip(bx,by,bx,by);
+}
+
+void multiply_flip(boolean bx_tex, boolean by_tex, boolean bx_inc, boolean by_inc) {
+  set_multiply_shader();
+  rope_shader_multiply.set("flip_tex",bx_tex,by_tex);
+  rope_shader_multiply.set("flip_inc",bx_inc,by_inc);
+}
+
 /**
 * follower method
 */
@@ -518,20 +1213,20 @@ void multiply(PImage tex, PImage inc, float... ratio) {
 /**
 * with PGraphics work
 */
-void multiply(PGraphics pg, PImage tex, PImage inc) {
-  multiply(pg, tex, inc, 1);
+void multiply(PGraphics p, PImage tex, PImage inc) {
+  multiply(p, tex, inc, 1);
 }
 
-void multiply(PGraphics pg, PImage tex, PImage inc, Vec2 ratio) {
-  multiply(pg, tex, inc, ratio.x, ratio.y);
+void multiply(PGraphics p, PImage tex, PImage inc, Vec2 ratio) {
+  multiply(p, tex, inc, ratio.x, ratio.y);
 }
 
-void multiply(PGraphics pg, PImage tex, PImage inc, Vec3 ratio) {
-  multiply(pg, tex, inc, ratio.x, ratio.y, ratio.z);
+void multiply(PGraphics p, PImage tex, PImage inc, Vec3 ratio) {
+  multiply(p, tex, inc, ratio.x, ratio.y, ratio.z);
 }
 
-void multiply(PGraphics pg, PImage tex, PImage inc, Vec4 ratio) {
-  multiply(pg, tex, inc, ratio.x, ratio.y, ratio.z, ratio.w);
+void multiply(PGraphics p, PImage tex, PImage inc, Vec4 ratio) {
+  multiply(p, tex, inc, ratio.x, ratio.y, ratio.z, ratio.w);
 }
 /**
 * Master method multiply
@@ -540,34 +1235,66 @@ void multiply(PGraphics pg, PImage tex, PImage inc, Vec4 ratio) {
 * @param Pimage inc, is the image must be incrusted on the background picture
 * @param float [], Vec2, Vec3 or Vec4 is the normal ratio overlaying
 */
-void multiply(PGraphics pg, PImage tex, PImage inc, float... ratio) { 
-  Vec4 r = Vec4(1);
-  if(ratio.length == 1) {
-    r.set(ratio[0]);
-  } else if(ratio.length == 2) {
-    r.set(ratio[0],ratio[0],ratio[0],ratio[1]);
-  } else if(ratio.length == 3) {
-    r.set(ratio[0],ratio[1],ratio[2],1);
-  } else {
-    r.set(ratio[0],ratio[1],ratio[2],ratio[3]);
-  }
+void multiply(PGraphics p, PImage tex, PImage inc, float... ratio) {
+  set_multiply_shader();
+  
+  Vec4 r = array_to_Vec4_rgba(ratio);
 
-  rope_shader_multiply.set("texture",tex);
   rope_shader_multiply.set("incrustation",inc);
   rope_shader_multiply.set("ratio",r.x,r.z,r.w,r.z);
-  
 
-  if( pg == null ) {
+  if(p == null) {
+    rope_shader_multiply.set("texture",tex);
     shader(rope_shader_multiply);
+    //g.filter(rope_shader_multiply);
   } else {
-    pg.shader(rope_shader_multiply);
-    pg.image(tex, 0,0);
+    rope_shader_multiply.set("texture_PGraphics",tex);
+    rope_shader_multiply.set("PGraphics_renderer_is",true);
+    p.filter(rope_shader_multiply);
   }
 }
 /**
 overlay
-v 0.1.0
+
 */
+/**
+* size
+*/
+/**
+void overlay_size(int w1, int h1, int w2, int h2) {
+  if(rope_shader_overlay == null) rope_shader_overlay = loadShader("shader/filter/rope_filter_overlay.glsl");
+  rope_shader_overlay.set("wh_renderer_ratio",(float)w2 / (float)w1, (float)h2 / (float)h1);
+}
+*/
+void set_overlay_shader() {
+  if(rope_shader_overlay == null) {
+    if(shader_folder_path != null) {
+      rope_shader_overlay = loadShader(shader_folder_path+"rope_filter_overlay.glsl");
+    } else {
+      rope_shader_overlay = loadShader("shader/filter/rope_filter_overlay.glsl");
+    }  
+  }
+}
+/**
+* flip 
+*/
+void overlay_flip_tex(boolean bx_tex, boolean by_tex) {
+  overlay_flip(bx_tex,by_tex,false,false);
+}
+
+void overlay_flip_inc(boolean bx_inc, boolean by_inc) {
+  overlay_flip(false,false,bx_inc,by_inc);
+}
+
+void overlay_flip(boolean bx, boolean by) {
+  overlay_flip(bx,by,bx,by);
+}
+
+void overlay_flip(boolean bx_tex, boolean by_tex, boolean bx_inc, boolean by_inc) {
+  set_overlay_shader();
+  rope_shader_overlay.set("flip_tex",bx_tex,by_tex);
+  rope_shader_overlay.set("flip_inc",bx_inc,by_inc);
+}
 /**
 * follower method
 */
@@ -603,20 +1330,20 @@ void overlay(PImage tex, PImage inc, float... ratio) {
 /**
 * with PGraphics work
 */
-void overlay(PGraphics pg, PImage tex, PImage inc) {
-  overlay(pg, tex, inc, 1);
+void overlay(PGraphics p, PImage tex, PImage inc) {
+  overlay(p, tex, inc, 1);
 }
 
-void overlay(PGraphics pg, PImage tex, PImage inc, Vec2 ratio) {
-  overlay(pg, tex, inc, ratio.x, ratio.y);
+void overlay(PGraphics p, PImage tex, PImage inc, Vec2 ratio) {
+  overlay(p, tex, inc, ratio.x, ratio.y);
 }
 
-void overlay(PGraphics pg, PImage tex, PImage inc, Vec3 ratio) {
-  overlay(pg, tex, inc, ratio.x, ratio.y, ratio.z);
+void overlay(PGraphics p, PImage tex, PImage inc, Vec3 ratio) {
+  overlay(p, tex, inc, ratio.x, ratio.y, ratio.z);
 }
 
-void overlay(PGraphics pg, PImage tex, PImage inc, Vec4 ratio) {
-  overlay(pg, tex, inc, ratio.x, ratio.y, ratio.z, ratio.w);
+void overlay(PGraphics p, PImage tex, PImage inc, Vec4 ratio) {
+  overlay(p, tex, inc, ratio.x, ratio.y, ratio.z, ratio.w);
 }
 /**
 * Master method overlay
@@ -625,29 +1352,21 @@ void overlay(PGraphics pg, PImage tex, PImage inc, Vec4 ratio) {
 * @param Pimage inc, is the image must be incrusted on the background picture
 * @param float [], Vec2, Vec3 or Vec4 is the normal ratio overlaying
 */
-void overlay(PGraphics pg, PImage tex, PImage inc, float... ratio) { 
-  Vec4 r = Vec4(1);
-  if(ratio.length == 1) {
-    r.set(ratio[0]);
-  } else if(ratio.length == 2) {
-    r.set(ratio[0],ratio[0],ratio[0],ratio[1]);
-  } else if(ratio.length == 3) {
-    r.set(ratio[0],ratio[1],ratio[2],1);
-  } else {
-    r.set(ratio[0],ratio[1],ratio[2],ratio[3]);
-  }
+void overlay(PGraphics p, PImage tex, PImage inc, float... ratio) { 
+  set_overlay_shader();
 
-  rope_shader_overlay.set("texture",tex);
+  Vec4 r = array_to_Vec4_rgba(ratio);
+  
   rope_shader_overlay.set("incrustation",inc);
   rope_shader_overlay.set("ratio",r.x,r.z,r.w,r.z);
   
-  //shader(rope_shader_overlay);
-
-  if( pg == null ) {
+  if(p == null) {
+    rope_shader_overlay.set("texture",tex);
     shader(rope_shader_overlay);
   } else {
-    pg.shader(rope_shader_overlay);
-    pg.image(tex, 0,0);
+    rope_shader_overlay.set("texture_PGraphics",tex);
+    rope_shader_overlay.set("PGraphics_renderer_is",true);
+    p.filter(rope_shader_overlay);
   }
 }
 
@@ -658,8 +1377,46 @@ void overlay(PGraphics pg, PImage tex, PImage inc, float... ratio) {
 
 /**
 blend
-v 0.1.0
+
 */
+/**
+* size
+*/
+/**
+void blend_size(int w1, int h1, int w2, int h2) {
+  if(rope_shader_blend == null) rope_shader_blend = loadShader("shader/filter/rope_filter_blend.glsl");
+  rope_shader_blend.set("wh_renderer_ratio",(float)w2 / (float)w1, (float)h2 / (float)h1);
+}
+*/
+void set_blend_shader() {
+  if(rope_shader_blend == null) {
+    if(shader_folder_path != null) {
+      rope_shader_blend = loadShader(shader_folder_path+"rope_filter_blend.glsl");
+    } else {
+      rope_shader_blend = loadShader("shader/filter/rope_filter_blend.glsl");
+    }  
+  }
+}
+/**
+* flip 
+*/
+void blend_flip_tex(boolean bx_tex, boolean by_tex) {
+  blend_flip(bx_tex,by_tex,false,false);
+}
+
+void blend_flip_inc(boolean bx_inc, boolean by_inc) {
+  blend_flip(false,false,bx_inc,by_inc);
+}
+
+void blend_flip(boolean bx, boolean by) {
+  blend_flip(bx,by,bx,by);
+}
+
+void blend_flip(boolean bx_tex, boolean by_tex, boolean bx_inc, boolean by_inc) {
+  set_blend_shader();
+  rope_shader_overlay.set("flip_tex",bx_tex,by_tex);
+  rope_shader_overlay.set("flip_inc",bx_inc,by_inc);
+}
 /**
 * follower method
 */
@@ -691,20 +1448,20 @@ void blend(PImage tex, PImage inc, float blend, float... ratio) {
 /**
 * with PGraphics work
 */
-void blend(PGraphics pg, PImage tex, float blend, PImage inc) {
-  blend(pg, tex, inc, blend, 1);
+void blend(PGraphics p, PImage tex, float blend, PImage inc) {
+  blend(p, tex, inc, blend, 1);
 }
 
-void blend(PGraphics pg, PImage tex, PImage inc, float blend, Vec2 ratio) {
-  blend(pg, tex, inc, blend, ratio.x, ratio.y);
+void blend(PGraphics p, PImage tex, PImage inc, float blend, Vec2 ratio) {
+  blend(p, tex, inc, blend, ratio.x, ratio.y);
 }
 
-void blend(PGraphics pg, PImage tex, PImage inc, float blend, Vec3 ratio) {
-  blend(pg, tex, inc, blend, ratio.x, ratio.y, ratio.z);
+void blend(PGraphics p, PImage tex, PImage inc, float blend, Vec3 ratio) {
+  blend(p, tex, inc, blend, ratio.x, ratio.y, ratio.z);
 }
 
-void overlay(PGraphics pg, PImage tex, PImage inc, float blend, Vec4 ratio) {
-  blend(pg, tex, inc, blend, ratio.x, ratio.y, ratio.z, ratio.w);
+void blend(PGraphics p, PImage tex, PImage inc, float blend, Vec4 ratio) {
+  blend(p, tex, inc, blend, ratio.x, ratio.y, ratio.z, ratio.w);
 }
 
 
@@ -717,40 +1474,68 @@ void overlay(PGraphics pg, PImage tex, PImage inc, float blend, Vec4 ratio) {
 * @param Pimage inc, is the image must be incrusted on the background picture
 * @param float [], Vec2, Vec3 or Vec4 is the normal ratio overlaying
 */
-void blend(PGraphics pg, PImage tex, PImage inc, float blend, float... ratio) { 
-  Vec4 r = Vec4(1);
-  if(ratio.length == 1) {
-    r.set(ratio[0]);
-  } else if(ratio.length == 2) {
-    r.set(ratio[0],ratio[0],ratio[0],ratio[1]);
-  } else if(ratio.length == 3) {
-    r.set(ratio[0],ratio[1],ratio[2],1);
-  } else {
-    r.set(ratio[0],ratio[1],ratio[2],ratio[3]);
-  }
+void blend(PGraphics p, PImage tex, PImage inc, float blend, float... ratio) { 
+  set_blend_shader();
 
-  rope_shader_blend.set("texture",tex);
+  Vec4 r = array_to_Vec4_rgba(ratio);
+  
   rope_shader_blend.set("incrustation",inc);
   rope_shader_blend.set("blend", blend);
   rope_shader_blend.set("ratio",r.x,r.z,r.w,r.z);
   
-  //shader(rope_shader_overlay);
-
-  if( pg == null ) {
+  if(p == null) {
+    rope_shader_blend.set("texture",tex);
     shader(rope_shader_blend);
   } else {
-    pg.shader(rope_shader_blend);
-    pg.image(tex, 0,0);
+    rope_shader_blend.set("texture_PGraphics",tex);
+    rope_shader_blend.set("PGraphics_renderer_is",true);
+    p.filter(rope_shader_blend);
   }
 }
 
 /**
 mix
-v 0.1.1
+
 */
 /**
-* follower method
+* size
 */
+/**
+void mix_size(int w1, int h1, int w2, int h2) {
+  if(rope_shader_mix == null) rope_shader_mix = loadShader("shader/filter/rope_filter_mix.glsl");
+  rope_shader_mix.set("wh_renderer_ratio",(float)w2 / (float)w1, (float)h2 / (float)h1);
+}
+*/
+void set_mix_shader() {
+  if(rope_shader_mix == null) {
+    if(shader_folder_path != null) {
+      rope_shader_mix = loadShader(shader_folder_path+"rope_filter_mix.glsl");
+    } else {
+      rope_shader_mix = loadShader("shader/filter/rope_filter_mix.glsl");
+    }  
+  }
+}
+/**
+* flip 
+*/
+void mix_flip_tex(boolean bx_tex, boolean by_tex) {
+  mix_flip(bx_tex,by_tex,false,false);
+}
+
+void mix_flip_inc(boolean bx_inc, boolean by_inc) {
+  mix_flip(false,false,bx_inc,by_inc);
+}
+
+void mix_flip(boolean bx, boolean by) {
+  mix_flip(bx,by,bx,by);
+}
+
+void mix_flip(boolean bx_tex, boolean by_tex, boolean bx_inc, boolean by_inc) {
+  set_mix_shader();
+  rope_shader_mix.set("flip_tex",bx_tex,by_tex);
+  rope_shader_mix.set("flip_inc",bx_inc,by_inc);
+}
+
 /**
 * without PGraphics work
 */
@@ -785,58 +1570,73 @@ void mix(PImage tex, PImage inc, float... ratio) {
 /**
 * with PGraphics work
 */
-void mix(PGraphics pg, PImage tex, PImage inc) {
-  mix(pg, tex, inc, 1);
+void mix(PGraphics p, PImage tex, PImage inc) {
+  mix(p, tex, inc, 1);
 }
 
-void mix(PGraphics pg, PImage tex, PImage inc, Vec2 ratio) {
-  mix(pg, tex, inc, ratio.x, ratio.y);
+void mix(PGraphics p, PImage tex, PImage inc, Vec2 ratio) {
+  mix(p, tex, inc, ratio.x, ratio.y);
 }
 
-void mix(PGraphics pg, PImage tex, PImage inc, Vec3 ratio) {
-  mix(pg, tex, inc, ratio.x, ratio.y, ratio.z);
+void mix(PGraphics p, PImage tex, PImage inc, Vec3 ratio) {
+  mix(p, tex, inc, ratio.x, ratio.y, ratio.z);
 }
 
-void mix(PGraphics pg, PImage tex, PImage inc, Vec4 ratio) {
-  mix(pg, tex, inc, ratio.x, ratio.y, ratio.z, ratio.w);
+void mix(PGraphics p, PImage tex, PImage inc, Vec4 ratio) {
+  mix(p, tex, inc, ratio.x, ratio.y, ratio.z, ratio.w);
 }
 
 /**
 * Master method mix
 * this method have a purpose to mix the four channel color.
 */
-void mix(PGraphics pg, PImage tex, PImage inc, float... ratio) {
-  Vec4 r = Vec4(1);
-  if(ratio.length == 1) {
-    r.set(ratio[0]);
-  } else if(ratio.length == 2) {
-    r.set(ratio[0],ratio[0],ratio[0],ratio[1]);
-  } else if(ratio.length == 3) {
-    r.set(ratio[0],ratio[1],ratio[2],1);
-  } else {
-    r.set(ratio[0],ratio[1],ratio[2],ratio[3]);
-  }
+void mix(PGraphics p, PImage tex, PImage inc, float... ratio) {
+  set_mix_shader();
 
-  rope_shader_mix.set("texture",tex);
+  Vec4 r = array_to_Vec4_rgba(ratio); 
+  
   rope_shader_mix.set("incrustation",inc);
   rope_shader_mix.set("ratio",r.r,r.g,r.b,r.a);
 
-  if( pg == null ) {
+  if(p == null) {
+    rope_shader_mix.set("texture",tex);
     shader(rope_shader_mix);
   } else {
-    pg.shader(rope_shader_mix);
-    pg.image(tex, 0,0);
+    rope_shader_mix.set("texture_PGraphics",tex);
+    rope_shader_mix.set("PGraphics_renderer_is",true);
+    p.filter(rope_shader_mix);
   }
 }
 
 /**
 level colour
-v 0.1.0
+
 */
+/**
+* size
+*/
+/**
+void level_size(int w1, int h1, int w2, int h2) {
+  if(rope_shader_level == null) rope_shader_level = loadShader("shader/filter/rope_filter_level.glsl");
+  rope_shader_level.set("wh_renderer_ratio",(float)w2 / (float)w1, (float)h2 / (float)h1);
+}
+*/
+/**
+* flip 
+ */
+void level_flip(boolean bx, boolean by) {
+  if(rope_shader_level == null) {
+    if(shader_folder_path != null) {
+      rope_shader_level = loadShader(shader_folder_path+"rope_filter_level.glsl");
+    } else {
+      rope_shader_level = loadShader("shader/filter/rope_filter_level.glsl");
+    }  
+  }  
+  rope_shader_level.set("flip",bx,by);
+}
 /**
 * follower method
 */
-
 void level(PImage tex, Vec2 level) {
   level(tex,level.x,level.y);
 }
@@ -864,46 +1664,96 @@ void level(PImage tex, float... ratio) {
 /**
 * with PGraphics work
 */
-void level(PGraphics pg, PImage tex, PImage inc) {
-  level(pg, tex, 1);
+void level(PGraphics p, PImage tex, PImage inc) {
+  level(p, tex, 1);
 }
 
-void level(PGraphics pg, PImage tex, Vec2 ratio) {
-  level(pg, tex, ratio.x, ratio.y);
+void level(PGraphics p, PImage tex, Vec2 ratio) {
+  level(p, tex, ratio.x, ratio.y);
 }
 
-void level(PGraphics pg, PImage tex, Vec3 ratio) {
-  level(pg, tex, ratio.x, ratio.y, ratio.z);
+void level(PGraphics p, PImage tex, Vec3 ratio) {
+  level(p, tex, ratio.x, ratio.y, ratio.z);
 }
 
-void level(PGraphics pg, PImage tex, Vec4 ratio) {
-  level(pg, tex, ratio.x, ratio.y, ratio.z, ratio.w);
+void level(PGraphics p, PImage tex, Vec4 ratio) {
+  level(p, tex, ratio.x, ratio.y, ratio.z, ratio.w);
 }
 /**
 * Master method level
 * this method have a purpose to mix the four channel color.
 */
-void level(PGraphics pg, PImage tex, float... level) {
-  Vec4 c = Vec4(1);
-  if(level.length == 1) {
-    c.set(level[0]);
-  } else if(level.length == 2) {
-    c.set(level[0],level[0],level[0],level[1]);
-  } else if(level.length == 3) {
-    c.set(level[0],level[1],level[2],1);
-  } else {
-    c.set(level[0],level[1],level[2],level[3]);
-  }
-  rope_shader_level.set("texture",tex);
-  rope_shader_level.set("level",c.r,c.g,c.b,c.a);
+void level(PGraphics p, PImage tex, float... ratio) {
+  if(rope_shader_level == null) {
+    if(shader_folder_path != null) {
+      rope_shader_level = loadShader(shader_folder_path+"rope_filter_level.glsl");
+    } else {
+      rope_shader_level = loadShader("shader/filter/rope_filter_level.glsl");
+    }  
+  } 
 
-  if( pg == null ) {
+  Vec4 r = array_to_Vec4_rgba(ratio);
+ 
+  rope_shader_level.set("level",r.r,r.g,r.b,r.a);
+
+  if( p == null ) {
+    rope_shader_level.set("texture",tex);
     shader(rope_shader_level);
   } else {
-    pg.shader(rope_shader_level);
-    pg.image(tex, 0,0);
+    rope_shader_level.set("texture_PGraphics",tex);
+    rope_shader_level.set("PGraphics_renderer_is",true);
+    p.filter(rope_shader_level);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1025,9 +1875,9 @@ void alpha_canvas(int target, float change) {
 
 /**
 show canvas
-v 0.0.3
+v 0.0.4
 */
-boolean fullscreen_is = false ;
+boolean fullscreen_canvas_is = false ;
 iVec2 show_pos ;
 /**
 Add to set the center of the canvas in relation with the window
@@ -1035,7 +1885,7 @@ Add to set the center of the canvas in relation with the window
 int offset_canvas_x = 0 ;
 int offset_canvas_y = 0 ;
 void set_show() {
-  if(!fullscreen_is) {
+  if(!fullscreen_canvas_is) {
     surface.setSize(get_canvas().width, get_canvas().height);
   } else {
     offset_canvas_x = width/2 - (get_canvas().width/2);
@@ -1057,7 +1907,7 @@ int get_offset_canvas_y() {
 }
 
 void show_canvas(int num) {
-  if(fullscreen_is) {
+  if(fullscreen_canvas_is) {
     image(get_canvas(num), show_pos);
   } else {
     image(get_canvas(num));
@@ -1277,6 +2127,25 @@ String int_to_String(int data) {
   return float_string_value ;
 }
 
+
+
+/**
+array float to Vec
+*/
+Vec4 array_to_Vec4_rgba(float... f) {
+  Vec4 v = Vec4(1);
+  if(f.length == 1) {
+    v.set(f[0],f[0],f[0],1.);
+  } else if(f.length == 2) {
+    v.set(f[0],f[0],f[0],f[1]);
+  } else if(f.length == 3) {
+    v.set(f[0],f[1],f[2],1);
+  } else if(f.length > 3) {
+    v.set(f[0],f[1],f[2],f[3]);
+  }
+  return v;
+}
+
 /**
 END TRANSLATOR
 */
@@ -1313,301 +2182,29 @@ END TRANSLATOR
 
 
 
-/**
-COLOR 
-v 0.3.1
-*/
-/**
-getColorMode()
-v 0.0.2
-*/
-/**
-* getColorMode()
-* @return float array of your color environment.
-* @param boolean print_info_is retrun a print about the color environment
-*/
-float [] getColorMode(boolean print_info_is) {
-  float colorMode = g.colorMode ;
-  float x = g.colorModeX;
-  float y = g.colorModeY;
-  float z = g.colorModeZ;
-  float a = g.colorModeA;
-  float array[] = {colorMode,x,y,z,a};
-  if (print_info_is && g.colorMode == HSB) {
-    println("HSB",x,y,z,a);
-  } else if(print_info_is && g.colorMode == RGB) {
-    println("RGB",x,y,z,a);
-  }
-  return array;
-}
-
-float [] getColorMode() {
-  return getColorMode(false);
-}
-
-/**
-camaieu 
-v 0.1.1
-*/
-// return hue or other date in range of specific data float
-float camaieu(float max, float color_ref, float range) {
-  float camaieu = 0 ;
-  float which_color = random(-range, range) ;
-  camaieu = color_ref +which_color ;
-  if(camaieu < 0 ) camaieu = max +camaieu ;
-  if(camaieu > max) camaieu = camaieu -max ;
-  return camaieu ;
-}
-
-/**
-color pool 
-v 0.2.0
-*/
-// color pool Vec4 RGB
-Vec4 [] color_pool_RGB(int num) {
-  Vec2 sat_range = Vec2(g.colorModeY) ;
-  Vec2 bright_range = Vec2(g.colorModeZ) ;
-  Vec2 alpha_range = Vec2(g.colorModeA) ;
-  float range = g.colorModeX *.5 ;
-  int num_group = 1 ;
-  float key_hue = -1 ;
-  return color_pool_RGB(num, num_group, key_hue, range, sat_range, bright_range, alpha_range) ;
-}
-
-Vec4 [] color_pool_RGB(int num, float key_hue) {
-  Vec2 sat_range = Vec2(g.colorModeY) ;
-  Vec2 bright_range = Vec2(g.colorModeZ) ;
-  Vec2 alpha_range = Vec2(g.colorModeA) ;
-  float range = g.colorModeX *.5 ;
-  int num_group = 1 ;
-  return color_pool_RGB(num, num_group, key_hue, range, sat_range, bright_range, alpha_range) ;
-}
-
-
-Vec4 [] color_pool_RGB(int num, int num_group, float hue_range) {
-  Vec2 sat_range = Vec2(g.colorModeY) ;
-  Vec2 bright_range = Vec2(g.colorModeZ) ;
-  Vec2 alpha_range = Vec2(g.colorModeA) ;
-  float key_hue = -1 ;
-  return color_pool_RGB(num, num_group, key_hue, hue_range, sat_range, bright_range, alpha_range) ;
-}
-
-
-Vec4 [] color_pool_RGB(int num, int num_group, float key_hue, float hue_range) {
-  Vec2 sat_range = Vec2(g.colorModeY) ;
-  Vec2 bright_range = Vec2(g.colorModeZ) ;
-  Vec2 alpha_range = Vec2(g.colorModeA) ;
-  return color_pool_RGB(num, num_group, key_hue, hue_range, sat_range, bright_range, alpha_range) ;
-}
-
-Vec4 [] color_pool_RGB(int num, int num_group, float hue_range, Vec2 sat_range, Vec2 bright_range, Vec2 alpha_range) {
-  float key_hue = -1 ;
-  return color_pool_RGB(num, num_group, key_hue, hue_range, sat_range, bright_range, alpha_range) ;
-}
-
-
-Vec4 [] color_pool_RGB(int num, int num_group, float key_hue, float hue_range, Vec2 sat_range, Vec2 bright_range, Vec2 alpha_range) {
-  Vec4 [] list = new Vec4[num]  ;
-  int [] c = color_pool(num, num_group, key_hue, hue_range, sat_range, bright_range, alpha_range) ;
-  for(int i = 0 ; i <list.length ; i++) {
-    list[i] = new Vec4(red(c[i]),green(c[i]),blue(c[i]),alpha(c[i])) ;
-  }
-  return list ;
-}
-
-// color pool Vec4 HSB
-Vec4 [] color_pool_HSB(int num) {
-  Vec2 sat_range = Vec2(g.colorModeY) ;
-  Vec2 bright_range = Vec2(g.colorModeZ) ;
-  Vec2 alpha_range = Vec2(g.colorModeA) ;
-  float range = g.colorModeX *.5 ;
-  int num_group = 1 ;
-  float key_hue = -1 ;
-  return color_pool_HSB(num, num_group, key_hue, range, sat_range, bright_range, alpha_range) ;
-}
-
-Vec4 [] color_pool_HSB(int num, float key_hue) {
-  Vec2 sat_range = Vec2(g.colorModeY) ;
-  Vec2 bright_range = Vec2(g.colorModeZ) ;
-  Vec2 alpha_range = Vec2(g.colorModeA) ;
-  float range = g.colorModeX *.5 ;
-  int num_group = 1 ;
-  return color_pool_HSB(num, num_group, key_hue, range, sat_range, bright_range, alpha_range) ;
-}
-
-
-Vec4 [] color_pool_HSB(int num, int num_group, float hue_range) {
-  Vec2 sat_range = Vec2(g.colorModeY) ;
-  Vec2 bright_range = Vec2(g.colorModeZ) ;
-  Vec2 alpha_range = Vec2(g.colorModeA) ;
-  float key_hue = -1 ;
-  return color_pool_HSB(num, num_group, key_hue, hue_range, sat_range, bright_range, alpha_range) ;
-}
-
-
-Vec4 [] color_pool_HSB(int num, int num_group, float key_hue, float hue_range) {
-  Vec2 sat_range = Vec2(g.colorModeY) ;
-  Vec2 bright_range = Vec2(g.colorModeZ) ;
-  Vec2 alpha_range = Vec2(g.colorModeA) ;
-  return color_pool_HSB(num, num_group, key_hue, hue_range, sat_range, bright_range, alpha_range) ;
-}
-
-Vec4 [] color_pool_HSB(int num, int num_group, float hue_range, Vec2 sat_range, Vec2 bright_range, Vec2 alpha_range) {
-  float key_hue = -1 ;
-  return color_pool_HSB(num, num_group, key_hue, hue_range, sat_range, bright_range, alpha_range) ;
-}
-
-
-Vec4 [] color_pool_HSB(int num, int num_group, float key_hue, float hue_range, Vec2 sat_range, Vec2 bright_range, Vec2 alpha_range) {
-  Vec4 [] list = new Vec4[num]  ;
-  int [] c = color_pool(num, num_group, key_hue, hue_range, sat_range, bright_range, alpha_range) ;
-  for(int i = 0 ; i <list.length ; i++) {
-    list[i] = new Vec4(hue(c[i]),saturation(c[i]),brightness(c[i]),alpha(c[i])) ;
-  }
-  return list ;
-}
-
-// color pool int
-int [] color_pool(int num) {
-  Vec2 sat_range = Vec2(g.colorModeY) ;
-  Vec2 bright_range = Vec2(g.colorModeZ) ;
-  Vec2 alpha_range = Vec2(g.colorModeA) ;
-  float range = g.colorModeX *.5 ;
-  int num_group = 1 ;
-  float key_hue = -1 ;
-  return color_pool(num, num_group, key_hue, range, sat_range, bright_range, alpha_range) ;
-}
-
-int [] color_pool(int num, float key_hue) {
-  Vec2 sat_range = Vec2(g.colorModeY) ;
-  Vec2 bright_range = Vec2(g.colorModeZ) ;
-  Vec2 alpha_range = Vec2(g.colorModeA) ;
-  float range = g.colorModeX *.5 ;
-  int num_group = 1 ;
-  return color_pool(num, num_group, key_hue, range, sat_range, bright_range, alpha_range) ;
-}
-
-int [] color_pool(int num, int num_group, float hue_range) {
-  Vec2 sat_range = Vec2(g.colorModeY) ;
-  Vec2 bright_range = Vec2(g.colorModeZ) ;
-  Vec2 alpha_range = Vec2(g.colorModeA) ;
-  float key_hue = -1 ;
-  return color_pool(num, num_group, key_hue, hue_range, sat_range, bright_range, alpha_range) ;
-}
-
-int [] color_pool(int num, int num_group, float key_hue, float hue_range) {
-  Vec2 sat_range = Vec2(g.colorModeY) ;
-  Vec2 bright_range = Vec2(g.colorModeZ) ;
-  Vec2 alpha_range = Vec2(g.colorModeA) ;
-  return color_pool(num, num_group, key_hue, hue_range, sat_range, bright_range, alpha_range) ;
-}
-
-int [] color_pool(int num, int num_group, float hue_range, Vec2 sat_range, Vec2 bright_range, Vec2 alpha_range) {
-  float key_hue = -1 ;
-  return color_pool(num, num_group, key_hue, hue_range, sat_range, bright_range, alpha_range) ;
-
-}
-
-// color pool by group
-int [] color_pool(int num, int num_group, float key_hue, float hue_range, Vec2 sat_range, Vec2 bright_range, Vec2 alpha_range) {
-  int ref = g.colorMode ;
-  float x = g.colorModeX ;
-  float y = g.colorModeY ;
-  float z = g.colorModeZ ;
-  float a = g.colorModeA ;
-  colorMode(HSB,360,100,100,100) ;
-
-  float [] color_ref = new float[num_group] ;
-  if(key_hue >= 0 ) {
-    color_ref[0] = key_hue ;
-  } else {
-    color_ref[0] = random(g.colorModeX) ;
-  }
-  if(num_group > 1) {
-    float step = g.colorModeX / num_group ;
-    for(int i = 1 ; i < num_group ; i++) {
-      color_ref[i] = color_ref[i -1] + step ;
-      if(color_ref[i] > g.colorModeX) {
-        color_ref[i] = color_ref[i] - g.colorModeX ;
-      }      
-    }
-  }
-
-  int [] list = new int[num] ;
-  int count = 0 ;
-  int step = num / num_group ;
-  int next_stop = step ; ;
-  for(int i = 0 ; i < list.length ; i++) {
-    if(i > next_stop) {
-      next_stop += step ;
-    }
-    float saturation = random(sat_range) ;
-    float brightness = random(bright_range) ;
-    float alpha = random(alpha_range) ;
-    float hue = camaieu(g.colorModeX, color_ref[count], hue_range) ;
-    list[i] = color(hue, saturation,brightness, alpha) ;
-    count++ ;
-    if(count >= color_ref.length) count = 0 ;
-
-  }
-  colorMode(ref,x,y,z,a) ;
-  return list ;
-}
 
 
 
 
 
-/**
-component range
-*/
-boolean alpha_range(float min, float max, int colour) {
-  float alpha = alpha(colour) ;
-  return in_range(min, max, alpha) ;
-}
-
-boolean red_range(float min, float max, int colour) {
-  float  r = red(colour) ;
-  return in_range(min, max, r) ;
-}
-
-boolean green_range(float min, float max, int colour) {
-  float  g = green(colour) ;
-  return in_range(min, max, g) ;
-}
-
-boolean blue_range(float min, float max, int colour) {
-  float  b = blue(colour) ;
-  return in_range(min, max, b) ;
-}
-
-boolean saturation_range(float min, float max, int colour) {
-  float  s = saturation(colour) ;
-  return in_range(min, max, s) ;
-}
-
-boolean brightness_range(float min, float max, int colour) {
-  float  b = brightness(colour) ;
-  return in_range(min, max, b) ;
-}
 
 
-boolean hue_range(float min, float max, int colour) {
-  int c_m = g.colorMode ;
-  float c_x = g.colorModeX ;
-  float c_y = g.colorModeY ;
-  float c_z = g.colorModeZ ;
-  float c_a = g.colorModeA ;
-  colorMode(HSB, c_x, c_y, c_z, c_a) ;
-  float  h = hue(colour) ;
 
-  boolean result = false ;
-  // test for the wheel value, hue is one of them ;
-  result = in_range_wheel(min, max, c_x, h) ;
-  // return to the current colorMode
-  colorMode(c_m, c_x, c_y, c_z, c_a) ;
-  return result ;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1621,127 +2218,23 @@ boolean hue_range(float min, float max, int colour) {
 
 
 /**
-convert color 0.0.1
+EXPORT FILE PDF_PNG 0.1.1
 */
-//convert color HSB to RVB
-Vec3 HSB_to_RGB(float hue, float saturation, float brightness) {
-  Vec4 vecRGB = HSB_to_RGB(hue, saturation, brightness, g.colorModeA).copy() ;
-  return Vec3(vecRGB.x,vecRGB.y,vecRGB.z) ;
-}
-
-Vec4 HSB_to_RGB(float hue, float saturation, float brightness, float alpha) {
-  Vec4 ref = Vec4(g.colorModeX, g.colorModeY, g.colorModeY, g.colorModeA) ;
-  color c = color (hue, saturation, brightness, alpha);
-
-  colorMode(RGB,255) ;
-  Vec4 vecRGBa = Vec4 (red(c), green(c), blue(c), alpha(c)) ;
-  // return to the previous colorMode
-  colorMode(HSB,ref.r, ref.g, ref.b, ref.a) ;
-  return vecRGBa ;
-}
-
-
-
-// color context
-/*
-* good when the text is on different background
-*/
-int color_context(int colorRef, int threshold, int clear, int dark) {
-  int new_color ;
-  if( brightness( colorRef ) < threshold ) {
-    new_color = clear;
-  } else {
-    new_color = dark ;
-  }
-  return new_color ;
-}
-/**
-END COLOR
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
-EXPORT FILE PDF_PNG 0.0.3
-
-*/
-// global PDF / PNG
-String default_folder_shot_pdf = "pdf_folder" ;
-String default_folder_shot_png = "png_folder" ;
-String default_name_pdf = "pdf_file_" ;
-String default_name_png = "png_file_" ;
 String ranking_shot = "_######" ;
-
-void start_shot(String path_folder, String name_file) {
-  start_PDF(path_folder, name_file) ;
-  start_PNG(path_folder, name_file) ;
-}
-
-void start_shot(String name_file) {
-  start_PDF(default_folder_shot_pdf, name_file) ;
-  start_PNG(default_folder_shot_png, name_file) ;
-}
-
-void start_shot() {
-  start_PDF() ;
-  // start_PNG() ;
-}
-
-void save_shot() {
-  save_PDF() ;
-  save_PNG() ;
-}
-void event_shot() {
-  event_PNG() ;
-  event_PDF() ;
-}
-
-
-
-
 // PDF
 import processing.pdf.*;
 boolean record_PDF;
 void start_PDF() {
-  start_PDF(default_folder_shot_pdf, default_name_pdf+ranking_shot) ;
+  start_PDF(null,null) ;
 }
 
 void start_PDF(String name_file) {
-  start_PDF(default_folder_shot_pdf, name_file) ;
+  start_PDF(null, name_file) ;
 }
 void start_PDF(String path_folder, String name_file) {
+  if(path_folder == null) path_folder = "pdf_folder";
+  if(name_file == null) name_file = "pdf_file_"+ranking_shot;
+
   if (record_PDF && !record_PNG) {
     if(renderer_P3D()) {
       beginRaw(PDF, path_folder+"/"+name_file+".pdf"); 
@@ -1758,6 +2251,7 @@ void save_PDF() {
     } else {
       endRecord() ;
     }
+    println("PDF");
     record_PDF = false;
   }
 }
@@ -1773,7 +2267,6 @@ void event_PDF() {
 boolean record_PNG ;
 boolean naming_PNG ;
 String path_folder_png, name_file_png  ;
-
 void start_PNG(String path_folder, String name_file) {
   path_folder_png = path_folder ;
   name_file_png = name_file ;
@@ -1783,9 +2276,9 @@ void start_PNG(String path_folder, String name_file) {
 void save_PNG() {
   if(record_PNG) {
     if(!naming_PNG) {
-      saveFrame(default_folder_shot_png +"/"+ default_name_png + ranking_shot+".png");
+      saveFrame("png_folder/shot_" + ranking_shot + ".png");
     } else {
-      saveFrame(path_folder_png +"/"+ name_file_png +".png");
+      saveFrame(path_folder_png + "/" + name_file_png + ".png");
     }
     record_PNG = false ;
   }
@@ -1795,35 +2288,69 @@ void event_PNG() {
   record_PNG = true;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
-END EXPORT FILE PDF / PNG
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
-
 BACKGROUND_2D_3D 
-v 0.0.3
+v 0.1.0
 */
-
 float MAX_RATIO_DEPTH = 6.9 ;
+
+/**
+Background classic processing
+*/
+// Vec
+void background(Vec4 c) {
+  background(c.r,c.g,c.b,c.a) ;
+}
+
+void background(Vec3 c) {
+  background(c.r,c.g,c.b) ;
+}
+
+void background(Vec2 c) {
+  background(c.x,c.y) ;
+}
+// iVec
+void background(iVec4 c) {
+  background(c.x,c.y,c.z,c.w) ;
+}
+
+void background(iVec3 c) {
+  background(c.x,c.y,c.z) ;
+}
+
+void background(iVec2 c) {
+  background(c.x,c.y) ;
+}
+
+
+
 
 /**
 Normalize background
@@ -1894,37 +2421,72 @@ void background_norm(float r_c, float g_c, float b_c, float a_c) {
 
 
 /**
-Background
+background rope
 */
-void background_rope(float colour) {
-  background_norm(colour / g.colorModeX, colour / g.colorModeY, colour / g.colorModeZ) ;
-  // background_2D(colour, g.colorModeA) ;
+void background_rope(int c) {
+  if(g.colorMode == 3) {
+    background_rope(hue(c),saturation(c),brightness(c));
+  } else {
+    background_rope(red(c),green(c),blue(c));
+  }
 }
 
-void background_rope(float colour, float alpha) {
-  background_norm(colour / g.colorModeX, colour / g.colorModeY, colour / g.colorModeZ, alpha / g.colorModeA) ;
+void background_rope(int c, float w) {
+  if(g.colorMode == 3) {
+    background_rope(hue(c),saturation(c),brightness(c),w);
+  } else {
+    background_rope(red(c),green(c),blue(c),w );
+  }
 }
 
-
-void background_rope(float red, float green, float blue, float alpha) {
-  background_norm(red / g.colorModeX, green / g.colorModeY, blue / g.colorModeZ, alpha / g.colorModeA) ;
+void background_rope(float c) {
+  background_rope(c,c,c);
 }
 
-void background_rope(float red, float green, float blue) {
-  background_norm(red / g.colorModeX, green / g.colorModeY, blue / g.colorModeZ) ;
+void background_rope(float c, float w) {
+  background_rope(c,c,c,w);
 }
 
 void background_rope(Vec4 c) {
-  background_norm(c.x / g.colorModeX, c.y / g.colorModeY, c.z / g.colorModeZ, c.w / g.colorModeA) ;
+  background_rope(c.x,c.y,c.z,c.w);
 }
 
 void background_rope(Vec3 c) {
-  background_norm(c.x / g.colorModeX, c.y / g.colorModeY, c.z / g.colorModeZ) ;
+  background_rope(c.x,c.y,c.z);
 }
 
 void background_rope(Vec2 c) {
-  background_norm(c.x / g.colorModeX, c.x / g.colorModeY, c.x / g.colorModeZ, c.y / g.colorModeA) ;
+  background_rope(c.x,c.x,c.x,c.y);
 }
+
+// master method
+void background_rope(float x, float y, float z, float w) {
+  background_norm(x/g.colorModeX, y/g.colorModeY, z/g.colorModeZ, w /g.colorModeA) ;
+}
+
+void background_rope(float x, float y, float z) {
+  background_norm(x/g.colorModeX, y/g.colorModeY, z/g.colorModeZ) ;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2026,57 +2588,126 @@ void write_row(TableRow row, String col_name, Object o) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
 print
-v 0.0.5
+v 0.1.3
 */
-// print 
-void printErr(Object... obj_list) {
+// util variable
+
+// print Err
+void printErr(Object... obj) {
   String message= ("");
-  for(int i = 0 ; i < obj_list.length ; i++) {
-    String data = obj_list[i].toString();
-    message += data + " " ;
+  for(int i = 0 ; i < obj.length ; i++) {
+    message = write_print_message(message, obj[i], obj.length, i);
   }
   System.err.println(message);
 }
 
-
 // print tempo
-void printErrTempo(int tempo, Object var) {
-  if(frameCount%tempo == 0) {
-    System.err.println(var);
+void printErrTempo(int tempo, Object... obj) {
+  if(frameCount%tempo == 0 || frameCount <= 1) {
+    String message= ("");
+    for(int i = 0 ; i < obj.length ; i++) {
+      message = write_print_message(message, obj[i], obj.length, i);
+    }
+    System.err.println(message);
   }
 }
 
-void printTempo(int tempo, Object... var) {
-  if(frameCount%tempo == 0) {
-    println(var);
+void printTempo(int tempo, Object... obj) {
+  if(frameCount%tempo == 0 || frameCount <= 1) {
+    String message= ("");
+    for(int i = 0 ; i < obj.length ; i++) {
+      message = write_print_message(message, obj[i], obj.length, i);
+    }
+    println(message);
   }
 }
 
-void printArrayTempo(int tempo, Object[] var) {
-  if(frameCount%tempo == 0) {
-    printArray(var);
+
+
+// local method
+String write_print_message(String message, Object obj, int length, int i) {
+  String add = "";
+  if(i == length -1) { 
+    if(obj == null) {
+      add = "null";
+    } else {
+      add = obj.toString();
+    }
+    return message += add;
+  } else {
+    if(obj == null) {
+      add = "null";
+    } else {
+      add = obj.toString();
+    }
+    return message += add + " ";
+  }
+}
+
+
+void printArrayTempo(int tempo, Object[] obj) {
+  if(frameCount%tempo == 0 || frameCount <= 1) {
+    printArray(obj);
   }
 }
 
 void printArrayTempo(int tempo, float[] var) {
-  if(frameCount%tempo == 0) {
+  if(frameCount%tempo == 0 || frameCount <= 10) {
     printArray(var);
   }
 }
 
 void printArrayTempo(int tempo, int[] var) {
-  if(frameCount%tempo == 0) {
+  if(frameCount%tempo == 0 || frameCount <= 10) {
     printArray(var);
   }
 }
 
 void printArrayTempo(int tempo, String[] var) {
-  if(frameCount%tempo == 0) {
+  if(frameCount%tempo == 0 || frameCount <= 10) {
     printArray(var);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2661,7 +3292,7 @@ public class Info_Vec_dict extends Info_dict {
 
 
 /**
-Info 0.1.0.1
+Info 0.1.0.2
 
 */
 interface Info {
@@ -2721,7 +3352,7 @@ class Info_int extends Info_method {
 
 
   // get
-  int [] get_all() {
+  int [] get() {
     int [] list = new int[]{a,b,c,d,e,f,g} ;
     return list ;
   }
@@ -2829,7 +3460,7 @@ class Info_String extends Info_method {
 
 
   // get
-  String [] get_all() {
+  String [] get() {
     String [] list = new String[]{a,b,c,d,e,f,g} ;
     return list ;
   }
@@ -2937,7 +3568,7 @@ class Info_float extends Info_method {
   }
 
   // get
-  float [] get_all() {
+  float [] get() {
     float [] list = new float[]{a,b,c,d,e,f,g} ;
     return list ;
   }
@@ -3049,7 +3680,7 @@ class Info_Vec extends Info_method {
 
 
   // get
-  Vec [] get_all() {
+  Vec [] get() {
     Vec [] list = new Vec[]{a,b,c,d,e,f,g} ;
     return list ;
   }
@@ -3163,7 +3794,7 @@ class Info_Object extends Info_method {
 
 
   // get
-  Object [] get_all() {
+  Object [] get() {
     Object [] list = new Object []{a,b,c,d,e,f,g} ;
     return list ;
   }
@@ -3384,7 +4015,7 @@ void freeze() {
 
 /**
 Gaussian randomize
-v 0.0.1
+v 0.0.2
 */
 @Deprecated
 float random_gaussian(float value) {
@@ -3396,7 +4027,7 @@ float random_gaussian(float value, float range) {
   /*
   * It's cannot possible to indicate a value result here, this part need from the coder ?
   */
-  System.err.println("This method must be improved or totaly deprecated");
+  printErrTempo(240,"float random_gaussian(); method must be improved or totaly deprecated");
   range = abs(range) ;
   float distrib = random(-1, 1) ;
   float result = 0 ;
@@ -3498,22 +4129,128 @@ int [][] loadPixels_array_2D() {
 
 
 
+/**
+GRAPHICS METHOD
+v 0.3.3
+*/
+/**
+SCREEN
+*/
+void set_window(int px, int py, int sx, int sy) {
+  set_window(iVec2(px,py), iVec2(sx,sy), get_screen_location(0));
+}
+
+void set_window(int px, int py, int sx, int sy, int target) {
+  set_window(iVec2(px,py), iVec2(sx,sy), get_screen_location(target));
+}
+
+void set_window(iVec2 pos, iVec2 size) {
+  set_window(pos, size, get_screen_location(0));
+}
+
+void set_window(iVec2 pos, iVec2 size, int target) {
+  set_window(pos, size, get_screen_location(target));
+}
+
+void set_window(iVec2 pos, iVec2 size, iVec2 pos_screen) { 
+  int offset_x = pos.x;
+  int offset_y = pos.y;
+  int dx = pos_screen.x;
+  int dy = pos_screen.y;
+  surface.setSize(size.x,size.y);
+  surface.setLocation(offset_x +dx, offset_y +dy);
+}
 
 /**
-CHECK
-
+check screen
 */
+/**
+screen size
+*/
+iVec2 get_screen_size() {
+  return get_display_size(sketchDisplay() -1);
+}
+
+iVec2 get_screen_size(int target) {
+  if(target >= get_display_num()) {
+    target = 0;
+    printErr("method get_screen_size(int target): target screen",target,"don't match with any screen device instead target '0' is used");
+  }
+  return get_display_size(target);
+}
+
+@Deprecated
+iVec2 get_display_size() {
+  return get_display_size(sketchDisplay() -1);
+}
+
+
+iVec2 get_display_size(int target) {
+  if(target >= get_display_num()) {
+    target = 0;
+    printErr("method get_screen_size(int target): target screen",target,"don't match with any screen device instead target '0' is used");
+  }  
+  Rectangle display = get_screen(target);
+  return iVec2((int)display.getWidth(), (int)display.getHeight()); 
+}
+
+/**
+screen location
+*/
+
+iVec2 get_screen_location(int target) {
+  Rectangle display = get_screen(target);
+  return iVec2((int)display.getX(), (int)display.getY());
+}
+
+/**
+screen num
+*/
+int get_screen_num() {
+  return get_display_num();
+}
+
+int get_display_num() {
+  GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+  return environment.getScreenDevices().length;
+}
+
+
+/**
+screen
+*/
+Rectangle get_screen(int target_screen) {
+  GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+  GraphicsDevice[] awtDevices = environment.getScreenDevices();
+  int target = 0 ;
+  if(target_screen < awtDevices.length) {
+    target = target_screen ; 
+  } else {
+    printErr("No screen match with your request, instead we use the current screen");
+    target = sketchDisplay() -1;
+    if(target >= awtDevices.length) target = awtDevices.length -1;
+  }
+  GraphicsDevice awtDisplayDevice = awtDevices[target];
+  Rectangle display = awtDisplayDevice.getDefaultConfiguration().getBounds();
+  return display;
+}
+
+
 
 
 /**
 Check renderer
 */
 boolean renderer_P3D() {
-  if(get_renderer_name(getGraphics()).equals("processing.opengl.PGraphics3D")) return true ; else return false ;
+  if(get_renderer(getGraphics()).equals("processing.opengl.PGraphics3D")) return true ; else return false ;
 }
 
 
-String get_renderer_name(final PGraphics graph) {
+String get_renderer() {
+  return get_renderer(g);
+}
+
+String get_renderer(final PGraphics graph) {
   try {
     if (Class.forName(JAVA2D).isInstance(graph))  return JAVA2D;
     if (Class.forName(FX2D).isInstance(graph))    return FX2D;
@@ -3535,9 +4272,33 @@ String get_renderer_name(final PGraphics graph) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+CHECK
+v 0.2.3
+*/
 /**
 Check Type
-v 0.0.2
+v 0.0.3
 */
 @Deprecated
 String object_type(Object obj) {
@@ -3569,6 +4330,8 @@ String get_type(Object obj) {
     return "Vec";
   } else if(obj instanceof iVec) {
     return "iVec";
+  } else if(obj instanceof bVec) {
+    return "bVec";
   } else return "Unknow" ;
 }
 
@@ -3662,100 +4425,130 @@ boolean in_range_wheel(float min, float max, float roof_max, float value) {
 
 /**
 STRING UTILS
+v 0.3.3
 */
 
 //STRING SPLIT
-String [] split_text(String textToSplit, String separator) {
-  String [] text = textToSplit.split(separator) ;
+String [] split_text(String str, String separator) {
+  String [] text = str.split(separator) ;
   return text  ;
 }
 
 
 //STRING COMPARE LIST SORT
 //raw compare
-int longest_word( String[] listWordsToSort) {
-  int sizeWord = 0 ;
-  for ( int i = 0 ; i < listWordsToSort.length ; i++) {
-    if (listWordsToSort[i].length() > sizeWord )  sizeWord = listWordsToSort[i].length() ;
-  }
-  return  sizeWord ;
+int longest_String(String[] string_list) {
+  int finish = 0;
+  if(string_list != null) finish = string_list.length;
+  return longest_String(string_list, 0, finish);
 }
+
 //with starting and end keypoint in the String must be sort
-int longest_word( String[] listWordsToSort, int start, int finish ) {
-  int sizeWord = 0 ;
-
-  for ( int i = start ; i < finish ; i++) {
-    if (listWordsToSort[i].length() > sizeWord )  sizeWord = listWordsToSort[i].length() ;
+int longest_String(String[] string_list, int start, int finish) {
+  int length = 0;
+  if(string_list != null) {
+    for ( int i = start ; i < finish ; i++) {
+      if (string_list[i].length() > length ) length = string_list[i].length() ;
+    }
   }
-  return  sizeWord ;
+  return length;
+}
+
+/**
+Longuest String with PFont
+*/
+int longest_String_pixel(PFont font, String[] string_list) {
+  int [] size_font = new int[1];
+  size_font[0] = font.getSize();
+  int finish = 0;
+  if(string_list != null) finish = string_list.length;
+  return longest_String_pixel(font.getName(), string_list, size_font, 0, finish);
+}
+
+int longest_String_pixel(PFont font, String[] string_list, int... size_font) {
+  int finish = 0;
+  if(string_list != null) finish = string_list.length;
+  return longest_String_pixel(font.getName(), string_list, size_font, 0, finish);
+}
+
+int longest_String_pixel(PFont font, String[] string_list, int [] size_font, int start, int finish) {
+  return longest_String_pixel(font.getName(), string_list, size_font, start, finish);
+}
+
+/**
+Longuest String with String name Font
+*/
+int longest_String_pixel(String font_name, String[] string_list, int... size_font) {
+  int finish = 0;
+  if(string_list != null) finish = string_list.length;
+  return longest_String_pixel(font_name, string_list, size_font, 0, finish);
+}
+
+// diferrent size by line
+int longest_String_pixel(String font_name, String[] string_list, int size_font, int start, int finish) {
+  int [] s_font = new int[1];
+  s_font[0] = size_font;
+  return longest_String_pixel(font_name, string_list, s_font, start, finish);
+}
+
+int longest_String_pixel(String font_name, String[] string_list, int [] size_font, int start, int finish) {
+  int width_pix = 0 ;
+  if(string_list != null) {
+    int target_size_font = 0;
+    for (int i = start ; i < finish && i < string_list.length; i++) {
+      if(i >= size_font.length) target_size_font = 0 ;
+      if (width_String(font_name, string_list[i], size_font[target_size_font]) > width_pix) {
+        width_pix = width_String(string_list[i],size_font[target_size_font]);
+      }
+      target_size_font++;
+    }
+  }
+  return width_pix;
 }
 
 
 
-// with the same size_text for each line
-int longest_word_in_pixel(String[] listWordsToSort, int size_font) {
-  int sizeWord = 0 ;
-  for ( int i = 0 ; i < listWordsToSort.length ; i++) {
-    if (width_String(listWordsToSort[i], size_font) > sizeWord )  sizeWord = width_String(listWordsToSort[i],size_font) ;
-  }
-  return  sizeWord ;
-}
 
-// with the same size_text for each line, choice the which line you check
-int longest_word_in_pixel( String[] listWordsToSort, int size_font, int start, int finish ) {
-  int sizeWord = 0 ;
-  for ( int i = start ; i <= finish ; i++) {
-    if (width_String(listWordsToSort[i], size_font) > sizeWord )  sizeWord = width_String(listWordsToSort[i],size_font) ;
-  }
-  return  sizeWord ;
-}
-
-// with list of size_text for each line
-int longest_word_in_pixel( String[] listWordsToSort, int [] size_font) {
-  int sizeWord = 0 ;
-  for ( int i = 0 ; i < listWordsToSort.length ; i++) {
-    if (width_String(listWordsToSort[i], size_font[i]) > sizeWord )  sizeWord = width_String(listWordsToSort[i],size_font[i]) ;
-  }
-  return  sizeWord ;
-}
-
-// with list of size_text for each line, choice the which line you check
-int longest_word_in_pixel( String[] listWordsToSort, int [] size_font, int start, int finish ) {
-  int sizeWord = 0 ;
-  for ( int i = start ; i <= finish ; i++) {
-    if (width_String(listWordsToSort[i], size_font[i]) > sizeWord )  sizeWord = width_String(listWordsToSort[i],size_font[i]) ;
-  }
-  return  sizeWord ;
-}
-
-
-
-
-
-
+/**
+width String
+*/
 int width_String(String target, int size) {
   return width_String("defaultFont", target, size) ;
 }
 
+int width_String(PFont pfont, String target, int size) {
+  return width_String(pfont.getName(), target, size);
+}
 
 int width_String(String font_name, String target, int size) {
   Font font = new Font(font_name, Font.BOLD, size) ;
   BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
   FontMetrics fm = img.getGraphics().getFontMetrics(font);
+  if(target ==null) {
+    printErr("method width_String(): String target =",target);
+    target = "";
+  }
   return fm.stringWidth(target);
 }
+
+
 
 
 int width_char(char target, int size) {
   return width_char("defaultFont", target, size) ;
 }
 
+int width_char(PFont pfont, char target, int size) {
+  return width_char(pfont.getName(), target, size);
+}
 int width_char(String font_name, char target, int size) {
   Font font = new Font(font_name, Font.BOLD, size) ;
   BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
   FontMetrics fm = img.getGraphics().getFontMetrics(font);
   return fm.charWidth(target);
 }
+
+
 
 
 
@@ -3774,6 +4567,29 @@ boolean research_in_String(String research, String target) {
 
 
 
+/**
+String file utils
+*/
+/**
+* remove element of the sketch path
+*/
+String sketchPath(int minus) {
+  minus = abs(minus);
+  String [] element = split(sketchPath(),"/");
+  String new_path ="" ;
+  if(minus < element.length ) {
+    for(int i = 0 ; i < element.length -minus ; i++) {
+      new_path +="/";
+      new_path +=element[i];
+    }
+    return new_path; 
+  } else {
+    printErr("The number of path elements is lower that elements must be remove, instead a data folder is used");
+    return sketchPath()+"/data";
+  }  
+}
+
+
 
 // remove the path of your file
 String file_name(String s) {
@@ -3781,4 +4597,13 @@ String file_name(String s) {
   String [] split_path = s.split("/") ;
   file_name = split_path[split_path.length -1] ;
   return file_name ;
+}
+
+
+String extension(String filename) {
+  if(filename != null) {
+    return filename.substring(filename.lastIndexOf(".") + 1, filename.length());
+  } else {
+    return null;
+  }
 }
