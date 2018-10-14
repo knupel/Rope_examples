@@ -15,8 +15,7 @@ void setup() {
 }
 
 
-float rotate_x;
-float rotate_y;
+Test test = new Test();
 void draw() {
   // first layer
   select_layer(0);
@@ -34,19 +33,9 @@ void draw() {
 
   // second layer
   select_layer(1);
-  rotate_x += .01;
-  rotate_y += .02;
+
   begin_layer();
-  background_rope(0);
-  translate(width/2,height/2);
-  pushMatrix();
-  
-  rotateX(rotate_x);
-  rotateY(rotate_y);
-  box(150);
-
-
-  popMatrix();
+  test.box_renderer();
 
   end_layer();
 
@@ -59,6 +48,28 @@ void draw() {
 void mousePressed() {
   clear_layer(0);
 }
+
+class Test {
+  float rotate_x;
+  float rotate_y;
+  Test() {}
+  void box_renderer() {
+    rotate_x += .01;
+    rotate_y += .02;
+    background_rope(0);
+    translate(width/2,height/2);
+    pushMatrix();
+    
+    rotateX(rotate_x);
+    rotateY(rotate_y);
+    box(150);
+
+
+    popMatrix();
+
+  }
+}
+
 
 
 
