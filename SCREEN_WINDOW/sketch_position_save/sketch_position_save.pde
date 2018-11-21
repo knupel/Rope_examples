@@ -7,7 +7,7 @@ ROPE - Romanesco processing environment –
 */
 
 void setup() {
-	size(500,500);
+	size(500,500,P3D);
 	load_sketch_location();
 }
 
