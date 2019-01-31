@@ -1,6 +1,9 @@
+/**
+TEXTURE
+* @see https://github.com/StanLepunK/Rope_examples
+2018-2019
+*/
 PImage img ;
-
-
 void setup() {
   size (100,100,P2D) ;
   // img = loadImage("purosGirl_small.jpg") ;
@@ -12,11 +15,11 @@ void setup() {
 
 void draw() {
   background(0);
-  // iVec2 pos = iVec2(mouseX,mouseY);
-   iVec2 pos = iVec2(0);
-  iVec2 size = iVec2(img.width, img.height);
+  // ivec2 pos = ivec2(mouseX,mouseY);
+   ivec2 pos = ivec2(0);
+  ivec2 size = ivec2(img.width, img.height);
   // plan(pos,size,img);
-   iVec2 pos_mouse = iVec2(mouseX,mouseY);
+   ivec2 pos_mouse = ivec2(mouseX,mouseY);
   PGraphics p = plan(pos_mouse, size,img,P2D);
 
   image(p,pos);
@@ -27,9 +30,9 @@ void draw() {
 
 
 PGraphics pg ;
-PGraphics plan(iVec2 pos, iVec2 size, PImage src, String renderer){
+PGraphics plan(ivec2 pos, ivec2 size, PImage src, String renderer){
 	pg = createGraphics(src.width, src.height,renderer);
-	iVec2 uv = iVec2(src.width, src.height);
+	ivec2 uv = ivec2(src.width, src.height);
 	float ratio = map(mouseX, 0,width,0, 1);
 	println(ratio);
   pg.beginDraw();

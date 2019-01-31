@@ -1,6 +1,6 @@
 /**
 ROPE - Romanesco processing environment – 
-* Copyleft (c) 2014-2018
+* Copyleft (c) 2014-2019
 * Stan le Punk
 * @see https://github.com/StanLepunK
 * @see http://stanlepunk.xyz/
@@ -29,19 +29,19 @@ void draw() {
   size_x = abs(sin(frameCount *.01) *(width/4));
   size_y = abs(sin(frameCount *.02) *(width/4));
   size_z = abs(sin(frameCount *.05) *(width/4));
-  Vec3 size = Vec3(size_x,size_y,size_z);
+  vec3 size = vec3(size_x,size_y,size_z);
   
 
-  //Vec3 size = Vec3(width/10);
+  //vec3 size = vec3(width/10);
   dir_x += .02;
   dir_y += .05;
   dir_z += .01;
-  Vec3 dir = Vec3(dir_x,dir_y,dir_z);
+  vec3 dir = vec3(dir_x,dir_y,dir_z);
   
 
 
   float value = 2*(sin(frameCount *.005));
   set_ratio_costume_size(value);
-  costume_rope(Vec3(width/2),size,dir,CROSS_BOX_3_ROPE);
-  //costume_rope(Vec3(width/2),Vec3(width/4),dir_z,"TRUC");
+  costume(vec3(width/2),size,dir,CROSS_BOX_3_ROPE);
+  //costume_rope(vec3(width/2),vec3(width/4),dir_z,"TRUC");
 }

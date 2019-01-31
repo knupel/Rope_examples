@@ -1,6 +1,6 @@
 /**
 ROPE - Romanesco processing environment – 
-* Copyleft (c) 2014-2017
+* Copyleft (c) 2014-2019
 * Stan le Punk
 * https://github.com/StanLepunK
 * http://stanlepunk.xyz/
@@ -15,7 +15,7 @@ void setup() {
 }
 
 void draw() {
-	String path = selected_path_folder();
+	String path = folder();
 	explore_folder(path, true, "jpg", "JPG");
 	if(get_files() != null && get_files().size() > 0 ) {
 		showPictures() ;

@@ -1,18 +1,14 @@
 /**
-ROPE - Romanesco processing environment – 
-* Copyleft (c) 2014-2018
+* MASK ROPE
+* Copyleft (c) 2016-2019
 * Stan le Punk
 * @see https://github.com/StanLepunK
 * @see http://stanlepunk.xyz/
-guide to code here: 
-* @see https://github.com/StanLepunK/Rope/tree/master/Guide
 */
 
 
 void setup() {
 	size(500,500);
-
-
 }
 
 
@@ -31,12 +27,12 @@ void mask_mapping_border(boolean change_is) {
     int marge = 40;
     // a,c,d,e for outside
     // f,g,h,i for inside
-    iVec2 [] coord_connected = {iVec2(0,0),iVec2(width,0),iVec2(width,height),iVec2(0,height),
-    														iVec2(marge,marge),iVec2(width-marge,marge),iVec2(width-marge,height-marge),iVec2(marge,height-marge)};
-    iVec2 [] coord_block_1 = {iVec2(width/3,marge),iVec2(width -width/3,marge)};
-    iVec2 [] coord_block_2 = new iVec2[0];
-    iVec2 [] coord_block_3 = {iVec2(width/3,height-marge),iVec2(width -width/3,height-marge)};
-    iVec2 [] coord_block_4 = new iVec2[0];
+    ivec2 [] coord_connected = {ivec2(0,0),ivec2(width,0),ivec2(width,height),ivec2(0,height),
+    														ivec2(marge,marge),ivec2(width-marge,marge),ivec2(width-marge,height-marge),ivec2(marge,height-marge)};
+    ivec2 [] coord_block_1 = {ivec2(width/3,marge),ivec2(width -width/3,marge)};
+    ivec2 [] coord_block_2 = new ivec2[0];
+    ivec2 [] coord_block_3 = {ivec2(width/3,height-marge),ivec2(width -width/3,height-marge)};
+    ivec2 [] coord_block_4 = new ivec2[0];
     //int num_mask = 2;
   
     mask_border = new Mask_mapping(coord_connected, coord_block_1,  coord_block_2, coord_block_3, coord_block_4);
@@ -55,8 +51,8 @@ Mask_mapping [] mask_simple;
 void mask_mapping_2_blocks(boolean change_is) {
   if(mask_simple == null) {
     int h = 40;
-    iVec2 [] coord_mask_0 = {iVec2(0,0),iVec2(width,0),iVec2(width,h),iVec2(0,h)};
-    iVec2 [] coord_mask_1 = {iVec2(0,height-h),iVec2(width,height-h),iVec2(width,height),iVec2(0,height)};
+    ivec2 [] coord_mask_0 = {ivec2(0,0),ivec2(width,0),ivec2(width,h),ivec2(0,h)};
+    ivec2 [] coord_mask_1 = {ivec2(0,height-h),ivec2(width,height-h),ivec2(width,height),ivec2(0,height)};
     int num_mask = 2;
     mask_simple = new Mask_mapping[num_mask];
     mask_simple[0] = new Mask_mapping(coord_mask_0);
@@ -75,57 +71,57 @@ void mask_mapping_2_blocks(boolean change_is) {
 
 public class Mask_mapping {
   // private int num;
-  private iVec3 [] coord;
-  private iVec3 [] coord_block_1, coord_block_2, coord_block_3, coord_block_4;
+  private ivec3 [] coord;
+  private ivec3 [] coord_block_1, coord_block_2, coord_block_3, coord_block_4;
   private boolean init;
   private boolean block_is;
   private int c = r.BLACK;
   private int range = 10;
 
-  public Mask_mapping(iVec2 [] list) {
-    coord = new iVec3[list.length];
+  public Mask_mapping(ivec2 [] list) {
+    coord = new ivec3[list.length];
     for(int i = 0 ; i < coord.length ;i++) {
-      coord[i] = iVec3(list[i].x,list[i].y,0);
+      coord[i] = ivec3(list[i].x,list[i].y,0);
     }
     init = true;
   }
 
-  public Mask_mapping(iVec2 [] list, iVec2 [] list_block_1, iVec2 [] list_block_2, iVec2 [] list_block_3, iVec2 [] list_block_4) {
+  public Mask_mapping(ivec2 [] list, ivec2 [] list_block_1, ivec2 [] list_block_2, ivec2 [] list_block_3, ivec2 [] list_block_4) {
 		if(list.length != 8) {
 			printErr("class Mask_mapping need exactly 8 points to create a block, no more no less, there is",list.length,"in the list, no mask can be create");
 		} else {
 			block_is = true ;
-			coord = new iVec3[list.length];
+			coord = new ivec3[list.length];
 			for(int i = 0 ; i < coord.length ;i++) {
-				coord[i] = iVec3(list[i].x,list[i].y,0);
+				coord[i] = ivec3(list[i].x,list[i].y,0);
 			}
 			// block 1
 			if(list_block_1.length > 0) {
-				coord_block_1 = new iVec3[list_block_1.length];
+				coord_block_1 = new ivec3[list_block_1.length];
 				for(int i = 0 ; i < coord_block_1.length ;i++) {
-					coord_block_1[i] = iVec3(list_block_1[i].x,list_block_1[i].y,0);
+					coord_block_1[i] = ivec3(list_block_1[i].x,list_block_1[i].y,0);
 				}
 			}
 
   		// block 2
 			if(list_block_2.length > 0) {
-				coord_block_2 = new iVec3[list_block_2.length];
+				coord_block_2 = new ivec3[list_block_2.length];
 				for(int i = 0 ; i < coord_block_2.length ;i++) {
-					coord_block_2[i] = iVec3(list_block_2[i].x,list_block_2[i].y,0);
+					coord_block_2[i] = ivec3(list_block_2[i].x,list_block_2[i].y,0);
 				}
 			}
   		// block 3
 			if(list_block_3.length > 0) {
-				coord_block_3 = new iVec3[list_block_3.length];
+				coord_block_3 = new ivec3[list_block_3.length];
 				for(int i = 0 ; i < coord_block_3.length ;i++) {
-					coord_block_3[i] = iVec3(list_block_3[i].x,list_block_3[i].y,0);
+					coord_block_3[i] = ivec3(list_block_3[i].x,list_block_3[i].y,0);
 				}
 			}
   		// block 4
 			if(list_block_3.length > 0) {
-				coord_block_4 = new iVec3[list_block_4.length];
+				coord_block_4 = new ivec3[list_block_4.length];
 				for(int i = 0 ; i < coord_block_4.length ;i++) {
-					coord_block_4[i] = iVec3(list_block_3[i].x,list_block_4[i].y,0);
+					coord_block_4[i] = ivec3(list_block_3[i].x,list_block_4[i].y,0);
 				}
 			}
 
@@ -178,11 +174,11 @@ public class Mask_mapping {
       }
       
     } else {
-      printErr("class Mask_mapping(), must be iniatilized with an array list iVec2 [] coord)");
+      printErr("class Mask_mapping(), must be iniatilized with an array list ivec2 [] coord)");
     }
   }
-  private void show_point(iVec3 [] list) {
-    for(iVec3 iv : list) {
+  private void show_point(ivec3 [] list) {
+    for(ivec3 iv : list) {
       // fill(255);
       stroke(r.WHITE);
       strokeWeight(range);
@@ -190,12 +186,12 @@ public class Mask_mapping {
     }
   }
   private boolean drag_is = false ;
-  private void move_point(iVec3 [] list) {
+  private void move_point(ivec3 [] list) {
     if(!drag_is) {
-      for(iVec3 iv : list) {
-        iVec2 drag = iVec2(mouseX,mouseY);
-        iVec2 area = iVec2(range);
-        if(inside(drag,area,iVec2(iv.x,iv.y)) && iv.z == 0) {
+      for(ivec3 iv : list) {
+        ivec2 drag = ivec2(mouseX,mouseY);
+        ivec2 area = ivec2(range);
+        if(inside(drag,area,ivec2(iv.x,iv.y)) && iv.z == 0) {
           if(mousePressed) {
             iv.set(iv.x,iv.y,1);
             drag_is = true ;
@@ -210,19 +206,19 @@ public class Mask_mapping {
       }
     }
     
-    for(iVec3 iv : list) {
+    for(ivec3 iv : list) {
       if(iv.z == 1) iv.set(mouseX,mouseY,1);
     }
 
     if(!mousePressed) {
       drag_is = false;
-      for(iVec3 iv : list) {
+      for(ivec3 iv : list) {
         iv.set(iv.x,iv.y,0);
       }
     }
   }
 
-  private void draw_shape(iVec3 [] list) {
+  private void draw_shape(ivec3 [] list) {
     beginShape();
     for(int i = 0 ; i < list.length ; i++) {
       vertex(list[i]);
@@ -230,7 +226,7 @@ public class Mask_mapping {
     endShape(CLOSE);
   }
 
-  private void draw_shape(iVec3 [] list, iVec3 [] list_b_1, iVec3 [] list_b_2, iVec3 [] list_b_3, iVec3 [] list_b_4) {
+  private void draw_shape(ivec3 [] list, ivec3 [] list_b_1, ivec3 [] list_b_2, ivec3 [] list_b_3, ivec3 [] list_b_4) {
   	// block 1
     beginShape();
     vertex(list[0]);

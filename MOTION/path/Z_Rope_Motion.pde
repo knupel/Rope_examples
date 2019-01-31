@@ -1,104 +1,326 @@
 /**
-Class Motion 3.0.4
-Rope – Romanesco Processing Environment – 2015 – 2017
+ROPE - Romanesco processing environment – 
+* Copyleft (c) 2014-2017 
+* Stan le Punk > http://stanlepunk.xyz/
+Rope Motion  2015 – 2018
+v 1.3.0
+Rope – Romanesco Processing Environment – 
+* @author Stan le Punk
+* @see https://github.com/StanLepunK/Rope
+*/
+
+
+
+
+/**
+Method motion
+v 0.2.0
+*/
+vec2 follow(vec2 target, float speed) {
+  vec3 f = follow(target.x,target.y,0,speed);
+  return vec2(f.x,f.y);
+}
+
+
+
+vec3 follow(vec3 target, float speed) {
+  return follow(target.x,target.y,target.z,speed);
+}
+
+vec2 follow(float tx, float ty, float speed) {
+  vec3 f = follow(tx,ty,0,speed);
+  return vec2(f.x,f.y);
+}
+
+/**
+* master method
+*Compute position vector Traveller, give the target pos and the speed to go.
+*/
+vec3 dest_3D_follow_rope;
+vec3 follow(float tx, float ty, float tz, float speed) {
+  if(speed <= 0 || speed > 1) {
+    printErrTempo(120,"vec3 follow(): float speed parameter must be a normal value between 0 and 1\n instead value 1 is attribute to speed");
+    speed = 1.;
+  }
+  if(dest_3D_follow_rope == null) dest_3D_follow_rope = vec3();
+  // calcul X pos
+  float dx = tx - dest_3D_follow_rope.x;
+  if(abs(dx) != 0) {
+    dest_3D_follow_rope.x += dx * speed;
+  }
+  // calcul Y pos
+  float dy = ty - dest_3D_follow_rope.y;
+  if(abs(dy) != 0) {
+    dest_3D_follow_rope.y += dy * speed;
+  }
+  // calcul Z pos
+  float dz = tz - dest_3D_follow_rope.z;
+  if(abs(dz) != 0) {
+    dest_3D_follow_rope.z += dz * speed;
+  }
+  return dest_3D_follow_rope;
+}
+
+
+
+
+
+
+/**
+Class Motion 
+v 1.1.0
+2016-2018
 * @author Stan le Punk
 * @see https://github.com/StanLepunK/Motion
 */
 
 class Motion {
-  float velocity = 1. ;
-  float acceleration ;
-  float deceleration ;
-  
+  float vel_ref = 1. ;
+  float vel = 1. ;
+  float max_vel = 1 ;
 
+  float acc = .01 ;
+  float dec = .01 ;
+  boolean  acc_is = false ;
+  boolean  dec_is = true ;
+
+  vec3 dir  ;
+  int tempo = 0 ;
+  private boolean tempo_is = false ;
+  
+  // constructor
   Motion() {
   }
 
-
-  void stop_inertia() {
-    inertia(Vec3(), 0, 0) ;
+  Motion(float max_vel) {
+    this.max_vel = max_vel ;
   }
 
-  // apply_intertia
-  Vec3 mouse_ref_apply_in ; 
 
-  Vec2 apply_inertia(Vec2 current_pos, Vec2 my_pos, float braking, float max_speed) {
-    Vec3 current_pos_3D = Vec3(current_pos) ;
-    Vec3 my_pos_3D = Vec3(my_pos) ;
-    Vec3 apply = apply_inertia(current_pos_3D, my_pos_3D, braking, max_speed) ;
-    return Vec2(apply.x, apply.y) ;
+
+  // get
+  float get_velocity() {
+    return vel ;
   }
 
-  Vec3 apply_inertia(Vec3 current_pos, Vec3 my_pos, float braking, float max_speed) {
-    if(mouse_ref_apply_in == null) mouse_ref_apply_in = Vec3(my_pos) ;
+  vec3 get_direction() {
+    return dir ;
+  }
 
-    Vec3 inertia = inertia(current_pos, braking, max_speed) ;
-    if(inertia.equals(Vec3(0))) {
-      my_pos.sub(sub(mouse_ref_apply_in, current_pos)) ; ;
+  float get_acceleration() {
+    return acc;
+  }
+
+  float get_deceleration() {
+    return dec;
+  }
+
+  boolean acceleration_is() {
+    return acc_is ;
+  }
+
+  boolean deceleration_is() {
+    return dec_is ;
+  }
+
+  boolean velocity_is() {
+    if(vel == 0) return false ; else return true ;
+  }
+
+
+
+
+  // set
+  public void set_deceleration(float dec) {
+    this.dec = abs(dec) ;
+  }
+
+  public void set_acceleration(float acc) {
+    this.acc = abs(acc) ;
+  }
+
+  public void set_velocity(float vel) {
+    this.vel = vel ;
+  }
+
+  public void set_max_velocity(float max_vel) {
+    this.max_vel = max_vel ;
+  }
+
+  public void set_tempo(int tempo) {
+    tempo_is = true ;
+    this.tempo = tempo ;
+  }
+
+  void reset() {
+    this.vel = 0 ;
+    this.vel_ref = 0 ;
+    if(dir == null) {
+      this.dir = vec3(0) ;
     } else {
-      my_pos.add(inertia) ;
+      this.dir.set(0) ;
     }
-    mouse_ref_apply_in.set(current_pos) ;
-    return my_pos ;
   }
 
 
 
-  // intertia
-  float vel_in ;
-  Vec3 dir_in  ;
-  Vec3 for_vel_in ;
-  Vec3 for_dir_in ;
-  Vec3 mouse_in ;
 
-  Vec2 inertia(Vec2 current_pos, float braking, float max_speed) {
-    Vec3 current_pos_3D = Vec3(current_pos) ;
-    Vec3 inertia = inertia(current_pos_3D, braking, max_speed) ;
-    return Vec2(inertia.x, inertia.y) ;
+  // event
+  public void stop() {
+    this.vel_ref = this.vel ;
+    set_velocity(0) ;
   }
 
-  Vec3 inertia(Vec3 current_pos, float braking, float max_speed) {
-    // init var
-    if(dir_in == null) dir_in = Vec3() ;
-    if(for_vel_in == null) for_vel_in = Vec3() ;
-    if(for_dir_in == null) for_dir_in = Vec3() ;
-    if(mouse_in == null) mouse_in = Vec3() ;
+  public void start() {
+    set_velocity(vel_ref) ;
+  }
+
+  public void acceleration_is(boolean state) {
+    acc_is = state ;
+  }
+
+  public void deceleration_is(boolean state) {
+    dec_is = state ;
+  }
 
 
-    Vec3 inertia = Vec3() ;
-    mouse_in.set(current_pos) ;
+  // motion
+  // deceleration
+  public void deceleration() {
+    if(vel > 0) {
+      vel -= dec ;
+      // to stop object
+      if(vel < 0) vel = 0 ;
+    } else if(vel < 0 ) {
+      vel += dec ;
+      if(vel > 0) vel = 0 ;
+    }
+  }
+  
+  // acceleration
+  public void acceleration() {
+    if(vel > 0) {
+      vel += acc ;
+      // limit the velocity to the maximum velocity
+      if(vel > max_vel) vel = max_vel ;
+    } else if(vel < 0 ) {
+      vel -= acc ;
+      // limit the velocity to the maximum velocity
+      if(abs(vel) > max_vel) vel = -max_vel ;
+    }
+  }
 
-    if(for_vel_in.equals(mouse_in)) {
+
+
+
+
+
+
+  /**
+  leading 
+  v 0.0.3
+  */
+  public vec2 leading(vec2 leading_pos, vec2 exec_pos) {
+    vec3 current_pos_3D = vec3(leading_pos) ;
+    vec3 my_pos_3D = vec3(exec_pos) ;
+    vec3 lead = leading(current_pos_3D, my_pos_3D) ;
+    return vec2(lead.x, lead.y) ;
+  }
+
+
+  vec3 for_vel ;
+  vec3 for_dir ;
+
+  vec3 leading_pos ;
+  vec3 leading_ref ;
+  boolean apply_acc = false ;
+
+  public vec3 leading(vec3 leading_pos, vec3 exec_pos) {
+    if(leading_ref == null) {
+      leading_ref = vec3(exec_pos) ;
+    }
+    vec3 new_pos = vec3(exec_pos) ;
+
+    vec3 velocity_xyz = apply_leading(leading_pos) ;
+    if(velocity_xyz.equals(vec3(0))) {
+      // follow the lead when this one move
+      apply_acc = true ;
+      new_pos.sub(sub(leading_ref, leading_pos)) ;
+    } else {
+      new_pos.add(velocity_xyz) ;
+    }
+    leading_ref.set(leading_pos) ;
+    return new_pos ;
+  }
+
+
+  private vec3 apply_leading(vec3 leading_pos) {
+    // init var if var is null
+    if (dir == null) {
+      dir = vec3() ;
+    }
+    if (for_vel == null) {
+      for_vel = vec3() ;
+    }
+    if (for_dir == null) {
+      for_dir = vec3() ;
+    }
+    if (leading_pos == null) {
+      leading_pos = vec3() ;
+    }
+
+
+    vec3 vel_vec3 = vec3() ;
+    leading_pos.set(leading_pos) ;
+
+    if(for_vel.equals(leading_pos)) {
       // limit speed
-      if (abs(vel_in) > max_speed) {
-        if(vel_in < 0) {
-          vel_in = -max_speed ;
+      if (abs(vel) > max_vel) {
+        if(vel < 0) {
+          vel = -max_vel ;
         } else {
-          vel_in = max_speed ;
+          vel = max_vel ;
         }
       }
-       // braking
-      if(vel_in > 0) {
-        vel_in -= braking ;
-        if(vel_in < 0) vel_in = 0 ;
-      } else if(vel_in < 0 ) {
-        vel_in += braking ;
-        if(vel_in > 0) vel_in = 0 ;
+      
+
+      if(abs(vel) >= max_vel || !acc_is) {
+        apply_acc = false ;
       }
 
-      // update pos
-      inertia = mult(dir_in, vel_in) ;
+      if(apply_acc && acc_is) {
+        acceleration() ;
+      }
+
+      if(!apply_acc && dec_is) {
+        deceleration() ;
+      }
+
+      // update position
+      vel_vec3 = mult(dir, vel) ;
     } else {
-      vel_in = dist(mouse_in, for_vel_in) ;
-      dir_in = sub(mouse_in,for_dir_in) ;
-      dir_in.normalize() ;
+      vel = dist(leading_pos, for_vel) ;
+      dir = sub(leading_pos, for_dir) ;
+      dir.normalize() ;
     }
-    for_vel_in.set(current_pos) ;
-    println("inertia vel", vel_in) ;
-    if(frameCount%15 == 0) for_dir_in.set(current_pos) ;
+    for_vel.set(leading_pos) ;
+
+    // calcul direction
+    if(!tempo_is) tempo = int(frameRate *.25) ;
+    if(tempo != 0) {
+      if(frameCount%tempo == 0) {
+        for_dir.set(leading_pos) ;
+      } 
+    }
+    
     //
-    return inertia ;
+    return vel_vec3 ;
   }
+  /**
+  end leading
+  */
+
+  
 }
 
 
@@ -112,17 +334,17 @@ PATH
 */
 class Path extends Motion {
   // list of the keypoint, use super_class Path
-  ArrayList<Vec3> path ;
+  ArrayList<vec3> path ;
   // distance between the keypoint and the position of the translation shape
   float dist_from_start = 0 ;
   float dist_a_b = 0 ;
 
   // a & b are points to calculate the direction and position of the translation to give at the shape
-  // Vec3 origin, target ;
+  // vec3 origin, target ;
   // speed ratio to adjust the speed xy according to position target
-  Vec3 ratio  ;
+  vec3 ratio  ;
   //keypoint 
-  Vec3 pos ;
+  vec3 pos ;
   
 
   // find a good keypoint in the ArrayList
@@ -130,39 +352,39 @@ class Path extends Motion {
   int m = 1 ;
 
   Path() {
-    // super() ;
-    path = new ArrayList<Vec3>() ;
-    pos = Vec3(MAX_INT) ;
+    super() ;
+    path = new ArrayList<vec3>() ;
+    pos = vec3(MAX_INT) ;
   }
    // set
    void set_velocity(float velocity) {
-    if(velocity < 0) {
+    if(vel < 0) {
       System.err.println("negative value, class Path use the abslolute value of") ;
-      System.err.println(velocity) ;
+      System.err.println(vel) ;
     }
-    this.velocity = abs(velocity) ;
+    this.vel = abs(vel) ;
    }
 
   
 
   // next
   public void previous() {
-    Vec3 origin, target ;
+    vec3 origin, target ;
     if (path.size() > 1 ) {
-      Vec3 key_a = Vec3() ;
-      Vec3 key_b = Vec3() ;
+      vec3 key_a = vec3() ;
+      vec3 key_b = vec3() ;
       int origin_rank = path.size() - n -1 ;
       int target_rank = path.size() - m -1 ;
-      key_a = (Vec3) path.get(origin_rank) ;
-      key_b = (Vec3) path.get(target_rank) ;
+      key_a = (vec3) path.get(origin_rank) ;
+      key_b = (vec3) path.get(target_rank) ;
 
-      origin = Vec3(key_a) ;
-      target = Vec3(key_b) ;
+      origin = vec3(key_a) ;
+      target = vec3(key_b) ;
       go(origin, target) ;
 
     } else if (path.size() == 1) {
-      Vec3 key_a = (Vec3) path.get(0) ;
-      origin = Vec3(key_a) ;
+      vec3 key_a = (vec3) path.get(0) ;
+      origin = vec3(key_a) ;
       pos.set(origin) ;
     } else {
       pos.set(-100) ;
@@ -176,20 +398,20 @@ class Path extends Motion {
 
   // next
   public void next() {
-    Vec3 origin, target ;
+    vec3 origin, target ;
     if (path.size() > 1 ) {
-      Vec3 key_a = Vec3() ;
-      Vec3 key_b = Vec3() ;
-      key_a = (Vec3) path.get(n) ;
-      key_b = (Vec3) path.get(m) ;
+      vec3 key_a = vec3() ;
+      vec3 key_b = vec3() ;
+      key_a = (vec3) path.get(n) ;
+      key_b = (vec3) path.get(m) ;
 
-      origin = Vec3(key_a) ;
-      target = Vec3(key_b) ;
+      origin = vec3(key_a) ;
+      target = vec3(key_b) ;
       go(origin, target) ;
 
     } else if (path.size() == 1) {
-      Vec3 key_a = (Vec3) path.get(n) ;
-      origin = Vec3(key_a) ;
+      vec3 key_a = (vec3) path.get(n) ;
+      origin = vec3(key_a) ;
       pos.set(origin) ;
     } else {
       pos.set(-100) ;
@@ -200,8 +422,8 @@ class Path extends Motion {
 
 
   // private method of class
-  private void go(Vec3 origin, Vec3 target) {
-    if(pos.equals(Vec3(MAX_INT))) {
+  private void go(vec3 origin, vec3 target) {
+    if(pos.equals(vec3(MAX_INT))) {
       pos.set(origin) ;
     }
     // distance between the keypoint a & b and the position of the translation shape
@@ -210,11 +432,11 @@ class Path extends Motion {
     //update the position
     if (dist_from_start < dist_a_b) {
       // calcul speed ratio
-      Vec3 speed_ratio = sub(origin,target) ;
+      vec3 speed_ratio = sub(origin,target) ;
 
       // final calcul ratio
       if(ratio == null) {
-        ratio = Vec3() ;
+        ratio = vec3() ;
       }
       ratio.x = speed_ratio.x / speed_ratio.y ;
       ratio.y = speed_ratio.y / speed_ratio.x ;
@@ -228,30 +450,30 @@ class Path extends Motion {
       if (speed_ratio.x == 0) {
         pos.x += 0 ;
         if (origin.y - target.y < 0 )  {
-          pos.y += velocity ; 
+          pos.y += vel ; 
         } else {
-          pos.y -= velocity ;
+          pos.y -= vel ;
         }
       } 
       if (speed_ratio.y == 0) {
         pos.y += 0 ;
         if (origin.x - target.x < 0 ) {
-          pos.x += velocity ; 
+          pos.x += vel ; 
         } else {
-          pos.x -= velocity ;
+          pos.x -= vel ;
         }     
       }
 
       if (speed_ratio.x != 0 && speed_ratio.y != 0  )  {
         if (origin.x - target.x < 0 ) {
-          pos.x += (velocity *ratio.x) ; 
+          pos.x += (vel *ratio.x) ; 
         } else {
-          pos.x -= (velocity *ratio.x) ;
+          pos.x -= (vel *ratio.x) ;
         }
         if (origin.y - target.y < 0 ) {
-          pos.y += (velocity *ratio.y) ; 
+          pos.y += (vel *ratio.y) ; 
         } else {
-          pos.y -= (velocity *ratio.y) ;
+          pos.y -= (vel *ratio.y) ;
         }
       }
     } else {
@@ -287,7 +509,7 @@ class Path extends Motion {
 
 
   // get
-  Vec3 get_pos() {
+  vec3 get_pos() {
     return pos ;
   }
 
@@ -295,28 +517,28 @@ class Path extends Motion {
     return path.size() ;
   }
 
-  Vec3 [] path() {
-    Vec3 [] list = new Vec3[path.size()] ;
+  vec3 [] path() {
+    vec3 [] list = new vec3[path.size()] ;
     for(int i = 0 ; i < path.size() ; i++) {
       list[i] = path.get(i).copy() ;
     }
     return list ;
   }
 
-  ArrayList<Vec3> path_ArrayList() {
+  ArrayList<vec3> path_ArrayList() {
     return path ;
   }
   
 
   // add point to the list to make the path
-  void add(Vec coord) {
-    path.add(Vec3(coord.x,coord.y,coord.z)) ;
+  void add(vec coord) {
+    path.add(vec3(coord.x,coord.y,coord.z)) ;
   }
   void add(int x, int y, int z) {
-    path.add(Vec3(x,y,z)) ;
+    path.add(vec3(x,y,z)) ;
   }
 
   void add(int x, int y) {
-    path.add(Vec3(x,y,0)) ;
+    path.add(vec3(x,y,0)) ;
   }
 }

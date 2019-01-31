@@ -1,5 +1,9 @@
+/**
+TEXTURE
+* @see https://github.com/StanLepunK/Rope_examples
+2018-2019
+*/
 PImage img ;
-
 void setup() {
   size (100,100,P2D) ;
   frameRate(180);
@@ -12,8 +16,8 @@ void setup() {
 void draw() {
   background(0);
   println(frameRate);
-  iVec2 pos = iVec2(0);
-  iVec2 pos_mouse = iVec2(mouseX,mouseY);
+  ivec2 pos = ivec2(0);
+  ivec2 pos_mouse = ivec2(mouseX,mouseY);
   
   // PImage img_result = change_colour(img).copy(); 
   // PGraphics p = plan(img_result,P2D);
@@ -31,7 +35,7 @@ void shader_setup() {
 }
 
 PImage change_colour(PImage src) {
-	Vec4 c = Vec4(1);
+	vec4 c = vec4(1);
 	c.x = map(mouseX, 0,width, 0,1);
 	c.y = map(mouseY, 0,height, 0,1);
   c.z = abs(sin(frameCount *.01));
@@ -49,8 +53,8 @@ Put your result on PGraphics
 PGraphics pg ;
 PGraphics plan(PImage src, String renderer){
 	pg = createGraphics(src.width, src.height,renderer);
-	iVec2 uv = iVec2(src.width, src.height);
-  iVec2 size = iVec2(src.width, src.height); 
+	ivec2 uv = ivec2(src.width, src.height);
+  ivec2 size = ivec2(src.width, src.height); 
 
   pg.beginDraw();
   pg.noStroke(); 

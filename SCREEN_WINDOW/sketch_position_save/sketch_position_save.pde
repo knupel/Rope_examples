@@ -1,9 +1,7 @@
 /**
-ROPE - Romanesco processing environment – 
-* Copyleft (c) 2014-2018
-* Stan le Punk
-* https://github.com/StanLepunK
-* http://stanlepunk.xyz/
+WINDOW SAVE POSITION
+* @see https://github.com/StanLepunK/Rope_examples
+2018-2019
 */
 
 void setup() {
@@ -16,7 +14,7 @@ void draw() {
 	update_sketch_location();
 }
 
-iVec2 ref_sketch_location;
+ivec2 ref_sketch_location;
 void update_sketch_location() {
 	if(ref_sketch_location == null) {
 		ref_sketch_location = get_sketch_location().copy();
@@ -44,7 +42,7 @@ void write_sketch_location() {
 
 void load_sketch_location() {
 	String[] location = loadStrings("location.loc");
-	iVec2 loc = iVec2();
+	ivec2 loc = ivec2();
 	loc.x = Integer.parseInt(location[0]);
 	loc.y = Integer.parseInt(location[1]);
 	// check if the save position can be used and don't display the sketch in a innaccessible place
@@ -97,7 +95,7 @@ void load_sketch_location() {
 	surface.setLocation(loc.x,loc.y);
 }
 
-void center_sketch(iVec2 loc) {
+void center_sketch(ivec2 loc) {
 	println("bad position the sketch will be centered");
 	int term_x_0 = get_screen_size().x /2;
 	int term_x_1 = width/2;

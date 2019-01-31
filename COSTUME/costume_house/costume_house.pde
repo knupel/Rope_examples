@@ -5,8 +5,6 @@ ROPE - Romanesco processing environment –
 * https://github.com/StanLepunK
 * http://stanlepunk.xyz/
 */
-// import processing.video.Movie;
-
 House house;
 void setup() {
 	colorMode(HSB,360,100,100,100);
@@ -33,7 +31,7 @@ void draw() {
   float sx = map(rx,0,1,min,max);
   float sy = map(ry,0,1,min,max);
   float sz = map(rz,0,1,min,max);
-  Vec3 size = Vec3(sx,sy,sz);
+  vec3 size = vec3(sx,sy,sz);
   house.set_size(size);
 
   // house peak
@@ -62,31 +60,3 @@ void draw() {
 	house.show();
 	popMatrix();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

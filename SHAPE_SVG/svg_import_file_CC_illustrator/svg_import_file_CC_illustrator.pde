@@ -61,10 +61,10 @@ void draw() {
   CLASSIC VERTEX
   */
 
-  Vec2 scale = Vec2(1) ;
-  // Vec2 pos = Vec2 (width/2, height/2); 
-  Vec2 pos = Vec2 (mouseX -width/2, mouseY -height/2); 
-  Vec2 jitter = Vec2 (100, 5);
+  vec2 scale = vec2(1) ;
+  // vec2 pos = vec2 (width/2, height/2); 
+  vec2 pos = vec2 (mouseX -width/2, mouseY -height/2); 
+  vec2 jitter = vec2 (100, 5);
 
 
 
@@ -73,8 +73,8 @@ void draw() {
   //layer_svg() ;
   
   // ID_svg_2D(pos_2D, scale_2D, jitter_2D, ID) ;
-  Vec3 pos_temp = Vec3(pos.x, pos.y, 0) ;
-  Vec3 value = Vec3(30,5,0) ;
+  vec3 pos_temp = vec3(pos.x, pos.y, 0) ;
+  vec3 value = vec3(30,5,0) ;
   add_value_to_points(pos_temp, value) ;
 }
 
@@ -99,7 +99,7 @@ void keyPressed() {
 /**
 FULL SVG
 */
-void full_svg(Vec2 pos, Vec2 scale, Vec2 jitter) {
+void full_svg(vec2 pos, vec2 scale, vec2 jitter) {
   svg.pos(pos) ;
   svg.scaling(scale) ;
   svg.jitter(jitter) ;
@@ -186,12 +186,12 @@ void layer_svg() {
 ADD VALUE
 */
 
-void add_value_to_points(Vec3 pos, Vec3 add_value) {
+void add_value_to_points(vec3 pos, vec3 add_value) {
   for(int ID = 0 ; ID < svg.num_brick() ; ID++ ) {
-    int length = svg.list_svg_Vec(ID).length ;
-    Vec3 [] value = new Vec3[length] ;
+    int length = svg.list_svg_vec(ID).length ;
+    vec3 [] value = new vec3[length] ;
     for(int i = 0 ; i < value.length ; i++) {
-      value[i] = new Vec3("RANDOM", (int)add_value.x, (int)add_value.y, (int)add_value.z) ;
+      value[i] = new vec3("RANDOM", (int)add_value.x, (int)add_value.y, (int)add_value.z) ;
       value[i].mult(.1) ;
     }
     
@@ -242,7 +242,7 @@ void print_info_by_list(){
 /**
 ID GROUP LAYER
 */
-void ID_svg(Vec2 pos_2D, Vec2 scale_2D, Vec2 jitter_2D, int ID) {
+void ID_svg(vec2 pos_2D, vec2 scale_2D, vec2 jitter_2D, int ID) {
   svg.pos(pos_2D) ;
   svg.scaling(scale_2D) ;
   svg.jitter(jitter_2D) ;

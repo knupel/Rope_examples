@@ -1,3 +1,8 @@
+/**
+TEXTURE
+* @see https://github.com/StanLepunK/Rope_examples
+2018-2019
+*/
 PImage img ;
 
 void setup() {
@@ -10,16 +15,16 @@ void setup() {
 
 void draw() {
   background(0);
-  // iVec2 pos = iVec2(mouseX,mouseY);
-   iVec2 pos = iVec2(0);
-  iVec2 size = iVec2(img.width, img.height);
+  // ivec2 pos = ivec2(mouseX,mouseY);
+   ivec2 pos = ivec2(0);
+  ivec2 size = ivec2(img.width, img.height);
   // plan(pos,size,img);
   plan(pos,size,img);
   // image(img);
 }
 
-void plan(iVec2 pos, iVec2 size, PImage src){
-	iVec2 uv = iVec2(src.width, src.height);
+void plan(ivec2 pos, ivec2 size, PImage src){
+	ivec2 uv = ivec2(src.width, src.height);
   beginShape();
   texture(src);
   

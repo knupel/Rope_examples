@@ -11,7 +11,7 @@ void draw() {
 
 
 
-iVec2 window_ref;
+ivec2 window_ref;
 void set_movie() {
 	if(movie == null && input() != null) {
 		println(input());
@@ -19,9 +19,9 @@ void set_movie() {
 		movie.loop();
 
 	} else if(movie != null) {
-	  if(window_ref == null || !window_ref.equals(iVec2(movie.width,movie.height))) {
+	  if(window_ref == null || !window_ref.equals(ivec2(movie.width,movie.height))) {
 	  	surface.setSize(movie.width,movie.height);
-	  	window_ref = iVec2(movie.width,movie.height);
+	  	window_ref = ivec2(movie.width,movie.height);
 	  }
 		image(movie,0,0,width,height);
 	}

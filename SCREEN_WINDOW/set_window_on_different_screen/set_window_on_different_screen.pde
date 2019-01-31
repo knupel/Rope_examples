@@ -1,11 +1,7 @@
 /**
-ROPE - Romanesco processing environment – 
-* Copyleft (c) 2014-2018
-* Stan le Punk
-* @see https://github.com/StanLepunK
-* @see http://stanlepunk.xyz/
-guide to code here: 
-* @see https://github.com/StanLepunK/Rope/tree/master/Guide
+WINDOW MOVE :)
+* @see https://github.com/StanLepunK/Rope_examples
+2018-2019
 */
 
 int x, y;
@@ -21,7 +17,7 @@ void setup() {
     println("size:",get_screen_size(i));
     println("location:",get_screen_location(i));
   }
-  set_window(iVec2(x,y), iVec2(600,400), target_screen);
+  set_window(ivec2(x,y), ivec2(600,400), target_screen);
 }
 
 

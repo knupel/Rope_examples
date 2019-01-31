@@ -10,9 +10,9 @@ void setup() {
 	float magenta = 1;
 	float yellow = 0;
 	float black = 0;
-	Vec3 rgb = cmyk_to_rgb(cyan,magenta,yellow,black);
+	vec3 rgb = cmyk_to_rgb(cyan,magenta,yellow,black);
 	println("CMYK to RGB",rgb);
-	Vec4 cmyk = rgb_to_cmyk(rgb.r,rgb.g,rgb.b);
+	vec4 cmyk = rgb_to_cmyk(rgb.r,rgb.g,rgb.b);
 	println("RGB to CMYK",cmyk);
 	background_rope(rgb);
 }
