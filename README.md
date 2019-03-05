@@ -1,4 +1,4 @@
-Few sketches example with the Rope libraries and method to extend Processing.
+Few sketches example with the Rope library and Rope_framework to extend Processing.
 
 ## rope library
 to use the set rope method you need to downlow Rope library
