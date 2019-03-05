@@ -1,9 +1,8 @@
 /**
 ROPE - Romanesco processing environment – 
 * Copyleft (c) 2014-2019
-* Stan le Punk
-* https://github.com/StanLepunK
-* http://stanlepunk.xyz/
+* @see @stanlepunk
+* https://github.com/StanLepunK/Rope_framework
 */
 
 PImage img ;
@@ -55,20 +54,3 @@ void test_3D() {
 	rotateY(rot_y += .02);
 	box(800,100,100);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
