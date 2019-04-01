@@ -16,7 +16,7 @@ void setup() {
 
 void draw() {
 	String path = folder();
-	explore_folder(path, true, "jpg", "JPG");
+	explore_folder(path, true, "jpg");
 	if(get_files() != null && get_files().size() > 0 ) {
 		showPictures() ;
 	}
