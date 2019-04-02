@@ -1,39 +1,34 @@
 /**
-ROPE - Romanesco processing environment – 
+* Rope Framework
+* v 1.0.0
 * Copyleft (c) 2014-2019
-* Stan le Punk
-* https://github.com/StanLepunK
-* http://stanlepunk.xyz/
+* @author @stanlepunk
+* @see https://github.com/StanLepunK/Rope_framework
+* 
+* note:
+* import rope.core.*; > imported in the tab Z_R_core.pde
+* import rope.vector.*; > imported in the tab Z_R_core.pde
+* 
 */
 
-
 void setup() {
-	select_folder();
-	
-	
-	// check_folder(path, false);
 }
 
 void draw() {
-	String path = folder();
-	explore_folder(path, true, "jpg");
-	if(get_files() != null && get_files().size() > 0 ) {
-		showPictures() ;
-	}
-}
+  boolean explore_sub_folder = true;
+  String [] ext = {"mov"};
+  explore_folder(folder(),explore_sub_folder,ext); 
 
-
-
-int next = 0 ;
-void showPictures() {
-  if(next >= get_files().size()) next = 0 ;
-  File f = get_files().get(next);
-  PImage img = loadImage(f.getAbsolutePath());
-  surface.setSize(img.width, img.height);
-  image(img, 0, 0);
+  if(get_files() != null && get_files().size() > 0) {
+  	println("size",get_files().size());
+  	for(File f : get_files()) {
+	  	println(f);
+	  }
+    exit();
+  }
 }
 
 
 void keyPressed() {
-	if(key == 'n') next += 1 ;
+	if(key == 'f') select_folder();
 }

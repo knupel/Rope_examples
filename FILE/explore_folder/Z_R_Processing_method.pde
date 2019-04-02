@@ -1,16 +1,17 @@
 /**
 ROPE PROCESSING METHOD
-v 2.1.3
+v 2.4.4
 * Copyleft (c) 2014-2019
 * Stan le Punk > http://stanlepunk.xyz/
-* @author Stan le Punk
-* @see https://github.com/StanLepunK/Rope_method
+* @author @stanlepunk
+* @see https://github.com/StanLepunK/Rope_framework
+* Processing 3.5.3
 */
 
 
 /**
 ADVANCED GHOST METHOD
-v 1.0.0
+v 1.0.1
 All advanced ghost push Processing method further.
 Processing and vec, ivec and bvec method
 the idea here is create method directly insprating from Processing to simplify the coder life
@@ -21,11 +22,11 @@ the idea here is create method directly insprating from Processing to simplify t
 * @param component give in order : mode, x, y, z and alpha
 */
 void colorMode(vec5 component) {
-  int mode = (int)component.a;
+  int mode = (int)component.w;
   if(mode == HSB) {
-    colorMode(HSB,component.b,component.c,component.d,component.e);
+    colorMode(HSB,component.b(),component.c(),component.d(),component.e());
   } else if(mode == RGB) {
-    colorMode(RGB,component.b,component.c,component.d,component.e);
+    colorMode(RGB,component.b(),component.c(),component.d(),component.e());
   } else {
     printErr("The first component of your vec is", mode, "and don't match with any Processing colorMode, instead the current colorMode will be used");
   }
@@ -119,6 +120,34 @@ vec3 ceil(vec3 arg) {
 
 vec4 ceil(vec4 arg) {
   return vec4(ceil(arg.x),ceil(arg.y),ceil(arg.z),ceil(arg.w));
+}
+
+
+/**
+abs
+*/
+vec2 abs(vec2 arg) {
+  return vec2(abs(arg.x),abs(arg.y));
+}
+
+vec3 abs(vec3 arg) {
+  return vec3(abs(arg.x),abs(arg.y),abs(arg.z));
+}
+
+vec4 abs(vec4 arg) {
+  return vec4(abs(arg.x),abs(arg.y),abs(arg.z),abs(arg.w));
+}
+
+ivec2 abs(ivec2 arg) {
+  return ivec2(abs(arg.x),abs(arg.y));
+}
+
+ivec3 abs(ivec3 arg) {
+  return ivec3(abs(arg.x),abs(arg.y),abs(arg.z));
+}
+
+ivec4 abs(ivec4 arg) {
+  return ivec4(abs(arg.x),abs(arg.y),abs(arg.z),abs(arg.w));
 }
 
 
@@ -311,6 +340,31 @@ void rect(ivec3 p, ivec2 s) {
 }
 
 
+/**
+Triangle
+*/
+void triangle(ivec a, ivec b, ivec2 c) {
+  triangle(vec3(a.x,a.y,a.z),vec3(b.x,b.y,b.z),vec3(c.x,c.y,c.z));
+}
+
+void triangle(vec a, vec b, vec c) {
+  if(a.z == 0 && b.z == 0 && c.z == 0) {
+    triangle(a.x,a.y,b.x,b.y,c.x,c.y);
+  } else {
+    if(renderer_P3D()) {
+      beginShape();
+      vertex(a.x,a.y,a.z);
+      vertex(b.x,b.y,b.z);
+      vertex(c.x,c.y,c.z);
+      endShape(CLOSE);
+    } else {
+
+      triangle(a.x,a.y,b.x,b.y,c.x,c.y);
+    }
+  }
+}
+
+
 
 
 /**
@@ -494,11 +548,11 @@ void fill(vec2 c) {
   else noFill();
 }
 void fill(vec3 c) {
-  fill(c.r,c.g,c.b) ;
+  fill(c.x,c.y,c.z) ;
 }
 
 void fill(vec3 c, float a) {
-  if(a > 0) fill(c.r,c.g,c.b,a); 
+  if(a > 0) fill(c.x,c.y,c.z,a); 
   else noFill();
 }
 
@@ -538,16 +592,16 @@ void stroke(vec2 c) {
   else noStroke();
 }
 void stroke(vec3 c) {
-  stroke(c.r,c.g,c.b);
+  stroke(c.x,c.y,c.z);
 }
 
 void stroke(vec3 c, float a) {
-  if(a > 0) stroke(c.r,c.g,c.b, a); 
+  if(a > 0) stroke(c.x,c.y,c.z,a); 
   else noStroke();
 }
 
 void stroke(vec4 c) {
-  if(c.a > 0) stroke(c.r,c.g,c.b,c.a); 
+  if(c.w > 0) stroke(c.x,c.y,c.z,c.w); 
   else noStroke();
 }
 // ivec
@@ -776,7 +830,7 @@ void start_matrix_3D(vec pos, vec3 dir_cart) {
     translate(p) ;
   } else {
     printErr("Error in void start_matrix_3D(), vec pos is not an instance of vec2 or vec3, the matrix don't translate your object") ;
-    exit() ;
+    // exit() ;
   }
   float radius = sqrt(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
   float longitude = acos(dir.x / sqrt(dir.x * dir.x + dir.y * dir.y)) * (dir.y < 0 ? -1 : 1);
@@ -802,7 +856,7 @@ void start_matrix_3D(vec pos, vec2 dir_polar) {
     rotateXY(dir_polar);
   } else {
     printErr("Error in void start_matrix_3D(), vec pos is not an instance of vec2 or vec3, the matrix cannot be init") ;
-    exit() ;
+    // exit() ;
   }
 }
 
@@ -819,7 +873,7 @@ void start_matrix_2D(vec pos, float orientation) {
     rotate(orientation);
   } else {
     printErr("Error in void start_matrix_3D(), vec pos is not an instance of vec2 or vec3, the matrix cannot be init") ;
-    exit();
+    // exit();
   }
 }
 
@@ -974,11 +1028,19 @@ void matrix_start() {
 /**
 GHOST METHODS for PROCESSING
 2018-2018
-v 0.2.0
+v 0.2.2
 */
+boolean get_layer_is_correct() {
+  if(get_layer() != null && get_layer().width > 0 && get_layer().height > 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 // colorMode
 void colorMode(int mode) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().colorMode(mode);
   } else {
     g.colorMode(mode);
@@ -986,7 +1048,7 @@ void colorMode(int mode) {
 }
 
 void colorMode(int mode, float max) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().colorMode(mode,max);
   } else {
     g.colorMode(mode,max);
@@ -995,14 +1057,14 @@ void colorMode(int mode, float max) {
 
 
 void colorMode(int mode, float max1, float max2, float max3) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().colorMode(mode,max1,max2,max3);
   } else {
     g.colorMode(mode,max1,max2,max3);
   }
 }
 void colorMode(int mode, float max1, float max2, float max3, float maxA) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().colorMode(mode,max1,max2,max3,maxA);
   } else {
     g.colorMode(mode,max1,max2,max3,maxA);
@@ -1016,7 +1078,7 @@ void colorMode(int mode, float max1, float max2, float max3, float maxA) {
 
 // position
 void translate(float x, float y) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().translate(x,y);
   } else {
     g.translate(x,y);
@@ -1024,7 +1086,7 @@ void translate(float x, float y) {
 }
 
 void translate(float x, float y, float z) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().translate(x,y,z);
   } else {
     g.translate(x,y,z);
@@ -1034,7 +1096,7 @@ void translate(float x, float y, float z) {
 
 // rotate
 void rotate(float arg) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().rotate(arg);
   } else {
     g.rotate(arg);
@@ -1043,7 +1105,7 @@ void rotate(float arg) {
 
 
 void rotateX(float arg) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().rotateX(arg);
   } else {
     g.rotateX(arg);
@@ -1051,7 +1113,7 @@ void rotateX(float arg) {
 }
 
 void rotateY(float arg) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().rotateY(arg);
   } else {
     g.rotateY(arg);
@@ -1060,7 +1122,7 @@ void rotateY(float arg) {
 
 
 void rotateZ(float arg) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().rotateZ(arg);
   } else {
     g.rotateZ(arg);
@@ -1069,7 +1131,7 @@ void rotateZ(float arg) {
 
 // scale
 void scale(float s) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().scale(s);
   } else {
     g.scale(s);
@@ -1077,7 +1139,7 @@ void scale(float s) {
 }
 
 void scale(float x, float y) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().scale(x,y);
   } else {
     g.scale(x,y);
@@ -1085,7 +1147,7 @@ void scale(float x, float y) {
 }
 
 void scale(float x, float y, float z) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().scale(x,y,z);
   } else {
     g.scale(x,y,z);
@@ -1094,7 +1156,7 @@ void scale(float x, float y, float z) {
 
 // shear
 void shearX(float angle) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().shearX(angle);
   } else {
     g.shearX(angle);
@@ -1102,7 +1164,7 @@ void shearX(float angle) {
 }
 
 void shearY(float angle) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().shearY(angle);
   } else {
     g.shearY(angle);
@@ -1126,7 +1188,7 @@ aspect
 */
 // fill
 void noFill() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().noFill();
   } else {
     g.noFill();
@@ -1134,7 +1196,7 @@ void noFill() {
 } 
 
 void fill(int rgb) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().fill(rgb);
   } else {
     g.fill(rgb);
@@ -1143,7 +1205,7 @@ void fill(int rgb) {
 
 
 void fill(int rgb, float alpha) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().fill(rgb,alpha);
   } else {
     g.fill(rgb,alpha);
@@ -1151,7 +1213,7 @@ void fill(int rgb, float alpha) {
 }
 
 void fill(float gray) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().fill(gray);
   } else {
     g.fill(gray);
@@ -1160,7 +1222,7 @@ void fill(float gray) {
 
 
 void fill(float gray, float alpha) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().fill(gray,alpha);
   } else {
     g.fill(gray,alpha);
@@ -1168,7 +1230,7 @@ void fill(float gray, float alpha) {
 }
 
 void fill(float v1, float v2, float v3) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().fill(v1,v2,v3);
   } else {
     g.fill(v1,v2,v3);
@@ -1176,7 +1238,7 @@ void fill(float v1, float v2, float v3) {
 }
 
 void fill(float v1, float v2, float v3, float alpha) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().fill(v1,v2,v3,alpha);
   } else {
     g.fill(v1,v2,v3,alpha);
@@ -1185,7 +1247,7 @@ void fill(float v1, float v2, float v3, float alpha) {
 
 // stroke
 void noStroke() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().noStroke();
   } else {
     g.noStroke();
@@ -1193,7 +1255,7 @@ void noStroke() {
 } 
 
 void stroke(int rgb) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().stroke(rgb);
   } else {
     g.stroke(rgb);
@@ -1201,8 +1263,10 @@ void stroke(int rgb) {
 }
 
 
+
+
 void stroke(int rgb, float alpha) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().stroke(rgb,alpha);
   } else {
     g.stroke(rgb,alpha);
@@ -1210,7 +1274,7 @@ void stroke(int rgb, float alpha) {
 }
 
 void stroke(float gray) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().stroke(gray);
   } else {
     g.stroke(gray);
@@ -1219,7 +1283,7 @@ void stroke(float gray) {
 
 
 void stroke(float gray, float alpha) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().stroke(gray,alpha);
   } else {
     g.stroke(gray,alpha);
@@ -1227,7 +1291,7 @@ void stroke(float gray, float alpha) {
 }
 
 void stroke(float v1, float v2, float v3) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().stroke(v1,v2,v3);
   } else {
     g.stroke(v1,v2,v3);
@@ -1235,7 +1299,7 @@ void stroke(float v1, float v2, float v3) {
 }
 
 void stroke(float v1, float v2, float v3, float alpha) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().stroke(v1,v2,v3,alpha);
   } else {
     g.stroke(v1,v2,v3,alpha);
@@ -1245,7 +1309,7 @@ void stroke(float v1, float v2, float v3, float alpha) {
 
 // strokeWeight
 void strokeWeight(float thickness) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().strokeWeight(thickness);
   } else {
     g.strokeWeight(thickness);
@@ -1254,7 +1318,7 @@ void strokeWeight(float thickness) {
 
 // strokeJoin
 void strokeJoin(int join) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().strokeJoin(join);
   } else {
     g.strokeJoin(join);
@@ -1263,7 +1327,7 @@ void strokeJoin(int join) {
 
 // strokeJoin
 void strokeCapstrokeCap(int cap) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().strokeCap(cap);
   } else {
     g.strokeCap(cap);
@@ -1286,7 +1350,7 @@ shape
 */
 
 void rectMode(int mode) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().rectMode(mode);
   } else {
     g.rectMode(mode);
@@ -1294,7 +1358,7 @@ void rectMode(int mode) {
 }
 
 void ellipseMode(int mode) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().ellipseMode(mode);
   } else {
     g.ellipseMode(mode);
@@ -1303,7 +1367,7 @@ void ellipseMode(int mode) {
 
 // rect
 void rect(float px, float py, float sx, float sy) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().rect(px,py,sx,sy);
   } else {
     g.rect(px,py,sx,sy);
@@ -1312,7 +1376,7 @@ void rect(float px, float py, float sx, float sy) {
 
 
 void rect(float  px, float py, float sx, float sy, float r) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().rect(px,py,sx,sy,r);
   } else {
     g.rect(px,py,sx,sy,r);
@@ -1320,7 +1384,7 @@ void rect(float  px, float py, float sx, float sy, float r) {
 }
 
 void rect(float px, float py, float sx, float sy, float tl, float tr, float br, float bl) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().rect(px,py,sx,sy,tl,tr,br,bl);
   } else {
     g.rect(px,py,sx,sy,tl,tr,br,bl);
@@ -1330,7 +1394,7 @@ void rect(float px, float py, float sx, float sy, float tl, float tr, float br, 
 
 //arc
 void arc(float a, float b, float c, float d, float start, float stop) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().arc(a,b,c,d,start,stop);
   } else {
     g.arc(a,b,c,d,start,stop);
@@ -1338,7 +1402,7 @@ void arc(float a, float b, float c, float d, float start, float stop) {
 }
 
 void arc(float a, float b, float c, float d, float start, float stop, int mode) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().arc(a,b,c,d,start,stop,mode);
   } else {
     g.arc(a,b,c,d,start,stop,mode);
@@ -1347,7 +1411,7 @@ void arc(float a, float b, float c, float d, float start, float stop, int mode) 
 
 // ellipse
 void ellipse(int px, int py, int sx, int sy) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().ellipse(px,py,sx,sy);
   } else {
     g.ellipse(px,py,sx,sy);
@@ -1359,7 +1423,7 @@ void ellipse(int px, int py, int sx, int sy) {
 
 // box
 void box(float s) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().box(s,s,s);
   } else {
     g.box(s,s,s);
@@ -1367,7 +1431,7 @@ void box(float s) {
 }
 
 void box(float w, float h, float d) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().box(w,h,d);
   } else {
     g.box(w,h,d);
@@ -1377,7 +1441,7 @@ void box(float w, float h, float d) {
 
 // sphere
 void sphere(float r) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().sphere(r);
   } else {
     g.sphere(r);
@@ -1388,7 +1452,7 @@ void sphere(float r) {
 
 // sphere detail
 void sphereDetail(int res) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().sphereDetail(res);
   } else {
     g.sphereDetail(res);
@@ -1396,7 +1460,7 @@ void sphereDetail(int res) {
 }
 
 void sphereDetail(int ures, int vres) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().sphereDetail(ures,vres);
   } else {
     g.sphereDetail(ures,vres);
@@ -1408,7 +1472,7 @@ void sphereDetail(int ures, int vres) {
 
 //line
 void line(float x1, float y1, float x2, float y2) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().line(x1,y1,x2,y2);
   } else {
     g.line(x1,y1,x2,y2);
@@ -1416,7 +1480,7 @@ void line(float x1, float y1, float x2, float y2) {
 }
 
 void line(float x1, float y1, float z1, float x2, float y2, float z2) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().line(x1,y1,z1,x2,y2,z2);
   } else {
     g.line(x1,y1,z1,x2,y2,z2);
@@ -1430,7 +1494,7 @@ void line(float x1, float y1, float z1, float x2, float y2, float z2) {
 
 // point
 void point(float x, float y) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().point(x,y);
   } else {
     g.point(x,y);
@@ -1438,7 +1502,7 @@ void point(float x, float y) {
 }
 
 void point(float x, float y, float z) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().point(x,y,z);
   } else {
     g.point(x,y,z);
@@ -1447,7 +1511,7 @@ void point(float x, float y, float z) {
 
 // quad
 void quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().quad(x1,y1,x2,y2,x3,y3,x4,y4);
   } else {
     g.quad(x1,y1,x2,y2,x3,y3,x4,y4);
@@ -1472,7 +1536,7 @@ vertex
 */
 // begin
 void beginShape() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().beginShape();
   } else {
     g.beginShape();
@@ -1480,7 +1544,7 @@ void beginShape() {
 }
 
 void beginShape(int kind) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().beginShape(kind);
   } else {
     g.beginShape(kind);
@@ -1489,7 +1553,7 @@ void beginShape(int kind) {
 
 
 void endShape() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().endShape();
   } else {
     g.endShape();
@@ -1497,7 +1561,7 @@ void endShape() {
 }
 
 void endShape(int mode) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().endShape(mode);
   } else {
     g.endShape(mode);
@@ -1506,7 +1570,7 @@ void endShape(int mode) {
 
 // shape
 void shape(PShape shape) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().shape(shape);
   } else {
     g.shape(shape);
@@ -1514,7 +1578,7 @@ void shape(PShape shape) {
 }
 
 void shape(PShape shape, float x, float y) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().shape(shape,x,y);
   } else {
     g.shape(shape,x,y);
@@ -1522,7 +1586,7 @@ void shape(PShape shape, float x, float y) {
 }
 
 void shape(PShape shape, float a, float b, float c, float d) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().shape(shape,a,b,c,d);
   } else {
     g.shape(shape,a,b,c,d);
@@ -1534,7 +1598,7 @@ void shape(PShape shape, float a, float b, float c, float d) {
 
 //vertex
 void vertex(float x, float y) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().vertex(x,y);
   } else {
     g.vertex(x,y);
@@ -1542,7 +1606,7 @@ void vertex(float x, float y) {
 }
 
 void vertex(float x, float y, float z) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().vertex(x,y,z);
   } else {
     g.vertex(x,y,z);
@@ -1550,7 +1614,7 @@ void vertex(float x, float y, float z) {
 }
 
 void vertex(float [] v) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().vertex(v);
   } else {
     g.vertex(v);
@@ -1558,7 +1622,7 @@ void vertex(float [] v) {
 }
 
 void vertex(float x, float y, float u, float v) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().vertex(x,y,u,v);
   } else {
     g.vertex(x,y,u,v);
@@ -1567,7 +1631,7 @@ void vertex(float x, float y, float u, float v) {
 
 
 void vertex(float x, float y, float z, float u, float v) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().vertex(x,y,z,u,v);
   } else {
     g.vertex(x,y,z,u,v);
@@ -1577,7 +1641,7 @@ void vertex(float x, float y, float z, float u, float v) {
 
 // quadratic vertex
 void quadraticVertex(float cx, float cy, float x3, float y3) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().quadraticVertex(cx,cy,x3,y3);
   } else {
     g.quadraticVertex(cx,cy,x3,y3);
@@ -1585,7 +1649,7 @@ void quadraticVertex(float cx, float cy, float x3, float y3) {
 }
 
 void quadraticVertex(float cx, float cy, float cz, float x3, float y3, float z3) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().quadraticVertex(cx,cy,cz,x3,y3,z3);
   } else {
     g.quadraticVertex(cx,cy,cz,x3,y3,z3);
@@ -1594,7 +1658,7 @@ void quadraticVertex(float cx, float cy, float cz, float x3, float y3, float z3)
 
 // curve vertex
 void curveVertex(float x, float y) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().curveVertex(x,y);
   } else {
     g.curveVertex(x,y);
@@ -1602,7 +1666,7 @@ void curveVertex(float x, float y) {
 }
 
 void curveVertex(float x, float y, float z) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().curveVertex(x,y,z);
   } else {
     g.curveVertex(x,y,z);
@@ -1612,7 +1676,7 @@ void curveVertex(float x, float y, float z) {
 
 //bezier vertex
 void bezierVertex(float x2, float y2, float x3, float y3, float x4, float y4) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().bezierVertex(x2,y2,x3,y3,x4,y4);
   } else {
     g.bezierVertex(x2,y2,x3,y3,x4,y4);
@@ -1621,7 +1685,7 @@ void bezierVertex(float x2, float y2, float x3, float y3, float x4, float y4) {
 
 
 void bezierVertex(float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().bezierVertex(x2,y2,z2,x3,y3,z3,x4,y4,z4);
   } else {
     g.bezierVertex(x2,y2,z2,x3,y3,z3,x4,y4,z4);
@@ -1630,7 +1694,7 @@ void bezierVertex(float x2, float y2, float z2, float x3, float y3, float z3, fl
 
 // bezier
 void bezier(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().bezier(x1,y1,x2,y2,x3,y3,x4,y4);
   } else {
     g.bezier(x1,y1,x2,y2,x3,y3,x4,y4);
@@ -1638,7 +1702,7 @@ void bezier(float x1, float y1, float x2, float y2, float x3, float y3, float x4
 }
 
 void bezier(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().bezier(x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4);
   } else {
     g.bezier(x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4);
@@ -1647,7 +1711,7 @@ void bezier(float x1, float y1, float z1, float x2, float y2, float z2, float x3
 
 // bezier detail
 void bezierDetail(int detail) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().bezierDetail(detail);
   } else {
     g.bezierDetail(detail);
@@ -1656,7 +1720,7 @@ void bezierDetail(int detail) {
 
 // curve
 void curve(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().curve(x1,y1,x2,y2,x3,y3,x4,y4);
   } else {
     g.curve(x1,y1,x2,y2,x3,y3,x4,y4);
@@ -1665,7 +1729,7 @@ void curve(float x1, float y1, float x2, float y2, float x3, float y3, float x4,
 
 
 void curve(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().curve(x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4);
   } else {
     g.curve(x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4);
@@ -1674,7 +1738,7 @@ void curve(float x1, float y1, float z1, float x2, float y2, float z2, float x3,
 
 // curve detail
 void curveDetail(int detail) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().curveDetail(detail);
   } else {
     g.curveDetail(detail);
@@ -1702,7 +1766,7 @@ void curveDetail(int detail) {
 
 // light
 void lights() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().lights();
   } else {
     g.lights();
@@ -1710,7 +1774,7 @@ void lights() {
 }
 
 void noLights() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().noLights();
   } else {
     g.noLights();
@@ -1719,7 +1783,7 @@ void noLights() {
 
 // ambient light
 void ambientLight(float v1, float v2, float v3) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().ambientLight(v1,v2,v3);
   } else {
     g.ambientLight(v1,v2,v3);
@@ -1728,7 +1792,7 @@ void ambientLight(float v1, float v2, float v3) {
 
 
 void ambientLight(float v1, float v2, float v3, float x, float y, float z) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().ambientLight(v1,v2,v3,x,y,z);
   } else {
     g.ambientLight(v1,v2,v3,x,y,z);
@@ -1738,7 +1802,7 @@ void ambientLight(float v1, float v2, float v3, float x, float y, float z) {
 
 //directionalLight(v1, v2, v3, nx, ny, nz)
 void directionalLight(float v1, float v2, float v3, float nx, float ny, float nz) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().directionalLight(v1,v2,v3,nx,ny,nz);
   } else {
     g.directionalLight(v1,v2,v3,nx,ny,nz);
@@ -1749,7 +1813,7 @@ void directionalLight(float v1, float v2, float v3, float nx, float ny, float nz
 
 // lightFalloff(constant, linear, quadratic)
 void lightFalloff(float constant, float linear, float quadratic) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().lightFalloff(constant,linear,quadratic);
   } else {
     g.lightFalloff(constant,linear,quadratic);
@@ -1760,7 +1824,7 @@ void lightFalloff(float constant, float linear, float quadratic) {
 // lightSpecular(v1, v2, v3) 
 
 void lightSpecular(float v1, float v2, float v3) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().lightSpecular(v1,v2,v3);
   } else {
     g.lightSpecular(v1,v2,v3);
@@ -1769,7 +1833,7 @@ void lightSpecular(float v1, float v2, float v3) {
 
 // normal(nx, ny, nz)
 void normal(float nx, float ny, float nz) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().normal(nx,ny,nz);
   } else {
     g.normal(nx,ny,nz);
@@ -1779,7 +1843,7 @@ void normal(float nx, float ny, float nz) {
 
 // pointLight(v1, v2, v3, x, y, z)
 void pointLight(float v1, float v2, float v3, float x, float y, float z) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().pointLight(v1,v2,v3,x,y,z);
   } else {
     g.pointLight(v1,v2,v3,x,y,z);
@@ -1788,7 +1852,7 @@ void pointLight(float v1, float v2, float v3, float x, float y, float z) {
 
 // spotLight(v1, v2, v3, x, y, z, nx, ny, nz, angle, concentration)
 void spotLight(float v1, float v2, float v3, float x, float y, float z, float nx, float ny, float nz, float angle, float concentration) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().spotLight(v1,v2,v3,x,y,z,nx,ny,nz,angle,concentration);
   } else {
     g.spotLight(v1,v2,v3,x,y,z,nx,ny,nz,angle,concentration);
@@ -1800,7 +1864,7 @@ void spotLight(float v1, float v2, float v3, float x, float y, float z, float nx
 Material properties
 */
 void ambient(int rgb) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().ambient(rgb);
   } else {
     g.ambient(rgb);
@@ -1808,7 +1872,7 @@ void ambient(int rgb) {
 }
 
 void ambient(float gray) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().ambient(gray);
   } else {
     g.ambient(gray);
@@ -1817,7 +1881,7 @@ void ambient(float gray) {
 
 
 void ambient(float v1, float v2, float v3) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().ambient(v1,v2,v3);
   } else {
     g.ambient(v1,v2,v3);
@@ -1827,7 +1891,7 @@ void ambient(float v1, float v2, float v3) {
 
 // emissive
 void emissive(int rgb) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().emissive(rgb);
   } else {
     g.emissive(rgb);
@@ -1835,7 +1899,7 @@ void emissive(int rgb) {
 }
 
 void emissive(float gray) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().emissive(gray);
   } else {
     g.emissive(gray);
@@ -1844,7 +1908,7 @@ void emissive(float gray) {
 
 
 void emissive(float v1, float v2, float v3) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().emissive(v1,v2,v3);
   } else {
     g.emissive(v1,v2,v3);
@@ -1854,7 +1918,7 @@ void emissive(float v1, float v2, float v3) {
 
 // specular
 void specular(int rgb) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().specular(rgb);
   } else {
     g.specular(rgb);
@@ -1862,7 +1926,7 @@ void specular(int rgb) {
 }
 
 void specular(float gray) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().specular(gray);
   } else {
     g.specular(gray);
@@ -1871,7 +1935,7 @@ void specular(float gray) {
 
 
 void specular(float v1, float v2, float v3) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().specular(v1,v2,v3);
   } else {
     g.specular(v1,v2,v3);
@@ -1881,7 +1945,7 @@ void specular(float v1, float v2, float v3) {
 
 // shininess(shine)
 void shininess(float shine) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().shininess(shine);
   } else {
     g.shininess(shine);
@@ -1911,28 +1975,31 @@ void shininess(float shine) {
 
 
 /**
-camera ghost
+* camera ghost
+* v 0.2.0
 */
-// camera
 void camera() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().camera();
   } else {
     g.camera();
   }
 }
 
-void camera(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ) {
-  if(get_layer() != null) {
-    get_layer().camera(eyeX,eyeY,eyeZ,centerX,centerY,centerZ,upX,upY,upZ);
+void camera(float orientation_x, float orientation_y, float orientation_z, float pos_x, float pos_y, float pos_z, float up_x, float up_y, float up_z) {
+  // orientation is eye
+  // pos i center
+  // up is up !
+  if(get_layer_is_correct()) {
+    get_layer().camera(orientation_x,orientation_y,orientation_z, pos_x,pos_y,pos_z, up_x,up_y,up_z);
   } else {
-    g.camera(eyeX,eyeY,eyeZ,centerX,centerY,centerZ,upX,upY,upZ);
+    g.camera(orientation_x,orientation_y,orientation_z, pos_x,pos_y,pos_z, up_x,up_y,up_z);
   }
 }
 
 
 void beginCamera() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().beginCamera();
   } else {
     g.beginCamera();
@@ -1940,7 +2007,7 @@ void beginCamera() {
 }
 
 void endCamera() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().endCamera();
   } else {
     g.endCamera();
@@ -1950,7 +2017,7 @@ void endCamera() {
 
 // frustum(left, right, bottom, top, near, far)
 void frustum(float left, float right, float bottom, float top, float near, float far) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().frustum(left,right,bottom,top,near,far);
   } else {
     g.frustum(left,right,bottom,top,near,far);
@@ -1960,7 +2027,7 @@ void frustum(float left, float right, float bottom, float top, float near, float
 
 // ortho
 void ortho() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().ortho();
   } else {
     g.ortho();
@@ -1968,7 +2035,7 @@ void ortho() {
 }
 
 void ortho(float left, float right, float bottom, float top) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().ortho(left,right,bottom,top);
   } else {
     g.ortho(left,right,bottom,top);
@@ -1977,7 +2044,7 @@ void ortho(float left, float right, float bottom, float top) {
 
 
 void ortho(float left, float right, float bottom, float top, float near, float far) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().ortho(left,right,bottom,top,near,far);
   } else {
     g.ortho(left,right,bottom,top,near,far);
@@ -1988,7 +2055,7 @@ void ortho(float left, float right, float bottom, float top, float near, float f
   
 // perspective
 void perspective() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().perspective();
   } else {
     g.perspective();
@@ -1997,7 +2064,7 @@ void perspective() {
 
 
 void perspective(float fovy, float aspect, float zNear, float zFar) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().perspective(fovy,aspect,zNear,zFar);
   } else {
     g.perspective(fovy,aspect,zNear,zFar);
@@ -2025,7 +2092,7 @@ void perspective(float fovy, float aspect, float zNear, float zFar) {
 matrix
 */
 void pushMatrix() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().pushMatrix();
   } else {
     g.pushMatrix();
@@ -2034,7 +2101,7 @@ void pushMatrix() {
 
 
 void popMatrix() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().popMatrix();
   } else {
     g.popMatrix();
@@ -2044,7 +2111,7 @@ void popMatrix() {
 
 // apply matrix
 void applyMatrix(PMatrix source) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().applyMatrix(source);
   } else {
     g.applyMatrix(source);
@@ -2052,7 +2119,7 @@ void applyMatrix(PMatrix source) {
 }
 
 void applyMatrix(float n00, float n01, float n02, float n10, float n11, float n12) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().applyMatrix(n00,n01,n02,n10,n11,n12);
   } else {
     g.applyMatrix(n00,n01,n02,n10,n11,n12);
@@ -2060,7 +2127,7 @@ void applyMatrix(float n00, float n01, float n02, float n10, float n11, float n1
 }
 
 void applyMatrix(float n00, float n01, float n02, float n03, float n10, float n11, float n12, float n13, float n20, float n21, float n22, float n23, float n30, float n31, float n32, float n33) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().applyMatrix(n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23,n30,n31,n32,n33);
   } else {
     g.applyMatrix(n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23,n30,n31,n32,n33);
@@ -2070,7 +2137,7 @@ void applyMatrix(float n00, float n01, float n02, float n03, float n10, float n1
 
 
 void resetMatrix() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().resetMatrix();
   } else {
     g.resetMatrix();
@@ -2095,7 +2162,7 @@ void resetMatrix() {
 image
 */
 void image(PImage img, float x, float y) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().image(img,x,y);
   } else {
     g.image(img,x,y);
@@ -2103,7 +2170,7 @@ void image(PImage img, float x, float y) {
 }
 
 void image(PImage img, float a, float b, float c, float d) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().image(img,a,b,c,d);
   } else {
     g.image(img,a,b,c,d);
@@ -2127,7 +2194,7 @@ void image(PImage img, float a, float b, float c, float d) {
 get
 */
 int get(int x, int y) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     return get_layer().get(x,y);
   } else {
     return g.get(x,y);
@@ -2136,7 +2203,7 @@ int get(int x, int y) {
 
 
 PImage get(int x, int y, int w, int h) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     return get_layer().get(x,y,w,h);
   } else {
     return g.get(x,y,w,h);
@@ -2145,7 +2212,7 @@ PImage get(int x, int y, int w, int h) {
 
 
 PImage get() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     return get_layer().get();
   } else {
     return g.get();
@@ -2164,7 +2231,7 @@ PImage get() {
 loadPixels()
 */
 void loadPixels() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().loadPixels();
   } else {
     g.loadPixels();
@@ -2176,7 +2243,7 @@ void loadPixels() {
 updatePixels()
 */
 void updatePixels() {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().updatePixels();
   } else {
     g.updatePixels();
@@ -2194,7 +2261,7 @@ void updatePixels() {
 tint
 */
 void tint(int rgb) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().tint(rgb);
   } else {
     g.tint(rgb);
@@ -2202,7 +2269,7 @@ void tint(int rgb) {
 }
 
 void tint(int rgb, float alpha) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().tint(rgb,alpha);
   } else {
     g.tint(rgb,alpha);
@@ -2210,7 +2277,7 @@ void tint(int rgb, float alpha) {
 }
 
 void tint(float gray) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().tint(gray);
   } else {
     g.tint(gray);
@@ -2218,7 +2285,7 @@ void tint(float gray) {
 }
 
 void tint(float gray, float alpha) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().tint(gray,alpha);
   } else {
     g.tint(gray,alpha);
@@ -2226,15 +2293,39 @@ void tint(float gray, float alpha) {
 }
 
 void tint(float v1, float v2, float v3) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().tint(v1,v2,v3);
   } else {
     g.tint(v1,v2,v3);
   }
 }
 
+void tint(ivec4 v) {
+  tint(v.x,v.y,v.z,v.w);
+}
+
+void tint(ivec3 v) {
+  tint(v.x,v.y,v.z,g.colorModeA);
+}
+
+void tint(ivec2 v) {
+  tint(v.x,v.x,v.x,v.y);
+}
+
+void tint(vec4 v) {
+  tint(v.x,v.y,v.z,v.w);
+}
+
+void tint(vec3 v) {
+  tint(v.x,v.y,v.z,g.colorModeA);
+}
+
+void tint(vec2 v) {
+  tint(v.x,v.x,v.x,v.y);
+}
+
 void tint(float v1, float v2, float v3, float alpha) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().tint(v1,v2,v3,alpha);
   } else {
     g.tint(v1,v2,v3,alpha);
@@ -2259,7 +2350,7 @@ void tint(float v1, float v2, float v3, float alpha) {
 blend
 */
 void blend(int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int mode) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().blend(sx,sy,sw,sh,dx,dy,dw,dh,mode);
   } else {
     g.blend(sx,sy,sw,sh,dx,dy,dw,dh,mode);
@@ -2268,7 +2359,7 @@ void blend(int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int m
 
 
 void blend(PImage src, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int mode) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().blend(src,sx,sy,sw,sh,dx,dy,dw,dh,mode);
   } else {
     g.blend(src,sx,sy,sw,sh,dx,dy,dw,dh,mode);
@@ -2289,27 +2380,28 @@ void blend(PImage src, int sx, int sy, int sw, int sh, int dx, int dy, int dw, i
 
 /**
 filter
+v 0.0.2
 */
 void filter(PShader shader) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().filter(shader);
-  } else {
+  } else if (g.pixels != null) {
     g.filter(shader);
   }
 }
 
 void filter(int kind) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().filter(kind);
-  } else {
+  } else if (g.pixels != null) {
     g.filter(kind);
   }
 }
 
 void filter(int kind, float param) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().filter(kind,param);
-  } else {
+  } else if (g.pixels != null) {
     g.filter(kind,param);
   }
 }
@@ -2330,7 +2422,7 @@ void filter(int kind, float param) {
 set
 */
 void set(int x, int y, int c) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().set(x,y,c);
   } else {
     /*
@@ -2342,7 +2434,7 @@ void set(int x, int y, int c) {
 }
 
 void set(int x, int y, PImage img) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().set(x,y,img);
   } else {
     /*
@@ -2369,10 +2461,10 @@ void set(int x, int y, PImage img) {
 /**
 text
 2017-2019
-v 0.1.1
+v 0.1.2
 */
 void text(char c, float x, float y) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().text(c,x,y);
   } else {
     g.text(c,x,y);
@@ -2381,7 +2473,7 @@ void text(char c, float x, float y) {
 
 
 void text(char c, float x, float y, float z) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().text(c,x,y,z);
   } else {
     g.text(c,x,y,z);
@@ -2389,7 +2481,7 @@ void text(char c, float x, float y, float z) {
 }
 
 void text(char [] chars, int start, int stop, float x, float y) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().text(chars,start,stop,x,y);
   } else {
     g.text(chars,start,stop,x,y);
@@ -2398,7 +2490,7 @@ void text(char [] chars, int start, int stop, float x, float y) {
 
 
 void text(char [] chars, int start, int stop, float x, float y, float z) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().text(chars,start,stop,x,y,z);
   } else {
     g.text(chars,start,stop,x,y,z);
@@ -2408,7 +2500,7 @@ void text(char [] chars, int start, int stop, float x, float y, float z) {
 
 
 void text(String str, float x, float y) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().text(str,x,y);
   } else {
     g.text(str,x,y);
@@ -2417,7 +2509,7 @@ void text(String str, float x, float y) {
 
 
 void text(String str, float x, float y, float z) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().text(str,x,y,z);
   } else {
     g.text(str,x,y,z);
@@ -2426,7 +2518,7 @@ void text(String str, float x, float y, float z) {
 
 
 void text(String str, float x1, float y1, float x2, float y2) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().text(str,x1,y1,x2,y2);
   } else {
     g.text(str,x1,y1,x2,y2);
@@ -2434,7 +2526,7 @@ void text(String str, float x1, float y1, float x2, float y2) {
 }
 
 void text(float num, float x, float y) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().text(num,x,y);
   } else {
     g.text(num,x,y);
@@ -2443,7 +2535,7 @@ void text(float num, float x, float y) {
 
 
 void text(float num, float x, float y, float z) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().text(num,x,y,z);
   } else {
     g.text(num,x,y,z);
@@ -2452,7 +2544,7 @@ void text(float num, float x, float y, float z) {
 
 
 void text(int num, float x, float y) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().text(num,x,y);
   } else {
     g.text(num,x,y);
@@ -2461,7 +2553,7 @@ void text(int num, float x, float y) {
 
 
 void text(int num, float x, float y, float z) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().text(num,x,y,z);
   } else {
     g.text(num,x,y,z);
@@ -2471,7 +2563,7 @@ void text(int num, float x, float y, float z) {
 
 // text Align
 void textAlign(int alignX) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().textAlign(alignX);
   } else {
     g.textAlign(alignX);
@@ -2480,7 +2572,7 @@ void textAlign(int alignX) {
 
 
 void textAlign(int alignX, int alignY) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().textAlign(alignX,alignY);
   } else {
     g.textAlign(alignX,alignY);
@@ -2489,7 +2581,7 @@ void textAlign(int alignX, int alignY) {
 
 // textLeading(leading)
 void textLeading(float leading) {
-if(get_layer() != null) {
+if(get_layer_is_correct()) {
     get_layer().textLeading(leading);
   } else {
     g.textLeading(leading);
@@ -2499,7 +2591,7 @@ if(get_layer() != null) {
 
 // textMode(mode)
 void textMode(int mode) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().textMode(mode);
   } else {
     g.textMode(mode);
@@ -2508,7 +2600,7 @@ void textMode(int mode) {
 
 // text Size
 void textSize(float size) {
-  if(get_layer() != null) {
+  if(get_layer_is_correct()) {
     get_layer().textSize(size);
   } else {
     g.textSize(size);
@@ -2519,7 +2611,7 @@ void textSize(float size) {
 // textFont
 void textFont(PFont font) {
   if(font != null) {
-    if(get_layer() != null) {
+    if(get_layer_is_correct()) {
       get_layer().textFont(font);
     } else {
       g.textFont(font);
@@ -2528,7 +2620,7 @@ void textFont(PFont font) {
 }
 
 void textFont(PFont font, float size) {
-  if(font != null) {
+  if(get_layer_is_correct()) {
     if(get_layer() != null) {
       get_layer().textFont(font,size);
     } else {
