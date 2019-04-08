@@ -1,9 +1,16 @@
 /**
-ROPE - Romanesco processing environment – 
+* Rope Framework
+* v 1.0.1
 * Copyleft (c) 2014-2019
-* Stan le Punk
-* https://github.com/StanLepunK
-* http://stanlepunk.xyz/
+* @author @stanlepunk
+* @see https://github.com/StanLepunK/Rope_framework
+* 
+* note:
+* Processing 3.5.3
+* Rope library 0.5.1
+* import rope.core.*; > imported in the tab Z_R_core.pde
+* import rope.vector.*; > imported in the tab Z_R_core.pde
+* 
 */
 
 PImage img ;
@@ -42,7 +49,7 @@ void draw() {
 	// background(img,mouseX,mouseY,size,255,255,0,curtain_pos);
 
 	// EXAMPLE 6
-	vec3 level = abs(vec3().wave_sin(frameCount,.01,.02,.03));
+	vec3 level = abs(vec3().sin_wave(frameCount,.01,.02,.03));
 	int mode = 0;
 	background(fx_level(img,false,mode,level.array()),CENTER,255,255,0);
 	println((int)frameRate);
@@ -64,20 +71,3 @@ void test_3D() {
 	rotateY(rot_y += .02);
 	box(800,100,100);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

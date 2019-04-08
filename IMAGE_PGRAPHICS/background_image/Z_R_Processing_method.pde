@@ -1,6 +1,6 @@
 /**
 ROPE PROCESSING METHOD
-v 2.4.1
+v 2.4.4
 * Copyleft (c) 2014-2019
 * Stan le Punk > http://stanlepunk.xyz/
 * @author @stanlepunk
@@ -11,7 +11,7 @@ v 2.4.1
 
 /**
 ADVANCED GHOST METHOD
-v 1.0.0
+v 1.0.1
 All advanced ghost push Processing method further.
 Processing and vec, ivec and bvec method
 the idea here is create method directly insprating from Processing to simplify the coder life
@@ -22,11 +22,11 @@ the idea here is create method directly insprating from Processing to simplify t
 * @param component give in order : mode, x, y, z and alpha
 */
 void colorMode(vec5 component) {
-  int mode = (int)component.a;
+  int mode = (int)component.w;
   if(mode == HSB) {
-    colorMode(HSB,component.b,component.c,component.d,component.e);
+    colorMode(HSB,component.b(),component.c(),component.d(),component.e());
   } else if(mode == RGB) {
-    colorMode(RGB,component.b,component.c,component.d,component.e);
+    colorMode(RGB,component.b(),component.c(),component.d(),component.e());
   } else {
     printErr("The first component of your vec is", mode, "and don't match with any Processing colorMode, instead the current colorMode will be used");
   }
@@ -548,11 +548,11 @@ void fill(vec2 c) {
   else noFill();
 }
 void fill(vec3 c) {
-  fill(c.r,c.g,c.b) ;
+  fill(c.x,c.y,c.z) ;
 }
 
 void fill(vec3 c, float a) {
-  if(a > 0) fill(c.r,c.g,c.b,a); 
+  if(a > 0) fill(c.x,c.y,c.z,a); 
   else noFill();
 }
 
@@ -592,16 +592,16 @@ void stroke(vec2 c) {
   else noStroke();
 }
 void stroke(vec3 c) {
-  stroke(c.r,c.g,c.b);
+  stroke(c.x,c.y,c.z);
 }
 
 void stroke(vec3 c, float a) {
-  if(a > 0) stroke(c.r,c.g,c.b, a); 
+  if(a > 0) stroke(c.x,c.y,c.z,a); 
   else noStroke();
 }
 
 void stroke(vec4 c) {
-  if(c.a > 0) stroke(c.r,c.g,c.b,c.a); 
+  if(c.w > 0) stroke(c.x,c.y,c.z,c.w); 
   else noStroke();
 }
 // ivec
@@ -1975,9 +1975,9 @@ void shininess(float shine) {
 
 
 /**
-camera ghost
+* camera ghost
+* v 0.2.0
 */
-// camera
 void camera() {
   if(get_layer_is_correct()) {
     get_layer().camera();
@@ -1986,11 +1986,14 @@ void camera() {
   }
 }
 
-void camera(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ) {
+void camera(float orientation_x, float orientation_y, float orientation_z, float pos_x, float pos_y, float pos_z, float up_x, float up_y, float up_z) {
+  // orientation is eye
+  // pos i center
+  // up is up !
   if(get_layer_is_correct()) {
-    get_layer().camera(eyeX,eyeY,eyeZ,centerX,centerY,centerZ,upX,upY,upZ);
+    get_layer().camera(orientation_x,orientation_y,orientation_z, pos_x,pos_y,pos_z, up_x,up_y,up_z);
   } else {
-    g.camera(eyeX,eyeY,eyeZ,centerX,centerY,centerZ,upX,upY,upZ);
+    g.camera(orientation_x,orientation_y,orientation_z, pos_x,pos_y,pos_z, up_x,up_y,up_z);
   }
 }
 
