@@ -29,7 +29,7 @@ void draw() {
   // set_costume_star_angle(0);
   star_ratio(.1,.2,.3,.4,.5,.6,.7,.8,.9);
 
-  Costume c = new Costume(STAR_3D_ROPE);
+  Costume c = new Costume(this,STAR_3D_ROPE);
   costume(pos,size,dir,c);
   // costume(pos,size,dir,STAR_3D_ROPE);
   /*
@@ -40,17 +40,3 @@ void draw() {
   */
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -40,10 +40,10 @@ void draw() {
   house.set_peak(peak_a,peak_b);
 
   // house colour roof
-   house.set_fill_wall(r.GRAY_3);
+   house.set_fill_wall(r.GRAY[6]);
    house.set_fill_roof(r.BLOOD);
    house.set_fill_ground(r.BLACK);
-   house.set_stroke(r.GRAY_1);
+   house.set_stroke(r.GRAY[2]);
    house.set_thickness(2);
    house.mode(BOTTOM);
 

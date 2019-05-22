@@ -12,8 +12,6 @@ guide to code here:
 
 void setup() {
   size(300,300,P3D);
-  
-
 }
 
 float dir_x =0;
