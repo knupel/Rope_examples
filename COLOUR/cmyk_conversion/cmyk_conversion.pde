@@ -12,21 +12,7 @@ void setup() {
 	float black = 0;
 	vec3 rgb = cmyk_to_rgb(cyan,magenta,yellow,black);
 	println("CMYK to RGB",rgb);
-	vec4 cmyk = rgb_to_cmyk(rgb.r,rgb.g,rgb.b);
+	vec4 cmyk = rgb_to_cmyk(rgb.red(),rgb.gre(),rgb.blu());
 	println("RGB to CMYK",cmyk);
 	background_rope(rgb);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

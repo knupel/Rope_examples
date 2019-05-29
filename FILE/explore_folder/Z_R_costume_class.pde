@@ -828,7 +828,7 @@ v 0.0.6
 */
 public class House {
 	private int fill_roof = r.BLOOD;
-	private int fill_wall = r.GRAY_3;
+	private int fill_wall = r.GRAY[6];
 	private int fill_ground = r.BLACK;
 	private int stroke_roof = r.BLACK;
 	private int stroke_wall = r.BLACK;
@@ -1406,24 +1406,3 @@ public class Virus {
 }
 
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

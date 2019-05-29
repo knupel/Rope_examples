@@ -2187,13 +2187,3 @@ vec6 vec6(String s, int a, int b, int c, int d, int e, int f, int g, int h, int 
 vec6 vec6(String s, int v) {
   return new vec6(s,v);
 }
-
-
-
-
-
-
-
-
-
-

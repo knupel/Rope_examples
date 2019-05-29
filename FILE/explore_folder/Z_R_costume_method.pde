@@ -533,7 +533,7 @@ import rope.costume.R_Circle;
 import rope.costume.R_Bezier;
 R_Circle flower_costume_rope;
 void flower(vec pos, int diam, int petals_num) {
-	if(flower_costume_rope == null || flower_costume_rope.get_summit() != petals_num) {
+	if(flower_costume_rope == null || flower_costume_rope.get_summits() != petals_num) {
 		flower_costume_rope = new R_Circle(this,petals_num);
 	} else {
 		flower_costume_rope.pos(pos);
@@ -640,7 +640,7 @@ void star_summits(int summits) {
 
 void star_angle(float angle) {
 	if(star_costume_rope != null) {
-		star_costume_rope.set_angle(angle);
+		star_costume_rope.angle_x(angle);
 	} else {
 		star_costume_rope = new R_Star(this);
 	}
@@ -943,27 +943,3 @@ void print_list_costume() {
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

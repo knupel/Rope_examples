@@ -643,7 +643,7 @@ void star_summits(int summits) {
 
 void star_angle(float angle) {
 	if(star_costume_rope != null) {
-		star_costume_rope.angle(angle);
+		star_costume_rope.angle_x(angle);
 	} else {
 		star_costume_rope = new R_Star(this);
 	}
@@ -777,7 +777,7 @@ void virus(vec pos, vec size, float angle, int close) {
 	if(virus_costume_rope.get_mutation() > 0 && frameCount%virus_costume_rope.get_mutation() == 0) {
 		virus_costume_rope.reset() ;
 	}
-  virus_costume_rope.angle(angle) ;
+  virus_costume_rope.angle_x(angle) ;
 	virus_costume_rope.pos(pos) ;
 	virus_costume_rope.size(size) ;
 	virus_costume_rope.show() ;	
@@ -945,27 +945,3 @@ void print_list_costume() {
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -969,27 +969,27 @@ Background classic processing
 */
 // vec
 void background(vec4 c) {
-  background(c.r,c.g,c.b,c.a) ;
+  background(c.red(),c.gre(),c.blu(),c.alp()) ;
 }
 
 void background(vec3 c) {
-  background(c.r,c.g,c.b) ;
+  background(c.red(),c.gre(),c.blu()) ;
 }
 
 void background(vec2 c) {
-  background(c.x,c.y) ;
+  background(c.x(),c.y()) ;
 }
 // ivec
 void background(ivec4 c) {
-  background(c.x,c.y,c.z,c.w) ;
+  background(c.x(),c.y(),c.z(),c.w()) ;
 }
 
 void background(ivec3 c) {
-  background(c.x,c.y,c.z) ;
+  background(c.x(),c.y(),c.z()) ;
 }
 
 void background(ivec2 c) {
-  background(c.x,c.y) ;
+  background(c.x(),c.y()) ;
 }
 
 

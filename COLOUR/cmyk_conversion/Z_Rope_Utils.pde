@@ -2905,5 +2905,3 @@ class Info_Object extends Info_method {
 /**
 END INFO LIST
 */
-
-
