@@ -9,7 +9,7 @@ House house;
 void setup() {
 	colorMode(HSB,360,100,100,100);
 	size(700,700,P3D);
-	house = new House();
+	house = new House(this);
 }
 
 
@@ -32,7 +32,7 @@ void draw() {
   float sy = map(ry,0,1,min,max);
   float sz = map(rz,0,1,min,max);
   vec3 size = vec3(sx,sy,sz);
-  house.set_size(size);
+  house.size(size);
 
   // house peak
   float peak_a = abs(sin(frameCount *.005)) *.5;

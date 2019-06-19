@@ -6,13 +6,13 @@ ROPE - Romanesco processing environment –
 * http://stanlepunk.xyz/
 */
 
-ROPImage_Manager img_manager;
+R_Image_Manager img_manager;
 PGraphics pg ;
 
 void setup() {
   
 	size(100,100,P2D);
-	img_manager = new ROPImage_Manager();	
+	img_manager = new R_Image_Manager();	
 	// 
 	img_manager.load("puros_girl_small.jpg", "pirate_small.jpg");
   surface.setSize(img_manager.get(1).width,img_manager.get(1).height);
@@ -39,15 +39,10 @@ void draw() {
 
   
 
-  float rr = abs(sin(frameCount *.001));
-  float gg = abs(sin(frameCount *.002));
-  float bb = abs(sin(frameCount *.005));
-
-  overlay_flip_inc(false, true);
-  // multiply(img_manager.get(0),img_manager.get(1), rr,gg,bb);
-  overlay(img_manager.get("truc"),img_manager.get("puros_girl_small.jpg"), rr,gg,bb);
   img_manager.select("truc");
-  image(img_manager.get());
+  println(img_manager.get(0).width,img_manager.get(0).height);
+  println(img_manager.get().length);
+  image(img_manager.get(1));
  
 }
 

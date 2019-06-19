@@ -37,5 +37,5 @@ void draw() {
   stop_matrix() ;
   */
   costume_rotate_y();
-  costume(final_pos,size,dir_angle,RECT_ROPE);
+  costume(final_pos,size,dir_angle,RECT);
 }

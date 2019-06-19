@@ -51,7 +51,7 @@ void draw() {
 	// EXAMPLE 6
 	vec3 level = abs(vec3().sin_wave(frameCount,.01,.02,.03));
 	int mode = 0;
-	background(fx_level(img,false,mode,level.array()),CENTER,255,255,0);
+	background(fx_level(img,false,true,mode,level.array()),CENTER,255,255,0);
 	println((int)frameRate);
 
 

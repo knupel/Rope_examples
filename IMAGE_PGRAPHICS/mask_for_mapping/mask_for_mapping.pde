@@ -182,7 +182,7 @@ public class Mask_mapping {
       // fill(255);
       stroke(r.WHITE);
       strokeWeight(range);
-      point(iv);
+      point(vec3(iv));
     }
   }
   private boolean drag_is = false ;
@@ -221,7 +221,7 @@ public class Mask_mapping {
   private void draw_shape(ivec3 [] list) {
     beginShape();
     for(int i = 0 ; i < list.length ; i++) {
-      vertex(list[i]);
+      vertex(vec3(list[i]));
     }
     endShape(CLOSE);
   }
@@ -229,56 +229,54 @@ public class Mask_mapping {
   private void draw_shape(ivec3 [] list, ivec3 [] list_b_1, ivec3 [] list_b_2, ivec3 [] list_b_3, ivec3 [] list_b_4) {
   	// block 1
     beginShape();
-    vertex(list[0]);
-    vertex(list[1]);
-    vertex(list[5]);
+    vertex(vec3(list[0]));
+    vertex(vec3(list[1]));
+    vertex(vec3(list[5]));
     if(list_b_1 != null) {
     	for(int i = 0 ; i < list_b_1.length ; i++) {
-    		vertex(list_b_1[i]);
+    		vertex(vec3(list_b_1[i]));
     	}
     }
-    vertex(list[4]);
+    vertex(vec3(list[4]));
     endShape(CLOSE);
 
     // block 2
     beginShape();
-    vertex(list[1]);
-    vertex(list[2]);
-    vertex(list[6]);
+    vertex(vec3(list[1]));
+    vertex(vec3(list[2]));
+    vertex(vec3(list[6]));
     if(list_b_2 != null) {
     	for(int i = 0 ; i < list_b_2.length ; i++) {
-	      vertex(list_b_2[i]);
+	      vertex(vec3(list_b_2[i]));
 	    }
 	  }
-    vertex(list[5]);
+    vertex(vec3(list[5]));
     endShape(CLOSE);
 
     // block 3
     beginShape();
-    vertex(list[2]);
-    vertex(list[3]);
-    vertex(list[7]);
+    vertex(vec3(list[2]));
+    vertex(vec3(list[3]));
+    vertex(vec3(list[7]));
     if(list_b_3 != null) {
 	    for(int i = 0 ; i < list_b_3.length ; i++) {
-	      vertex(list_b_3[i]);
+	      vertex(vec3(list_b_3[i]));
 	    }
 	  }
-    vertex(list[6]);
+    vertex(vec3(list[6]));
     endShape(CLOSE);
 
 		// block 4
     beginShape();
-    vertex(list[3]);
-		vertex(list[0]);
-		vertex(list[4]);
+    vertex(vec3(list[3]));
+		vertex(vec3(list[0]));
+		vertex(vec3(list[4]));
     if(list_b_4 != null) {
 	    for(int i = 0 ; i < list_b_4.length ; i++) {
-	      vertex(list_b_4[i]);
+	      vertex(vec3(list_b_4[i]));
 	    }
 	  }
-    vertex(list[7]);
+    vertex(vec3(list[7]));
     endShape(CLOSE);
   }
 }
-
-

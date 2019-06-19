@@ -57,9 +57,7 @@ void move_point(ivec3 [] list) {
 void draw_shape(ivec3 [] list) {
 	beginShape();
 	for(int i = 0 ; i < list.length ; i++) {
-		vertex(list[i]);
+		vertex(vec3(list[i]));
 	}
 	endShape(CLOSE);
 }
-
-

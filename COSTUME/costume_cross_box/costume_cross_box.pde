@@ -40,6 +40,6 @@ void draw() {
 
   float value = 2*(sin(frameCount *.005));
   set_ratio_costume_size(value);
-  costume(vec3(width/2),size,dir,CROSS_BOX_3_ROPE);
+  costume(vec3(width/2),size,dir,CROSS_BOX_3);
   //costume_rope(vec3(width/2),vec3(width/4),dir_z,"TRUC");
 }

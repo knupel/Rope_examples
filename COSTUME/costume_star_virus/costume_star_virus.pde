@@ -29,14 +29,14 @@ void draw() {
   // set_costume_star_angle(0);
   star_ratio(.1,.2,.3,.4,.5,.6,.7,.8,.9);
 
-  Costume c = new Costume(this,STAR_3D_ROPE);
+  Costume c = new Costume(this,STAR_3D);
   costume(pos,size,dir,c);
-  // costume(pos,size,dir,STAR_3D_ROPE);
+  // costume(pos,size,dir,STAR_3D);
   /*
   virus_mutation(2);
   virus_node(4);
   virus_num(36);
-  costume(pos,size,dir,VIRUS_ROPE);
+  costume(pos,size,dir,VIRUS);
   */
 
 }

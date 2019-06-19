@@ -42,7 +42,7 @@ void via_method_flower() {
 void via_method_costume() {
   vec2 pos = vec2(mouseX,mouseY);
   int diam = width;
-  costume(pos,vec2(diam),FLOWER_ROPE);
+  costume(pos,vec2(diam),FLOWER);
 }
 
 
@@ -50,28 +50,7 @@ void via_method_costume_with_class_Costume() {
   vec2 pos = vec2(mouseX,mouseY);
   int diam = width;
   Costume flower = new Costume(this);
-  flower.set_type(FLOWER_ROPE);
+  flower.set_type(FLOWER);
   flower.set_summit(50);
   costume(pos,vec2(diam),flower);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
