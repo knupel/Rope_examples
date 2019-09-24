@@ -11,7 +11,6 @@
 */
 Poem poem;
 void setup() {
-  size(400,400,P2D);
   rope_version();
   String path = "voyage.txt";
   String [] content = loadStrings(path);
@@ -37,5 +36,3 @@ void setup() {
   printArray(poem.couplet(1));
 
 }
-
-
