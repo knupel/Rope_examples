@@ -12,8 +12,8 @@
 * import rope.vector.*; > imported in the tab Z_R_core.pde
 * 
 */
-int cols = 100;
-int rows = 100;
+int cols = 10;
+int rows = 10;
 int [] palette;
 int cell_x;
 int cell_y;
@@ -26,8 +26,7 @@ void setup() {
 	cell_y = height / cols;
 	num = cols *rows;
 	// palette = color_pool(num);
-	palette = color_pool(num, 20,100);
-	
+	palette = color_pool(num,20,100);
 }
 
 void draw() {
