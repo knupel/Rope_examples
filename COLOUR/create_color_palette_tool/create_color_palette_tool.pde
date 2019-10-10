@@ -7,7 +7,8 @@
 * exemple: color_pool
 *
 * WARNING
-* all the setting is based on HSB,360,100,100,100 
+* all the setting is based on the current value ColorMode but in HSB.
+* For the range hue, saturation, brightness and alpha use g.colorModeX, ...Y, ...Z and ...A for the max
 * but don't need to change the colorMode environement
 *
 * v 0.2.0
@@ -77,6 +78,7 @@ void gen_palette_hsb() {
 
 void gen_palette_int() {
 	// all the setting if based on HSB,360,100,100,100
+	// the range of hue, satutarion and brightness is calculated around the colour reference
 	int num_group = 1;
 	int hue_key = 20;
 	int hue_range = 30;
