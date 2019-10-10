@@ -3,10 +3,9 @@
 * Copyleft (c) 2014-2019
 * @author @stanlepunk
 * @see https://github.com/StanLepunK/Rope_framework
-* 25K lines
 *
 * hue palette
-* v 0.0.1
+* v 0.0.2
 * 2019-2019
 */
 void setup() {
@@ -15,8 +14,20 @@ void setup() {
   // colorMode(HSB,150,50,50,50);
   colorMode(HSB,1,1,1,1);
   rope_version();
-  
   background(r.NOIR);
+  hue_generator();
+}
+
+void draw() {
+}
+
+void mousePressed() {
+  background(r.NOIR);
+  hue_generator();
+}
+
+
+void hue_generator() {
   int num_group = 1;
   int num_colour = 300;
   float spectrum = 0.1;
@@ -31,5 +42,3 @@ void setup() {
     ellipse(random(width),random(height),20,20);
   }
 }
-
-

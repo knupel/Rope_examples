@@ -1,16 +1,17 @@
 /**
-* Rope Framework
-* v 1.1.0
+* Rope framework
 * Copyleft (c) 2014-2019
 * @author @stanlepunk
 * @see https://github.com/StanLepunK/Rope_framework
-* 
-* note:
-* Processing 3.5.3
-* Rope library 0.7.1.25
-* import rope.core.*; > imported in the tab Z_R_core.pde
-* import rope.vector.*; > imported in the tab Z_R_core.pde
-* 
+*
+* exemple: color_pool
+*
+* WARNING
+* all the setting is based on HSB,360,100,100,100 
+* but don't need to change the colorMode environement
+*
+* v 0.2.0
+* 2019-2019
 */
 int cols = 10;
 int rows = 10;
@@ -20,6 +21,7 @@ int cell_y;
 int num;
 void setup() {
 	print_constants_colour_rope();
+	rope_version();
 	size(400,400);
 
 	cell_x = width / rows;
@@ -52,7 +54,7 @@ void keyPressed() {
 }
 
 void gen_palette_full() {
-	// all the setting if based on HSB,360,100,100,100
+	// all the setting is based on HSB,360,100,100,100
 	int num_group = 3;
 	int hue_key = 20;
 	int hue_range = 30;
