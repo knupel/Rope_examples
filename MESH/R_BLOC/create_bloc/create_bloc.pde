@@ -24,7 +24,4 @@ void draw() {
 	} else {
 		bloc.show();
 	}
-	
 }
-
-
