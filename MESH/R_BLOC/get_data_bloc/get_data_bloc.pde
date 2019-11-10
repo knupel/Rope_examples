@@ -35,10 +35,8 @@ void draw() {
 
 void keyPressed() {
 	if(key == 's') {
-		println("name | num of step | int fill | int stroke | float thickness | type = 0 | main x | main y"); 
-		println("name | num of step | int fill | int stroke | float thickness | type = 1 | control x1 | control y1 | control x2 | control y2 | main x | main y");
+		println("name | num of step | int fill | int stroke | float thickness | type = 0 | main ax | main ay"); 
+		println("name | num of step | int fill | int stroke | float thickness | type = 1 | control x1 | control y1 | control x2 | control y2 | main ax | main ay");
 		println(bloc.get_data());
 	}
 }
-
-

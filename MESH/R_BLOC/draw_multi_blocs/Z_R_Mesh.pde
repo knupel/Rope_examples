@@ -1,26 +1,89 @@
 /**
 * R_Mesh
 * temp tab before pass to Rope
-* v 0.2.4
+* v 0.3.2
 * 2019-2019
 */
 
-
 /**
-method R_Bloc
+* R_Megabloc
+* v 0.0.2
+* 2019-2019
 */
-R_Bloc create_bloc(vec2 [] points) {
-	R_Bloc bloc = new R_Bloc();
-	for(vec2 v : points) {
-		bloc.build(v.x(),v.y(),true);
+public class R_Megabloc {
+	private ArrayList<R_Bloc> list;
+	private int width;
+	private int height;
+
+	public R_Megabloc() {
+		list = new ArrayList<R_Bloc>();
 	}
-	return bloc;
+
+	public void set(int width, int height) {
+		this.width = width;
+		this.height = height;
+	}
+
+	public void clear() {
+		list.clear();
+	}
+
+	public int size() {
+		return list.size();
+	}
+
+	public void add(R_Bloc bloc) {
+		list.add(bloc);
+	}
+
+	public void add(R_Bloc [] blocs) {
+		for(int i = 0 ; i < blocs.length ; i++) {
+			list.add(blocs[i]);
+		}
+	}
+
+	public int get_width() {
+		return width;
+	}
+
+	public int get_height() {
+		return height;
+	}
+
+	public ArrayList<R_Bloc> get()  {
+		return list;
+	}
+
+	public R_Bloc get(int index) {
+		if(index >= 0 && index < list.size()) {
+			return list.get(index);
+		} else {
+			return null;
+		}
+	}
+
+  public boolean remove(int index) {
+		if(index >= 0 && index < list.size()) {
+			list.remove(index);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
+	public void show() {
+		for(R_Bloc b : list) {
+			b.show();
+		}
+	}
 }
+
 
 /**
 * R_Bloc
 * 2019-2019
-* 0.1.7
+* 0.1.9
 */
 public class R_Bloc implements rope.core.R_Constants_Colour {
 	private ArrayList<vec3> list;
@@ -98,17 +161,20 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 
 	public String get_data() {
 		String num = "" + list.size();
+		String what = "bloc";
 		String field_name = "name:"+name;
 		String field_complexity = "complexity:"+num;
 		String field_fill = "fill:"+fill;
 		String field_stroke = "stroke:"+stroke;
 		String field_thickness = "thickness:"+Float.toString(thickness);
-		String setting = field_name + "," + field_complexity + "," + field_fill + "," + field_stroke + "," + field_thickness;
+		String setting = what + "," + field_name + "," + field_complexity + "," + field_fill + "," + field_stroke + "," + field_thickness;
 		for(vec3 v : list) {
-			String type = "type:0"; 
+			String type = "type:0";
+			String ax = "ax:" + Float.toString(v.x());
+			String ay = "ay:" + Float.toString(v.y());
 			// type 0 is a simple vertex
 			// type 1 is for bezier vertex for the future version
-			setting += "," + type + "," + Float.toString(v.x()) + "," + Float.toString(v.y());
+			setting += "," + type + "<>" + ax + "<>" + ay;
 		}
 		setting += ",close:" + end;
 		return setting;
@@ -383,25 +449,7 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 
 
 
-/**
-method R_Plane
-*/
-boolean in_plane(vec3 a, vec3 b, vec3 c, vec3 any, float range) {
-	vec3 n = get_plane_normal(a, b, c);
-	// Calculate nearest distance between the plane represented by the vectors
-	// a,b and c, and the point any
-	float d = n.x()*any.x() + n.y()*any.y() + n.z()*any.z() - n.x()*a.x() - n.y()*a.y() - n.z()*a.z();
-	// A perfect result would be d == 0 but this will not hapen with realistic
-	// float data so the smaller d the closer the point. 
-	// Here I have decided the point is on the plane if the distance is less than 
-	// range unit.
-	return abs(d) < range; 
-}
 
-
-vec3 get_plane_normal(vec3 a, vec3 b, vec3 c) {
-	return new R_Plane().get_plane_normal(a,b,c);
-}
 
 /**
 * R_Plane
