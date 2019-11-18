@@ -19,7 +19,7 @@ boolean bloc_manage_is = false;
 void setup() {
 	size(800,500,P2D);
 	rope_version();
-	megabloc = new R_Megabloc();
+	megabloc = new R_Megabloc(this);
 }
 
 
@@ -29,16 +29,16 @@ void draw() {
 		megabloc.show();
 	}
 	check_for_new_bloc(megabloc);
-	bloc_show_structure(megabloc);
+	bloc_show_struct(megabloc,mouseX,mouseY);
 	if(bloc_build_is) {
-		if(bloc_show_available_point(megabloc)) {
-			bloc_draw(megabloc, true);
+		if(bloc_show_available_point(megabloc,mouseX,mouseY)) {
+			bloc_draw(megabloc,mouseX,mouseY,mousePressed,true);
 			add_new_bloc_is = false;
 		} else {
-			bloc_draw(megabloc, true);
+			bloc_draw(megabloc,mouseX,mouseY,mousePressed,true);
 		}		
 	}
-	bloc_select(megabloc);
+	bloc_select(megabloc,mouseX,mouseY,mousePressed);
 	if(bloc_manage_is) {
 		bloc_manage(megabloc);
 	}
@@ -52,10 +52,8 @@ void mousePressed() {
 		new_bloc(megabloc);
 		add_new_bloc_is = false;
 	}
-	if(!bloc_selected_is) {
-		for(R_Bloc b : megabloc.get()) {
-			b.select_is(false);
-		}
+	for(R_Bloc b : megabloc.get()) {
+		b.select_is(false);
 	}
 }
 
@@ -64,7 +62,6 @@ void mouseReleased() {
 	if(bloc_build_is) {
 		add_point_to_bloc_is(true);
 	}
-	bloc_selected_is = false;
 }
 
 void keyPressed() {
@@ -87,22 +84,30 @@ void keyPressed() {
 
 
 
-void bloc_remove_single(R_Megabloc megabloc) {
-	int index = -1;
-	for(int i = 0 ; i < megabloc.size() ; i++) {
-		R_Bloc b = megabloc.get().get(i);
-		if(b.select_is()) {
-			index = i;
-		}
-	}
-	if(index > -1) {
-		megabloc.remove(index);
+void bloc_manage(R_Megabloc mb) {
+	if(!bloc_move(mb,mouseX,mouseY,mousePressed)) {
+		bloc_move_point(mb,mouseX,mouseY,mousePressed);
 	}
 }
 
 
 
-void info(R_Megabloc megabloc) {
+void bloc_remove_single(R_Megabloc mb) {
+	int index = -1;
+	for(int i = 0 ; i < mb.size() ; i++) {
+		R_Bloc b = mb.get().get(i);
+		if(b.select_is()) {
+			index = i;
+		}
+	}
+	if(index > -1) {
+		mb.remove(index);
+	}
+}
+
+
+
+void info(R_Megabloc mb) {
 	if(bloc_build_is) {
 		text("build bloc mode", 20,20);
 	}
@@ -111,7 +116,7 @@ void info(R_Megabloc megabloc) {
 		text("manage bloc mode", 20,20);
 	}
 
-	for(R_Bloc b : megabloc.get()) {
+	for(R_Bloc b : mb.get()) {
 		if(b.select_is()) {
 			text("there is bloc selected", 20,40);
 			break;

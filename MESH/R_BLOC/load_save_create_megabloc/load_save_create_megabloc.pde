@@ -17,14 +17,16 @@ R_Megabloc megabloc_from_save;
 void setup() {
 	size(400,400,P2D);
 	rope_version();
-	megabloc = new R_Megabloc();
-	create_bloc(megabloc);
+	megabloc = new R_Megabloc(this);
+	// create_bloc(megabloc);
 }
 
 
 void draw() {
 	background(r.SANG);
-	show_bloc(megabloc);
+	if(megabloc != null) {
+		show_bloc(megabloc);
+	}
 	if(megabloc_from_save != null) {
 		show_bloc(megabloc_from_save);
 	}
@@ -35,7 +37,7 @@ void keyPressed() {
 		create_bloc(megabloc);
 	}
 	if(key == 's') {
-		save_megabloc(megabloc,"bloc","");
+		save_megabloc(megabloc,"","bloc");
 	}
 
 	if(key == 'l') {
@@ -44,8 +46,16 @@ void keyPressed() {
 	}
 }
 
-void show_bloc(R_Megabloc megabloc) {
-	megabloc.show();
+void show_bloc(R_Megabloc mb) {
+	mb.show();
+	/*
+	for(R_Bloc b : mb.get()) {
+		println(b.get_fill(),b.get_stroke(),b.get_thickness());
+		for(vec3 v : b.get()) {
+			println(v);
+		}
+	}
+	*/
 }
 
 
@@ -55,7 +65,7 @@ void create_bloc(R_Megabloc megabloc) {
 	int fill = color(random(g.colorModeX),random(g.colorModeX),random(g.colorModeX));
 	int num = 3;
 	for(int i = 0 ; i < num ; i++) {
-		R_Bloc bloc = new R_Bloc();
+		R_Bloc bloc = new R_Bloc(this,width,height);
 		bloc.set_fill(fill);
 		int complexity = (int)random(3,5);
 		for(int k = 0 ; k < complexity ; k++) {

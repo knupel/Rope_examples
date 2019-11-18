@@ -1,5 +1,5 @@
-bloc file name:bloc,elements:3,width:400,height:400
-bloc,name:null,complexity:4,fill:-9526335,stroke:-16777216,thickness:2.0,type:0<>ax:387.59183<>ay:124.55247,type:0<>ax:165.05724<>ay:23.568201,type:0<>ax:326.55603<>ay:60.064198,type:0<>ax:106.3395<>ay:187.14188,close:false
-bloc,name:null,complexity:4,fill:-9526335,stroke:-16777216,thickness:2.0,type:0<>ax:265.48447<>ay:152.90425,type:0<>ax:157.5722<>ay:380.98022,type:0<>ax:171.68477<>ay:375.88837,type:0<>ax:345.5638<>ay:273.4078,close:false
-bloc,name:null,complexity:4,fill:-9526335,stroke:-16777216,thickness:2.0,type:0<>ax:76.942894<>ay:234.86903,type:0<>ax:156.56223<>ay:392.86887,type:0<>ax:75.608536<>ay:368.0146,type:0<>ax:138.03647<>ay:126.17486,close:false
+bloc file name:bloc,elements:3,width:400,height:400,magnetism:2
+bloc,name:null,complexity:3,fill:-2178795,stroke:-16777216,thickness:2.0,type:0<>ax:82.03311<>ay:248.55147,type:0<>ax:274.74356<>ay:54.2614,type:0<>ax:58.889652<>ay:203.25792,close:false
+bloc,name:null,complexity:4,fill:-2178795,stroke:-16777216,thickness:2.0,type:0<>ax:377.5433<>ay:101.27881,type:0<>ax:340.59692<>ay:198.54352,type:0<>ax:312.05783<>ay:394.58307,type:0<>ax:75.94285<>ay:34.583473,close:false
+bloc,name:null,complexity:3,fill:-2178795,stroke:-16777216,thickness:2.0,type:0<>ax:106.768394<>ay:343.3568,type:0<>ax:173.7094<>ay:117.51683,type:0<>ax:174.64505<>ay:27.676178,close:false
 

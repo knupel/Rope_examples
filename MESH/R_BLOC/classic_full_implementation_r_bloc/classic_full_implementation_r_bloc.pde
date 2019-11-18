@@ -22,16 +22,15 @@ void setup() {
 	// fullScreen(P3D);
 	size(800,800,P3D);
 	rope_version();
-	megabloc = new R_Megabloc();
+	megabloc = new R_Megabloc(this);
 	megabloc.set_magnetism(5);
 }
 
 
 void draw() {
-	rendering();
 	show();
 	check_for_new_bloc(megabloc);
-	bloc_show_structure(megabloc);
+	bloc_show_struct(megabloc,mouseX, mouseY);
 	if(bloc_build_is) {
 		if(bloc_show_available_point(megabloc, mouseX, mouseY)) {
 			bloc_draw(megabloc, mouseX, mouseY, mousePressed, true);
@@ -131,7 +130,6 @@ void show() {
 
 void bloc_manage(R_Megabloc megabloc) {
 	if(bloc_move_point_is) {
-		bloc_show_point(mouseX, mouseY);
 		bloc_select_single_point(megabloc, mouseX, mouseY, mousePressed);
 		// bloc_select_all_point(megabloc, mouseX, mouseY, mousePressed);
 		bloc_move_point(megabloc, mouseX, mouseY, mousePressed);
@@ -139,7 +137,6 @@ void bloc_manage(R_Megabloc megabloc) {
 		
 	}
 	if(bloc_move_bloc_is) {
-		// bloc_show_point(mouseX, mouseY);
 		bloc_select(megabloc, mouseX, mouseY, mousePressed);
 		bloc_move(megabloc, mouseX, mouseY, mousePressed);
 	}
@@ -195,21 +192,5 @@ void info(R_Megabloc megabloc) {
 
 
 
-float rotate_x,rotate_y,rotate_z;
-void rendering() {
-	rotate_x += 0.01;
-	rotate_y += 0.02;
-	background_rope(255,0,255);
-	fill(255);
-	stroke(0);
-	strokeWeight(1);
-	pushMatrix();
-	
-	translate(width/2,height/2,width/3);
-	rotateX(rotate_x);
-	rotateZ(rotate_y);
 
-	box(200);
-	popMatrix();
-}
 

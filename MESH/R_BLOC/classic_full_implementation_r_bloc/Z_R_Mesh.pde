@@ -7,7 +7,7 @@
 
 /**
 * R_Megabloc
-* v 0.0.2
+* v 0.1.0
 * 2019-2019
 */
 public class R_Megabloc {
@@ -15,9 +15,11 @@ public class R_Megabloc {
 	private int width;
 	private int height;
 	private int magnetism = 2;
+	private PApplet p;
 
-	public R_Megabloc() {
+	public R_Megabloc(PApplet p) {
 		list = new ArrayList<R_Bloc>();
+		this.p = p;
 	}
 
 	public void set(int width, int height) {
@@ -125,10 +127,13 @@ public class R_Megabloc {
 		}
 	}
 
-
 	public void show() {
-		for(R_Bloc b : list) {
-			b.show();
+		show(p.g);
+	}
+
+	public void show(PGraphics other) {
+		for(R_Bloc b : list) {;
+			b.show(other);
 		}
 	}
 }
@@ -137,7 +142,7 @@ public class R_Megabloc {
 /**
 * R_Bloc
 * 2019-2019
-* 0.2.0
+* 0.2.2
 */
 public class R_Bloc implements rope.core.R_Constants_Colour {
 	private ArrayList<vec3> list;
@@ -148,22 +153,27 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 	private boolean select_point_is;
 	private boolean action_available_is;
 	private int index;
+	// private mag_angle_is = false;
 	private int magnetism = 1;
-	private int colour;
+	private int colour_build;
 	private int fill;
 	private int stroke;
 	private float thickness = 2.0;
 	private vec2 ref_coord;
 	private vec2 coord;
+	private ivec2 canvas;
+	private PApplet p;
 
-	public R_Bloc() {
+	public R_Bloc(PApplet p, int width, int height) {
 		list = new ArrayList<vec3>();
 		id = (int)random(Integer.MAX_VALUE);
 		coord = new vec2();
 		ref_coord = new vec2();
-		colour = CYAN;
+		colour_build = CYAN;
 		fill = BLANC;
 		stroke = NOIR;
+		this.canvas = new ivec2(width,height);
+		this.p = p;
 	}
 
 	public void set_id(int id) {
@@ -178,8 +188,8 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 		this.fill = fill;
 	}
 
-	public void set_colour_build(int colour) {
-		this.colour = colour;
+	public void set_colour_build(int colour_build) {
+		this.colour_build = colour_build;
 	}
 
 	public void set_stroke(int stroke) {
@@ -194,12 +204,21 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 		this.name = name;
 	}
 
-
-
-
 	// get
 	public vec3 [] get() {
 		return list.toArray(new vec3[list.size()]);
+	}
+
+	public int get_fill() {
+		return this.fill;
+	}
+
+	public int get_stroke() {
+		return this.stroke;
+	}
+
+	public float get_thickness() {
+		return this.thickness;
 	}
 
 	public String get_name() {
@@ -276,7 +295,6 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 		return false;
 	}
 
-
 	public boolean select_point_is() {
 		return select_point_is;
 	}
@@ -284,9 +302,6 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 	public boolean select_is() {
 		return select_is;
 	}
-
-
-
 
 
 	// update
@@ -322,11 +337,15 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 	}
 
 	private void add(vec2 point) {
-		list.add(vec3(point));
+		vec3 temp = vec3(point);
+		mag_canvas(temp);
+		list.add(temp);
 	}
 
 	private void add(int index, vec2 point) {
-		list.add(index, vec3(point));
+		vec3 temp = vec3(point);
+		mag_canvas(temp);
+		list.add(index,temp);
 	}
 
 	/**
@@ -343,12 +362,14 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 			ref_coord.set(coord);
 		}
 	}
-		public void move_point(float x, float y, boolean event_is) {
+	
+	public void move_point(float x, float y, boolean event_is) {
 		if(event_is) {
 			vec3 offset = vec3(sub(ref_coord,coord));
 			for(vec3 p : list) {
 				if(p.z() == 1) {
 					p.sub(offset);
+					mag_canvas(p);
 					p.z(1);
 				}
 			}
@@ -357,39 +378,15 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 			ref_coord.set(coord);
 		}
 	}
-  /*
-	public void move_point(float x, float y, boolean event_is) {
-		if(event_is) {
-			// select point to move
-			if(!select_point_is()) {
-			// if(!select_point_is() && !select_is()) {
-				// reset_select_point();
-				select_point(x,y);
-			} else {
-				// case where the bloc is close / ended to move the first and the last point
-				if(end && (list.get(0).z() == 1 || list.get(list.size() -1).z() == 1)) {
-					list.get(0).x(x);
-					list.get(0).y(y);
-					list.get(list.size() -1).x(x);
-					list.get(list.size() -1).y(y);
-				} else {
-					for(vec3 v : list) {
-						if(v.z() == 1) {
-							println("je suis là",frameCount);
-						//if(v.z() == 1 && dist_is(v, x, y)) {
-							v.x(x);
-							v.y(y);
-						}
-					}
-				}
-			}
-		} else {
-			// try to change by external method bloc point selection.
-			// select_point_is = false;
-			// reset_select_point();
-		}
+
+
+	private void mag_canvas(vec3 p) {
+		if(p.x() < 0 + magnetism) p.x(0);
+		if(p.x() > canvas.x() - magnetism) p.x(canvas.x());
+		if(p.y() < 0 + magnetism) p.y(0);
+		if(p.y() > canvas.y() -magnetism) p.y(canvas.y());
 	}
-	*/
+
 
 	/**
 	* select
@@ -422,15 +419,6 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 				break;
 			}
 		}
-		/*
-		for(vec3 v : list) {
-			if(dist_is(v, x, y)) {
-				select_point_is(true);
-				v.z(1);
-				break;
-			}
-		}
-		*/
 	}
 
 	private void select(float x, float y) {
@@ -458,25 +446,43 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 		list.clear();
 	}
 
-	private void next() {
-		if(list.size() > 0) {
-			line(list.get(list.size()-1),coord);
-		}
-	}
-	
 	/**
 	* show
 	*/
+	private void next(PGraphics other) {
+		if(other != null)
+			beginDraw(other);
+		if(list.size() > 0) {
+			line(list.get(list.size()-1),coord,other);
+		}
+		if(other != null)
+			endDraw(other);
+	}
+
 	public boolean show_available_point(float x, float y) {
+		return calc_show_available_point(x, y, p.g);
+	}
+
+	public boolean show_available_point(float x, float y, PGraphics other) {
+		boolean is = false;
+		if(other != null)
+			beginDraw(other);
+		is = calc_show_available_point(x, y, p.g);
+		if(other != null)
+			endDraw(other);
+		return is;
+	}
+
+	private boolean calc_show_available_point(float x, float y, PGraphics other) {
 		update(x,y);
-		fill(BLANC);
+		fill(BLANC,other);
 		float size = 5;
 		if(list.size() > 0) {
 			for(int index = 0 ; index < list.size() ; index++) {
 				if(dist(coord,vec2(list.get(index))) < magnetism) {
 					vec2 pos = sub(vec2(list.get(index)),vec2(size).mult(.5));
-					square(pos,size);
-					line(pos.copy().add(0,size/2),pos.copy().add(size,size/2));
+					square(pos,size,other);
+					line(pos.copy().add(0,size/2),pos.copy().add(size,size/2),other);
 					action_available_is = true;
 					return true;
 				}
@@ -485,9 +491,9 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 					vec2 b = vec2(list.get(index));
 					if(is_on_line(a,b,coord,magnetism)) {
 						vec2 pos = sub(coord,vec2(size).mult(.5));
-						square(pos,size);
-						line(pos.copy().add(0,size/2),pos.copy().add(size,size/2));
-						line(pos.copy().add(size/2,0),pos.copy().add(size/2,size));
+						square(pos,size,other);
+						line(pos.copy().add(0,size/2),pos.copy().add(size,size/2),other);
+						line(pos.copy().add(size/2,0),pos.copy().add(size/2,size),other);
 						action_available_is = true;
 						return true;
 					}
@@ -497,51 +503,96 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 		return false;
 	}
 
-	private void show_anchor_point() {
+	public void show_anchor_point() {
+		calc_show_anchor_point(p.g);
+	}
+
+	public void show_anchor_point(PGraphics other) {
+		if(other != null)
+			beginDraw(other);
+		calc_show_anchor_point(other);
+		if(other != null)
+			endDraw(other);
+	}
+
+	private void calc_show_anchor_point(PGraphics other) {
 		float size = 5;
 		// past selection
-		fill(BLANC);
-		strokeWeight(1);
+		fill(BLANC,other);
+		stroke(colour_build,other);
+		strokeWeight(1,other);
 		int max = list.size() - 1;
 		for(int index = 0 ; index < max; index++) {
 			if(index == 0 && !end) {
-				square(sub(vec2(list.get(index)),vec2(size).mult(.5)),size * 1.5);
+				square(sub(vec2(list.get(index)),vec2(size).mult(.5)),size * 1.5,other);
 			} else {
-				square(sub(vec2(list.get(index)),vec2(size).mult(.5)),size);
+				square(sub(vec2(list.get(index)),vec2(size).mult(.5)),size,other);
 			}
 		}
 
 		// current selection
-		fill(colour);
+		fill(colour_build,other);
 		if(max >= 0) {
-			square(sub(vec2(list.get(max)),vec2(size).mult(.5)),size);
+			square(sub(vec2(list.get(max)),vec2(size).mult(.5)),size,other);
 		}
+		// aspect(fill,stroke,thickness,other);
 	}
 
-	private void show_struct() {
-		strokeWeight(1);
-		noFill();
-		stroke(colour);
-		beginShape();
+	public void show_struct() {
+		calc_show_struct(false,p.g);
+	}
+
+	public void show_struct(PGraphics other) {
+		if(other != null)
+			beginDraw(other);
+		calc_show_struct(true,other);
+		if(other != null)
+			endDraw(other);
+	}
+
+	private void calc_show_struct(boolean draw_is, PGraphics other) {
+		strokeWeight(1,other);
+		noFill(other);
+		stroke(colour_build,other);
+		beginShape(other);
 		for(int index = 0 ; index < list.size() ; index++) {
-			vertex(vec2(list.get(index)));
+			vertex(vec2(list.get(index)),other);
 		}
-		endShape();
+		endShape(other);
 		if(!end) {
-			next();
+			if(draw_is) {
+				beginDraw(other);
+				next(other);
+				endDraw(other);
+			} else {
+				next(other);
+			}
 		}
 	}
 
 	public void show() {
-		aspect(fill, stroke, thickness);
+		calc_show(p.g);
+	}
+
+	public void show(PGraphics other) {
+		if(other != null)
+			beginDraw(other);
+		calc_show(other);
+		if(other != null)
+			endDraw(other);
+	}
+
+	private void calc_show(PGraphics other) {
+		// println(fill,frameCount);
+		aspect(fill,stroke,thickness,other);
 		if(list.size() == 2) {
-			line(vec2(list.get(0)),vec2(list.get(1)));
+			line(vec2(list.get(0)),vec2(list.get(1)),other);
 		} else if(list.size() > 2) {
-			beginShape();
+			beginShape(other);
 			for(int index = 0 ; index < list.size() ; index++) {
-				vertex(vec2(list.get(index)));
+				vertex(vec2(list.get(index)),other);
 			}
-			endShape();
+			endShape(other);
 		}
 	}
 }
