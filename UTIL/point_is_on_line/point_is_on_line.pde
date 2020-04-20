@@ -5,15 +5,15 @@
 * @see https://github.com/StanLepunK/Rope_framework
 *
 * When a point meet a line
-* v 0.0.1
+* v 0.0.2
 * 2019-2019
 */
 vec2 a, b;
 void setup() {
 	size(500,500,P2D);
 	rope_version();
-	a = vec2().rand(vec2(0,width),vec2(0,height));
-	b = vec2().rand(vec2(0,width),vec2(0,height));
+	a = vec2().rand(vec2(0),vec2(width,height));
+	b = vec2().rand(vec2(0),vec2(width,height));
 }
 
 void draw() {
@@ -33,8 +33,8 @@ void draw() {
 }
 
 void keyPressed() {
-	a = vec2().rand(vec2(0,width),vec2(0,height));
-	b = vec2().rand(vec2(0,width),vec2(0,height));
+	a = vec2().rand(vec2(0),vec2(width,height));
+	b = vec2().rand(vec2(0),vec2(width,height));
 }
 
 

@@ -191,7 +191,7 @@ void add_value_to_points(vec3 pos, vec3 add_value) {
     int length = svg.list_svg_vec(ID).length ;
     vec3 [] value = new vec3[length] ;
     for(int i = 0 ; i < value.length ; i++) {
-      value[i] = vec3().rand(vec2(0,add_value.x()), vec2(0,add_value.y()), vec2(0,add_value.z()));
+      value[i] = vec3().rand(vec3(0), vec3(add_value.x(),add_value.y(),add_value.z()));
       value[i].mult(.1) ;
     }
     
