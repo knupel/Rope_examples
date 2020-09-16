@@ -1,23 +1,11 @@
 /**
 * COSTUME classes
 * Copyleft (c) 2019-2019
-* v 0.10.4
+* v 0.11.0
 * @author @stanlepunk
 * @see https://github.com/StanLepunK/Rope_framework
 * Here you finf the class Costume and all the class shape used.
-* Processing 3.5.3.269
-* Rope Library 0.8.3.28
 */
-
-
-
-
-
-
-
-
-
-
 
 
 final int POINT = 2; // processing value
@@ -91,17 +79,17 @@ final int VIRUS = 88_888_888;
 
 
 /**
-class Costume 
-2018-2019
-v 0.6.1
+* class Costume 
+* 2018-2019
+* v 0.7.1
 */
 import rope.costume.R_Primitive;
 public class Costume {
 	PGraphics other;
 
-	boolean fill_is;
-	boolean stroke_is;
-	boolean alpha_is;
+	boolean fill_is = true;
+	boolean stroke_is = true;
+	boolean alpha_is = true;
 
 	vec3 pos;
 	vec3 size;
@@ -211,7 +199,7 @@ public class Costume {
 		this.align = align;
 	} 
 
-/*
+	/**
 	public void set_angle(float angle) {
 		this.angle = angle;
 	}
@@ -238,9 +226,7 @@ public class Costume {
 	}
 
 
-
 	// get
-
 	public vec3 pos() {
 		return pos;
 	}
@@ -289,7 +275,7 @@ public class Costume {
 	public int get_num() {
 		return num;
 	}
-  /*
+	/**
 	public float get_angle() {
 		return angle;
 	}
@@ -370,7 +356,6 @@ public class Costume {
 	  	manage_stroke(stroke);
 	    manage_thickness(thickness);
 	  }
-	  //
 	  init_bool_aspect();
 	}
 
@@ -404,7 +389,6 @@ public class Costume {
 	    }
 	    noFill(other);   
 	  }
-	  //
 	  init_bool_aspect();
 	}
 
@@ -412,19 +396,18 @@ public class Costume {
 
 	public void aspect(vec fill, vec stroke, float thickness) {
 	  //checkfill color
-	  if(fill.w <=0 || !this.fill_is)  {
+	  if(fill.w() <= 0 || !this.fill_is)  {
 	    noFill(other) ; 
 	  } else {
 	    manage_fill(fill);
 	  } 
 	  //check stroke color
-	  if(stroke.w <=0 || thickness <= 0 || !this.stroke_is) {
+	  if(stroke.w() <=0 || thickness <= 0 || !this.stroke_is) {
 	    noStroke(other);
 	  } else {
 	    manage_stroke(stroke);
 	    manage_thickness(thickness);
 	  }
-	  //
 	  init_bool_aspect();
 	}
 
@@ -437,19 +420,19 @@ public class Costume {
 	  if(costume == r.NULL) {
 	    // 
 		} else if(costume != r.NULL || costume != POINT) {
-	    if(fill.w <= 0 || !this.fill_is) {
+	    if(fill.w() <= 0 || !this.fill_is) {
 	    	noFill(other) ; 
 	    } else {
 	    	manage_fill(fill);
 	    } 
-	    if(stroke.w <= 0  || thickness <= 0 || !this.stroke_is) {
+	    if(stroke.w() <= 0  || thickness <= 0 || !this.stroke_is) {
 	    	noStroke(other); 
 	    } else {
 	    	manage_stroke(stroke);
 	    	manage_thickness(thickness);
 	    }   
 	  } else {
-	    if(fill.w <= 0 || !this.fill_is) {
+	    if(fill.w() <= 0 || !this.fill_is) {
 	    	noStroke(other); 
 	    } else {
 	    	// case where the fill is use like a stroke, for point, pixel...
@@ -495,7 +478,6 @@ public class Costume {
 				}
 				fill(this.fill,other);
 			}
-			
 		}
 	}
 
@@ -582,7 +564,9 @@ public class Costume {
 		}
 
 		else if (this.get_type() == TRIANGLE) {
-			if(prim == null) prim = new R_Primitive(papplet,3);
+			if(prim == null || prim.get_summits() != 3) {
+				prim = new R_Primitive(papplet,3);
+			}
 			push(other);
 			translate(pos,other);
 			costume_rotate(rot,other);
@@ -591,7 +575,9 @@ public class Costume {
 			prim.show();
 			pop(other);
 		}  else if (this.get_type() == SQUARE) {
-			if(prim == null) prim = new R_Primitive(papplet,4);
+			if(prim == null  || prim.get_summits() != 4) {
+				prim = new R_Primitive(papplet,4);
+			}
 			push(other);
 			translate(pos,other);
 			costume_rotate(rot,other);
@@ -600,7 +586,9 @@ public class Costume {
 			prim.show();
 			pop(other);
 		} else if (this.get_type() == PENTAGON) {
-			if(prim == null) prim = new R_Primitive(papplet,5);
+			if(prim == null || prim.get_summits() != 5) {
+				prim = new R_Primitive(papplet,5);
+			}
 			push(other);
 			translate(pos,other);
 			costume_rotate(rot,other);
@@ -609,7 +597,9 @@ public class Costume {
 			prim.show();
 			pop(other);
 		} else if (this.get_type() == HEXAGON) {
-			if(prim == null) prim = new R_Primitive(papplet,6);
+			if(prim == null || prim.get_summits() != 6) {
+				prim = new R_Primitive(papplet,6);
+			}
 			push(other);
 			translate(pos,other);
 			costume_rotate(rot,other);
@@ -618,7 +608,9 @@ public class Costume {
 			prim.show();
 			pop(other);
 		} else if (this.get_type() == HEPTAGON) {
-			if(prim == null) prim = new R_Primitive(papplet,7);
+			if(prim == null || prim.get_summits() != 7) {
+				prim = new R_Primitive(papplet,7);
+			}
 			push(other);
 			translate(pos,other);
 			costume_rotate(rot,other);
@@ -627,7 +619,9 @@ public class Costume {
 			prim.show();
 			pop(other);
 		} else if (this.get_type() == OCTOGON) {
-			if(prim == null) prim = new R_Primitive(papplet,8);
+			if(prim == null || prim.get_summits() != 8) {
+				prim = new R_Primitive(papplet,8);
+			}
 			push(other);
 			translate(pos,other);
 			costume_rotate(rot,other);
@@ -636,7 +630,9 @@ public class Costume {
 			prim.show();
 			pop(other);
 		} else if (this.get_type() == NONAGON) {
-			if(prim == null) prim = new R_Primitive(papplet,9);
+			if(prim == null || prim.get_summits() != 9) {
+				prim = new R_Primitive(papplet,9);
+			}
 			push(other);
 			translate(pos,other);
 			costume_rotate(rot,other);
@@ -645,7 +641,9 @@ public class Costume {
 			prim.show();
 			pop(other);
 		} else if (this.get_type() == DECAGON) {
-			if(prim == null) prim = new R_Primitive(papplet,10);
+			if(prim == null || prim.get_summits() != 10) {
+				prim = new R_Primitive(papplet,10);
+			}
 			push(other);
 			translate(pos,other);
 			costume_rotate(rot,other);
@@ -654,7 +652,9 @@ public class Costume {
 			prim.show();
 			pop(other);
 		} else if (this.get_type() == HENDECAGON) {
-			if(prim == null) prim = new R_Primitive(papplet,11);
+			if(prim == null  || prim.get_summits() != 11) {
+				prim = new R_Primitive(papplet,11);
+			}
 			push(other);
 			translate(pos,other);
 			costume_rotate(rot,other);
@@ -663,7 +663,9 @@ public class Costume {
 			prim.show();
 			pop(other);
 		} else if (this.get_type() == DODECAGON) {
-			if(prim == null) prim = new R_Primitive(papplet,12);
+			if(prim == null  || prim.get_summits() != 12) {
+				prim = new R_Primitive(papplet,12);
+			}
 			push(other);
 			translate(pos,other);
 			costume_rotate(rot,other);
@@ -835,7 +837,6 @@ public class Costume {
 			} else {
 				house(size.xyz(),other);
 			}
-			
 			pop(other);
 		}
 
@@ -852,7 +853,7 @@ public class Costume {
 
 		else if(this.get_type() < 0) {
 			push() ;
-			translate(pos) ;
+			translate(pos);
 			costume_rotate(rot) ;
 			for(int i = 0 ; i < costume_pic_list.size() ; i++) {
 				Costume_pic p = costume_pic_list.get(i);
@@ -874,15 +875,14 @@ public class Costume {
 							scale = vec2(size.x / p.get_svg().width(), size.y / p.get_svg().height());
 						}
 						
-						p.get_svg().scaling(scale) ;
-						p.get_svg().draw() ;
-						break ;
+						p.get_svg().scaling(scale);
+						p.get_svg().draw();
+						break;
 					}		
 				}
 			}
-			pop() ;
+			pop();
 		}
-
 	  // reset variable can be change the other costume, if the effect is don't use.
 		ratio_costume_size = 1;
 	}
@@ -901,19 +901,19 @@ public class Costume {
 
 /**
 * COSTUME PIC CLASS
-* v 0.0.2
+* v 0.0.3
 * 2014-2019
 */
 public class Costume_pic {
-	PImage img ;
-	ROPE_svg svg ;
-	int type = -1 ; 
-	String name ;
+	PImage img;
+	ROPE_svg svg;
+	int type = -1; 
+	String name;
 	int id;
 	public Costume_pic(PApplet p5, String path, int id) {
 		// add png
 		if(path.endsWith("png") || path.endsWith("PNG")) {
-			img = loadImage(path) ;
+			img = loadImage(path);
 			type = 1;
 		}
 

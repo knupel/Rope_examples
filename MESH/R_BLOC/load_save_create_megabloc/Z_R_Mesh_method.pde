@@ -13,7 +13,7 @@ R_Bloc create_bloc(vec2 [] points) {
 
 /**
 * R_Megabloc method
-* v 0.1.2
+* v 0.1.5
 * 2019-2019
 */
 boolean add_point_to_bloc_is;
@@ -126,14 +126,16 @@ void bloc_draw(R_Megabloc mb, int x, int y, boolean event_is, boolean show_struc
 
 void bloc_remove_single_select(R_Megabloc mb) {
 	int index = -1;
-	for(int i = 0 ; i < mb.size() ; i++) {
-		R_Bloc b = mb.get().get(i);
-		if(b.select_is()) {
-			index = i;
+	if (mb != null) {
+		for(int i = 0 ; i < mb.size() ; i++) {
+			R_Bloc b = mb.get().get(i);
+			if(b.select_is()) {
+				index = i;
+			}
 		}
-	}
-	if(index > -1) {
-		mb.remove(index);
+		if(index > -1) {
+			mb.remove(index);
+		}
 	}
 }
 
@@ -288,19 +290,22 @@ boolean bloc_move(R_Megabloc mb, float x, float y, boolean event_is) {
 * load save
 */
 void save_megabloc(R_Megabloc mb, String path, String file_name) {
-	String [] save = new String[1];
-	// header
-	String name = "bloc file name:"+file_name;
-	String elem = "elements:"+ mb.size();
-	String w = "width:" + width;
-	String h = "height:" + height;
-	String mag = "magnetism:" + mb.get_magnetism();
-	save[0] =  name + "," + elem + "," + w + ","+ h + "," + mag + "\n";
-	// details
-	for(R_Bloc r : mb.get()) {
-		save[0] += (r.get_data() + "\n");
+	if(mb != null) {
+		String [] save = new String[1];
+		// header
+		String name = "bloc file name:"+file_name;
+		String elem = "elements:"+ mb.size();
+		String w = "width:" + width;
+		String h = "height:" + height;
+		String mag = "magnetism:" + mb.get_magnetism();
+		save[0] =  name + "," + elem + "," + w + ","+ h + "," + mag + "\n";
+		// details
+		for(R_Bloc r : mb.get()) {
+			save[0] += (r.get_data() + "\n");
+		}
+		saveStrings(path+file_name+".blc",save);
+
 	}
-	saveStrings(path+file_name+".blc",save);
 }
 
 String [] load_megabloc(String path_name) {
@@ -316,6 +321,10 @@ String [] load_megabloc(String path_name) {
 }
 
 R_Megabloc read_megabloc(String [] file_type_blc) {
+	return read_megabloc(file_type_blc, false, false);
+}
+
+R_Megabloc read_megabloc(String [] file_type_blc, boolean original_canvas_is, boolean fit_is) {
 	R_Megabloc mb = new R_Megabloc(this);
 	boolean is = true;
 	String [] header = file_type_blc[0].split(",");
@@ -326,16 +335,20 @@ R_Megabloc read_megabloc(String [] file_type_blc) {
 	} else {
 		is = false;
 	}
-		// dimension
-	int w = 0;
+	// dimension
+	int original_width = 0;
 	if(header[2].contains("width")) {
-		w = atoi(header[2].split(":")[1]);
+		original_width = atoi(header[2].split(":")[1]);
 	}
-	int h = 0;
+	int original_height = 0;
 	if(header[3].contains("height")) {
-		h = atoi(header[3].split(":")[1]);
+		original_height = atoi(header[3].split(":")[1]);
 	}
-	mb.set(w,h);
+	if(original_canvas_is) {
+		mb.set(original_width,original_height);
+	} else {
+		mb.set(width,height);
+	}
 	// magnetism
 	int mag = 2;
 	if(header[4].contains("magnetism")) {
@@ -346,7 +359,7 @@ R_Megabloc read_megabloc(String [] file_type_blc) {
 		String bloc_info [] = file_type_blc[i].split(",");
 		if(bloc_info[0].contains("bloc") && bloc_info[2].contains("complexity")
 				&& bloc_info[3].contains("fill") && bloc_info[4].contains("stroke") && bloc_info[5].contains("thickness")) {
-			R_Bloc b = new R_Bloc(this,mb.width,mb.height);
+			R_Bloc b = new R_Bloc(this,mb.width,mb.height);;
 			b.set_magnetism(mag);
 			b.set_fill(atoi(bloc_info[3].split(":")[1]));
 			b.set_stroke(atoi(bloc_info[4].split(":")[1]));
@@ -357,7 +370,13 @@ R_Megabloc read_megabloc(String [] file_type_blc) {
 					String [] coord = bloc_info[n].split("<>");
 					float ax = atof(coord[1].split(":")[1]);
 					float ay = atof(coord[2].split(":")[1]);
-					b.build(ax,ay,true);
+					if(fit_is && (original_width != width || original_height != height)) {
+						ax /= original_width;
+						ax *= width;
+						ay /= original_height;
+						ay *= height;
+					}
+					b.build(ax,ay,true,false);
 				}
 			}
 			mb.add(b);
@@ -405,11 +424,3 @@ boolean in_plane(vec3 a, vec3 b, vec3 c, vec3 any, float range) {
 vec3 get_plane_normal(vec3 a, vec3 b, vec3 c) {
 	return new R_Plane().get_plane_normal(a,b,c);
 }
-
-
-
-
-
-
-
-

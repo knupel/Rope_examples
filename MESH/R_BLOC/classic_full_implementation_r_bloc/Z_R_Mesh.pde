@@ -142,7 +142,7 @@ public class R_Megabloc {
 /**
 * R_Bloc
 * 2019-2019
-* 0.2.2
+* 0.2.3
 */
 public class R_Bloc implements rope.core.R_Constants_Colour {
 	private ArrayList<vec3> list;
@@ -153,7 +153,6 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 	private boolean select_point_is;
 	private boolean action_available_is;
 	private int index;
-	// private mag_angle_is = false;
 	private int magnetism = 1;
 	private int colour_build;
 	private int fill;
@@ -313,15 +312,19 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 	* build
 	*/
 	public void build(float x, float y, boolean event_is) {
+		build(x, y, event_is, true);
+	}
+
+	public void build(float x, float y, boolean event_is, boolean security_is) {
 		update(x,y);
 		if(event_is) {
 			vec2 point = vec2(x,y);
 			if(list.size() > 1) {
 				if(list.size() > 2 && end(point)) {
 					add(vec2(list.get(index)));
-				} else if(near_of(point)) {
+				} else if(security_is && near_of(point)) {
 					list.remove(index);
-				} else if(intersection(point)) {
+				} else if(security_is && intersection(point)) {
 					add(index, point);
 				} else {
 					add(point);
@@ -529,13 +532,11 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 				square(sub(vec2(list.get(index)),vec2(size).mult(.5)),size,other);
 			}
 		}
-
 		// current selection
 		fill(colour_build,other);
 		if(max >= 0) {
 			square(sub(vec2(list.get(max)),vec2(size).mult(.5)),size,other);
 		}
-		// aspect(fill,stroke,thickness,other);
 	}
 
 	public void show_struct() {
@@ -543,11 +544,13 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 	}
 
 	public void show_struct(PGraphics other) {
-		if(other != null)
+		if(other != null) {
 			beginDraw(other);
+		}
 		calc_show_struct(true,other);
-		if(other != null)
+		if(other != null) {
 			endDraw(other);
+		}
 	}
 
 	private void calc_show_struct(boolean draw_is, PGraphics other) {
@@ -575,15 +578,19 @@ public class R_Bloc implements rope.core.R_Constants_Colour {
 	}
 
 	public void show(PGraphics other) {
-		if(other != null)
+		if(other != null) {
 			beginDraw(other);
+		}
 		calc_show(other);
-		if(other != null)
+		if(other != null) {
 			endDraw(other);
+		}
 	}
 
 	private void calc_show(PGraphics other) {
-		// println(fill,frameCount);
+		// fill(fill,other);
+		// stroke(stroke,other);
+		// strokeWeight(thickness,other);
 		aspect(fill,stroke,thickness,other);
 		if(list.size() == 2) {
 			line(vec2(list.get(0)),vec2(list.get(1)),other);

@@ -1,11 +1,10 @@
 /**
 * Rope framework image
-* v 0.5.7
+* v 0.5.10
 * Copyleft (c) 2014-2019
 *
 * dependencies
 * Processing 3.5.3
-* Rope library 0.8.5.30
 *
 * @author @stanlepunk
 * @see https://github.com/StanLepunK/Rope_framework
@@ -298,7 +297,7 @@ void select_layer(int target) {
 
 /**
 PImage manager library
-v 0.7.1
+v 0.7.3
 */
 public class R_Image_Manager {
   ArrayList<R_Image> library ;
@@ -315,14 +314,16 @@ public class R_Image_Manager {
   public void load(String... path_img) {
     build();
     for(int i = 0 ; i <path_img.length ; i++) {
-      R_Image rop_img = new R_Image(path_img[i]);
+      String [] temp = path_img[i].split("/");
+      PImage img = loadImage(path_img[i]);
+      R_Image rop_img = new R_Image(img,temp[temp.length-1],i);
       library.add(rop_img);
     }  
   }
 
   public void add(PImage img_src) {
     build();
-    R_Image rop_img = new R_Image(img_src);
+    R_Image rop_img = new R_Image(img_src, "unknow" ,library.size());
     library.add(rop_img);
   }
 
@@ -445,7 +446,7 @@ public class R_Image_Manager {
   
 
   public PImage get(int target){
-    if(library != null && target < library.size()) {
+    if(library != null && target >= 0 && target < library.size()) {
       return library.get(target).get_image();
     } else return null;
   }
@@ -486,7 +487,7 @@ public class R_Image {
   private int id = -1;
 
   public R_Image(String path) {
-    this.name = path.split("/")[path.split("/").length -1].split("\\.")[0] ;
+    this.name = path.split("/")[path.split("/").length -1].split("\\.")[0];
     this.img = loadImage(path);
   }
 
@@ -1320,7 +1321,7 @@ void background_rope(float x, float y, float z) {
 
 /**
 * GRAPHICS METHOD
-* v 0.4.1
+* v 0.4.3
 */
 /**
 SCREEN
@@ -1357,13 +1358,16 @@ check screen
 screen size
 */
 ivec2 get_screen_size() {
-  return get_display_size(sketchDisplay() -1);
+  if(get_screen_num() > 1) {
+    return get_display_size(sketchDisplay() -1);
+  } else {
+    return get_display_size(0);
+  }
 }
 
 ivec2 get_screen_size(int target) {
   if(target >= get_display_num()) {
-    target = 0;
-    printErr("method get_screen_size(int target): target screen",target,"don't match with any screen device instead target '0' is used");
+    return null;
   }
   return get_display_size(target);
 }
@@ -1376,8 +1380,7 @@ ivec2 get_display_size() {
 
 ivec2 get_display_size(int target) {
   if(target >= get_display_num()) {
-    target = 0;
-    printErr("method get_screen_size(int target): target screen",target,"don't match with any screen device instead target '0' is used");
+    return null;
   }  
   Rectangle display = get_screen(target);
   return ivec2((int)display.getWidth(), (int)display.getHeight()); 
@@ -1418,7 +1421,6 @@ Rectangle get_screen(int target_screen) {
     Rectangle display = awtDisplayDevice.getDefaultConfiguration().getBounds();
     return display; 
   } else {
-    printErr("method get_screen(",target_screen,"), No screen match with your request");
     return null;
   }
 }

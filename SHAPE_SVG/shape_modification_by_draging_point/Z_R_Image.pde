@@ -1,13 +1,62 @@
 /**
 * Rope framework image
-* v 0.5.1
+* v 0.5.10
 * Copyleft (c) 2014-2019
-* Processing 3.5.3.269
-* Rope library 0.7.1.25
+*
+* dependencies
+* Processing 3.5.3
+*
 * @author @stanlepunk
 * @see https://github.com/StanLepunK/Rope_framework
 */
 
+/**
+* entry return the pixel position from x,y coordinate
+* v 0.0.2
+*/
+// with coordinate
+int entry(ivec2 pos, boolean constrain_is) {
+  return entry(g,pos.x(),pos.y(), constrain_is);
+}
+
+int entry(vec2 pos, boolean constrain_is) {
+  return entry(g,pos.x(),pos.y(), constrain_is);
+}
+
+int entry(float x, float y, boolean constrain_is) {
+  return entry(g,x,y,constrain_is);
+}
+
+int entry(PGraphics pg, ivec2 pos, boolean constrain_is) {
+  return entry(pg,pos.x(),pos.y(),constrain_is);
+}
+
+int entry(PGraphics pg, vec2 pos, boolean constrain_is) {
+  return entry(pg,pos.x(),pos.y(),constrain_is);
+}
+
+int entry(PGraphics pg, float x, float y, boolean constrain_is) {
+  //int max = pg.pixels.length;
+  int rank = (int)y * pg.width + (int)x;
+  return entry(pg, rank, constrain_is);
+}
+
+// with rank
+int entry(int rank, boolean constrain_is) {
+  return entry(g,rank,constrain_is);
+}
+
+int entry(PGraphics pg, int rank, boolean constrain_is) {
+  int max = pg.pixels.length;
+  if(constrain_is) {
+    if(rank < 0) rank = 0;
+    if(rank >= max) rank = max -1;
+  } else {
+    if(rank < 0) rank = max-rank;
+    if(rank >= max) rank = rank-max;
+  }
+  return rank;
+}
 
 
 
@@ -18,13 +67,15 @@
 
 /**
 PATTERN GENERATOR
-v 0.0.2
+v 0.0.3
 2018-2018
 */
 PGraphics pattern_noise(int w, int h, float... inc) {
   PGraphics pg ;
   noiseSeed((int)random(MAX_INT));
   if(w > 0 && h > 0 && inc.length > 0 && inc.length < 5) {
+    float [] cm = getColorMode(false);
+    colorMode(RGB,255,255,255,255);
     pg = createGraphics(w,h);
     float offset_x [] = new float[inc.length];
     float offset_y [] = new float[inc.length];
@@ -45,6 +96,7 @@ PGraphics pattern_noise(int w, int h, float... inc) {
       max[2] = g.colorModeZ;
       max[3] = g.colorModeA;
     }
+    colorMode((int)cm[0],cm[1],cm[2],cm[3],cm[4]);
 
     
     pg.beginDraw();
@@ -198,7 +250,6 @@ PGraphics get_layer() {
 
 PGraphics get_layer(int target) {
   if(rope_layer == null) {
-//    printErrTempo(180,"void get_layer(): Your layer system has not been init use method init_layer() in first",frameCount);
     return g;
   } else if(target > -1 && target < rope_layer.length) {
     return rope_layer[target];
@@ -246,7 +297,7 @@ void select_layer(int target) {
 
 /**
 PImage manager library
-v 0.7.0
+v 0.7.3
 */
 public class R_Image_Manager {
   ArrayList<R_Image> library ;
@@ -263,16 +314,16 @@ public class R_Image_Manager {
   public void load(String... path_img) {
     build();
     for(int i = 0 ; i <path_img.length ; i++) {
-      //Image img = loadImage(img_src[i]);
-      R_Image rop_img = new R_Image(path_img[i]);
-      //println(img.width, img_src[i]);
+      String [] temp = path_img[i].split("/");
+      PImage img = loadImage(path_img[i]);
+      R_Image rop_img = new R_Image(img,temp[temp.length-1],i);
       library.add(rop_img);
     }  
   }
 
   public void add(PImage img_src) {
     build();
-    R_Image rop_img = new R_Image(img_src);
+    R_Image rop_img = new R_Image(img_src, "unknow" ,library.size());
     library.add(rop_img);
   }
 
@@ -395,7 +446,7 @@ public class R_Image_Manager {
   
 
   public PImage get(int target){
-    if(library != null && target < library.size()) {
+    if(library != null && target >= 0 && target < library.size()) {
       return library.get(target).get_image();
     } else return null;
   }
@@ -436,7 +487,7 @@ public class R_Image {
   private int id = -1;
 
   public R_Image(String path) {
-    this.name = path.split("/")[path.split("/").length -1].split("\\.")[0] ;
+    this.name = path.split("/")[path.split("/").length -1].split("\\.")[0];
     this.img = loadImage(path);
   }
 
@@ -470,7 +521,7 @@ public class R_Image {
 
 /**
 resize image
-v 0.0.2
+v 0.0.3
 */
 /**
 * resize your picture proportionaly to the window sketch of the a specificic PGraphics
@@ -484,8 +535,12 @@ void image_resize(PImage src, boolean fullfit) {
 }
 
 void image_resize(PImage src, PGraphics pg, boolean fullfit) {
-  float ratio_w = pg.width / (float)src.width;
-  float ratio_h = pg.height / (float)src.height;
+  image_resize(src, pg.width, pg.height, fullfit);
+}
+
+void image_resize(PImage src, int target_width, int target_height, boolean fullfit) {
+  float ratio_w = target_width / (float)src.width;
+  float ratio_h = target_height / (float)src.height;
   if(!fullfit) {
     if(ratio_w > ratio_h) {
       src.resize(ceil(src.width *ratio_w), ceil(src.height *ratio_w));
@@ -684,6 +739,7 @@ void image(PImage img, vec pos, vec2 size) {
 /**
 * For the future need to use shader to do that...but in the future !
 */
+@Deprecated
 PImage reverse(PImage img) {
   PImage final_img;
   final_img = createImage(img.width, img.height, RGB) ;
@@ -696,6 +752,7 @@ PImage reverse(PImage img) {
 /**
 * For the future need to use shader to do that...but in the future !
 */
+@Deprecated
 PImage mirror(PImage img) {
   PImage final_img ;
   final_img = createImage(img.width, img.height, RGB) ;
@@ -708,7 +765,6 @@ PImage mirror(PImage img) {
     int reverse_line = img.width -(read_head*2) -1 ;
     int target = i +reverse_line  ;
 
-    if(target < 0 || target >img.pixels.length) println(i, read_head, target) ;
     final_img.pixels[i] = img.pixels[target] ;
 
     read_head++ ;
@@ -716,6 +772,7 @@ PImage mirror(PImage img) {
   return final_img ;
 }
 
+@Deprecated
 PImage paste(PImage img, int entry, int [] array_pix, boolean vertical_is) {
   if(!vertical_is) {
     return paste_vertical(img, entry, array_pix);
@@ -724,8 +781,8 @@ PImage paste(PImage img, int entry, int [] array_pix, boolean vertical_is) {
   }
 }
 
+@Deprecated
 PImage paste_horizontal(PImage img, int entry, int [] array_pix) { 
-  // println("horinzontal", frameCount, entry);
   PImage final_img ;
   final_img = img.copy() ;
   // reduce the array_pix in this one is bigger than img.pixels.length
@@ -745,9 +802,7 @@ PImage paste_horizontal(PImage img, int entry, int [] array_pix) {
       if(target >= final_img.pixels.length) {
         target = final_img.pixels.length -1;
       }
-      if(count >= array_pix.length) {
-        println("count", count, "array pix length", array_pix.length);
-      }
+
       final_img.pixels[target] = array_pix[count];
     }
     count++ ;
@@ -755,7 +810,7 @@ PImage paste_horizontal(PImage img, int entry, int [] array_pix) {
   return final_img ;
 }
 
-
+@Deprecated
 PImage paste_vertical(PImage img, int entry, int [] array_pix) { 
   PImage final_img;
   final_img = img.copy();
@@ -784,9 +839,6 @@ PImage paste_vertical(PImage img, int entry, int [] array_pix) {
       // change the size can happen ArrayIndexOutBound,
       if(target >= final_img.pixels.length) {
         target = final_img.pixels.length -1;
-      }
-      if(count >= array_pix.length) {
-        println("count", count, "array pix length", array_pix.length);
       }
       final_img.pixels[target] = array_pix[count];
     }
@@ -896,7 +948,7 @@ void update_canvas(PImage img, int which_one) {
   if(which_one < rope_canvas.length && which_one >= 0) {
     rope_canvas[which_one] = img;
   } else {
-    println("void update_canvas() : Your selection" ,which_one, "is not available, canvas '0' be use");
+    printErr("void update_canvas() : Your selection" ,which_one, "is not available, canvas '0' be use");
     rope_canvas[0] = img;
   }  
 }
@@ -914,9 +966,6 @@ void alpha_canvas(int target, float change) {
     float bb = blue(c);
     float aa = alpha(c);
     aa += change ;
-    if(i== 0 && target == 1 && aa < 5) {
-      // println(aa, change);
-    } 
     if(aa < 0 ) {
       aa = 0 ;
     }
@@ -1272,7 +1321,7 @@ void background_rope(float x, float y, float z) {
 
 /**
 * GRAPHICS METHOD
-* v 0.4.0
+* v 0.4.3
 */
 /**
 SCREEN
@@ -1309,13 +1358,16 @@ check screen
 screen size
 */
 ivec2 get_screen_size() {
-  return get_display_size(sketchDisplay() -1);
+  if(get_screen_num() > 1) {
+    return get_display_size(sketchDisplay() -1);
+  } else {
+    return get_display_size(0);
+  }
 }
 
 ivec2 get_screen_size(int target) {
   if(target >= get_display_num()) {
-    target = 0;
-    printErr("method get_screen_size(int target): target screen",target,"don't match with any screen device instead target '0' is used");
+    return null;
   }
   return get_display_size(target);
 }
@@ -1328,8 +1380,7 @@ ivec2 get_display_size() {
 
 ivec2 get_display_size(int target) {
   if(target >= get_display_num()) {
-    target = 0;
-    printErr("method get_screen_size(int target): target screen",target,"don't match with any screen device instead target '0' is used");
+    return null;
   }  
   Rectangle display = get_screen(target);
   return ivec2((int)display.getWidth(), (int)display.getHeight()); 
@@ -1365,15 +1416,13 @@ Rectangle get_screen(int target_screen) {
   GraphicsDevice[] awtDevices = environment.getScreenDevices();
   int target = 0 ;
   if(target_screen < awtDevices.length) {
-    target = target_screen ; 
+    target = target_screen;
+    GraphicsDevice awtDisplayDevice = awtDevices[target];
+    Rectangle display = awtDisplayDevice.getDefaultConfiguration().getBounds();
+    return display; 
   } else {
-    printErr("No screen match with your request, instead we use the current screen");
-    target = sketchDisplay() -1;
-    if(target >= awtDevices.length) target = awtDevices.length -1;
+    return null;
   }
-  GraphicsDevice awtDisplayDevice = awtDevices[target];
-  Rectangle display = awtDisplayDevice.getDefaultConfiguration().getBounds();
-  return display;
 }
 
 

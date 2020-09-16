@@ -1,10 +1,10 @@
 /**
 * ROPE SCIENCE
-* v 0.7.5
-* Copyleft (c) 2014-2019 
+* v 0.7.9
+* Copyleft (c) 2014-2020
 * @author @stanlepunk
 * @see https://github.com/StanLepunK/Rope_framework
-* Processing 3.5.3
+* Processing 4.0.a2
 */
 
 
@@ -84,16 +84,16 @@ float random_next_gaussian(float range) {
 
 float random_next_gaussian(float range, int n) {
   float roots = (float)random.nextGaussian();
-  float var = map(roots,-2.5,2.5,-1,1);  
+  float arg = map(roots,-2.5,2.5,-1,1);  
   if(n > 1) {
-    if(n%2 ==0 && var < 0) {
-       var = -1 *pow(var,n);
+    if(n%2 ==0 && arg < 0) {
+       arg = -1 *pow(arg,n);
      } else {
-       var = pow(var,n);
+       arg = pow(arg,n);
      }
-     return var *range ;
+     return arg *range ;
   } else {
-    return var *range ;
+    return arg *range ;
   }
 }
 
@@ -124,15 +124,33 @@ public double g_force(double dist, double m_1, double m_2) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
-Math rope 
-v 1.8.17
+* Math rope 
+* v 1.9.0
 * @author Stan le Punk
 * @see https://github.com/StanLepunK/Math_rope
 */
-/**
-Algebra utils
-*/
+
 //roots dimensions n
 float roots(float valueToRoots, int n) {
   return pow(valueToRoots, 1.0/n) ;
@@ -140,15 +158,15 @@ float roots(float valueToRoots, int n) {
 
 // Decimal
 // @return a specific quantity of decimal after comma
-float decimale(float var, int n) {
+float decimale(float arg, int n) {
   float div = pow(10, abs(n)) ;
-  return Math.round(var *div) / div;
+  return Math.round(arg *div) / div;
 }
 
 
 /**
-geometry util
-v. 0.0.7
+* geometry util
+* v. 0.0.7
 */
 float perimeter_disc(int r) {
   return 2 *r *PI ;
@@ -187,6 +205,57 @@ boolean inside(vec pos, vec size, vec2 target_pos, int type) {
 
 
 
+/**
+* https://forum.processing.org/two/discussion/90/point-and-line-intersection-detection
+* refactoring from Quark Algorithm
+*/
+boolean is_on_line(vec2 start, vec2 end, vec2 point, float range) {
+  vec2 vp = vec2();
+  vec2 line = sub(end,start);
+  float l2 = line.magSq();
+  if (l2 == 0.0) {
+    vp.set(start);
+    return false;
+  }
+  vec2 pv0_line = sub(point, start);
+  float t = pv0_line.dot(line)/l2;
+  pv0_line.normalize();
+  vp.set(line);
+  vp.mult(t);
+  vp.add(start);
+  float d = dist(point, vp);
+  if (t >= 0 && t <= 1 && d <= range) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/**
+* https://forum.processing.org/one/topic/how-do-i-find-if-a-point-is-inside-a-complex-polygon.html
+* http://paulbourke.net/geometry/
+* thks to Moggach and Paul Brook
+*/
+boolean in_polygon(vec [] points, vec2 pos) {
+  int i, j;
+  boolean is = false;
+  int sides = points.length;
+  for(i = 0, j = sides - 1 ; i < sides ; j = i++) {
+    if (( ((points[i].y() <= pos.y()) && (pos.y() < points[j].y())) || ((points[j].y() <= pos.y()) && (pos.y() < points[i].y()))) &&
+          (pos.x() < (points[j].x() - points[i].x()) * (pos.y() - points[i].y()) / (points[j].y() - points[i].y()) + points[i].x())) {
+      is = !is;
+    }
+  }
+  return is;
+}
+
+
+
+
+
+
+
+
 
 /**
 GEOMETRY POLAR and CARTESIAN
@@ -213,8 +282,8 @@ float latitude(float y, float range) {
 }
 
 /**
-angle
-v 0.0.2
+* angle
+* v 0.0.2
 * @return float
 */
 float angle_radians(float y, float range) {
@@ -261,9 +330,9 @@ vec3 to_polar(vec3 cart) {
 
 
 // Cartesian 3D
-/*
-@ return vec3
-return the position of point on Sphere, with longitude and latitude
+/**
+// @ return vec3
+// return the position of point on Sphere, with longitude and latitude
 */
 //If you want just the final pos
 vec3 to_cartesian_3D(vec2 pos, vec2 range, float sizeField)  {
@@ -287,6 +356,8 @@ vec3 to_cartesian_3D(float latitude, float longitude) {
 // main method
 vec3 to_cartesian_3D(float latitude, float longitude,  float radius) {
   // https://en.wikipedia.org/wiki/List_of_common_coordinate_transformations
+  // https://en.wikipedia.org/wiki/Spherical_coordinate_system
+  // https://fr.wikipedia.org/wiki/Coordonn%C3%A9es_sph%C3%A9riques
   
 
   /*
@@ -317,22 +388,20 @@ vec3 to_cartesian_3D(float longitude, float latitude, float radius) {
 
 
 // To cartesian 2D
-vec2 to_cartesian_2D (float pos, vec2 range, vec2 target_rad, float distance) {
+vec2 to_cartesian_2D(float pos, vec2 range, vec2 target_rad, float distance) {
   float rotation_plan = map(pos, range.x, range.y, target_rad.x, target_rad.y)  ;
-  return to_cartesian_2D (rotation_plan, distance) ;
+  return to_cartesian_2D(rotation_plan, distance);
 }
 
-
-vec2 to_cartesian_2D (float angle, float radius) {
+vec2 to_cartesian_2D(float angle, float radius) {
   return to_cartesian_2D(angle).mult(radius);
 }
 
-
 // main method
-vec2 to_cartesian_2D (float angle) {
+vec2 to_cartesian_2D(float angle) {
   float x = cos(angle);
   float y = sin(angle);
-  return vec2(x,y) ;
+  return vec2(x,y);
 }
 
 
@@ -342,7 +411,7 @@ vec2 to_cartesian_2D (float angle) {
 
 
 /**
-Projection
+// Projection
 */
 // Cartesian projection 2D
 vec2 projection(vec2 direction) {
@@ -353,9 +422,7 @@ vec2 projection(vec2 direction, float radius) {
   return projection(direction, vec2(), radius) ;
 }
 vec2 projection(vec2 direction, vec2 origin, float radius) {
-  // vec3 p = point_to_project.normalize(origin) ;
-  vec2 ref = direction.copy() ;
-  vec2 p = ref.dir(origin) ;
+  vec2 p = direction.copy().dir(origin) ;
   p.mult(radius) ;
   p.add(origin) ;
   return p ;
@@ -422,7 +489,7 @@ SPHERE PROJECTION
 /**
 FIBONACCI SPHERE PROJECTION CARTESIAN
 */
-vec3 [] list_cartesian_fibonacci_sphere (int num, float step, float root) {
+vec3 [] list_cartesian_fibonacci_sphere(int num, float step, float root) {
   float root_sphere = root *num ;
   vec3 [] list_points = new vec3[num] ;
   for (int i = 0; i < list_points.length ; i++) list_points[i] = distribution_cartesian_fibonacci_sphere(i, num, step, root_sphere) ;
@@ -484,15 +551,15 @@ PVector normal_direction(int direction) {
 }
 
 // degre direction from PVector direction
-float deg360 (PVector dir) {
+float deg360(PVector dir) {
   float deg360 ;
-  deg360 = 360 -(degrees(atan2(dir.x, dir.y)) +180)   ;
+  deg360 = 360 -(degrees(atan2(dir.x, dir.y)) +180);
   return deg360 ;
 }
 
-float deg360 (vec2 dir) {
+float deg360(vec2 dir) {
   float deg360 ;
-  deg360 = 360 -(degrees(atan2(dir.x, dir.y)) +180)   ;
+  deg360 = 360 -(degrees(atan2(dir.x, dir.y)) +180);
   return deg360 ;
 }
 
@@ -500,20 +567,21 @@ float deg360 (vec2 dir) {
 ROTATION
 */
 //Rotation Objet
-void rotation (float angle, float posX, float posY) {
-  translate(posX, posY ) ;
-  rotate (radians(angle) ) ;
-}
-void rotation (float angle, vec2 pos) {
-  translate(pos.x, pos.y) ;
-  rotate (radians(angle) ) ;
+void rotation(float angle, float pos_x, float pos_y) {
+  translate(pos_x,pos_y);
+  rotate (radians(angle));
 }
 
-vec2 rotation (vec2 ref, vec2 lattice, float angle) {
-  float a = angle(lattice, ref) + angle;
+void rotation(float angle, vec2 pos) {
+  translate(pos.x,pos.y);
+  rotate(radians(angle));
+}
+
+vec2 rotation(vec2 ref, vec2 lattice, float angle) {
+  float a = angle(lattice, ref) +angle;
   float d = lattice.dist(ref);
-  float x = lattice.x + cos( a ) * d;
-  float y = lattice.y + sin( a ) * d;
+  float x = lattice.x +cos(a) *d;
+  float y = lattice.y +sin(a) *d;
   return vec2(x,y);
 }
 
@@ -521,10 +589,10 @@ vec2 rotation (vec2 ref, vec2 lattice, float angle) {
 May be must push to deprecated
 */
 vec2 rotation_lattice(vec2 ref, vec2 lattice, float angle) {
-  float a = angle( lattice, ref ) + angle;
-  float d = dist( lattice, ref );
-  float x = lattice.x + cos( a ) * d;
-  float y = lattice.y + sin( a ) * d;
+  float a = angle( lattice, ref) +angle;
+  float d = dist( lattice, ref);
+  float x = lattice.x +cos(a) *d;
+  float y = lattice.y +sin(a) *d;
   return vec2(x,y);
 }
 
