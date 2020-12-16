@@ -1,0 +1,42 @@
+
+#misc
+applet
+application.linux-arm64
+application.linux-armv6hf
+application.linux32
+application.linux64
+application.windows32
+application.windows64
+application.macosx
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# vs
+out
+
+# build stuff in case there is
+Rope_method/build-tmp/
+test_pde
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+
+
+
+
+
+
+#file
+.jpg
+save/
