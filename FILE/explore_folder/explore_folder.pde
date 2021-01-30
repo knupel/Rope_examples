@@ -16,7 +16,7 @@ void setup() {
 
 void draw() {
   boolean explore_sub_folder = true;
-  String [] ext = {"mov"};
+  String [] ext = {"jpg"};
   explore_folder(folder(),explore_sub_folder,ext); 
 
   if(get_files() != null && get_files().size() > 0) {

@@ -1,7 +1,10 @@
 /**
 LEADING
 * @see https://github.com/StanLepunK/Rope_examples
-2018-2019
+* 2018-2021
+*
+* Give an impulsion to your particle
+* becareful to don't smatch your particle out of beyond !!!
 */
 
 Motion motion;
@@ -21,30 +24,3 @@ void draw() {
   pos.set(new_pos);
   ellipse(pos,vec2(10));
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
