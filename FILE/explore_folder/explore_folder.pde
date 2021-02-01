@@ -8,7 +8,7 @@
 
 /**
 * FOLDER EXPLORATION
-* V 0.2.0
+* V 0.2.1
 * 2019-2021
 
 * void explore_folder(String path, String... extension);
@@ -18,8 +18,6 @@
 * void select_folder();
 * void select_folder(String message);
 * boolean folder_input_default_is() ;
-* boolean folder_is();
-* void folder_is(boolean is);
 */
 void setup() {
 	rope_version();
