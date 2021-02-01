@@ -1,50 +1,51 @@
 /**
-* Rope Framework
-* v 1.0.0
-* Copyleft (c) 2014-2019
+* Rope framework
+* Copyleft (c) 2014-2021
 * @author @stanlepunk
 * @see https://github.com/StanLepunK/Rope_framework
-* 
-* note:
-* import rope.core.*; > imported in the tab Z_R_core.pde
-* import rope.vector.*; > imported in the tab Z_R_core.pde
-* 
+*
 */
 
+/**
+* INPUT
+* V 0.2.0
+* 2019-2021
+* void select_input();
+* void select_input(String type);
+* R_Data_Input get_input(String type);
+* R_Data_Input [] get_inputs();
+* R_Data_Input get_input(int target);
+* boolean input_use_is(); it's buggy or what ?
+* boolean input_use_is(String type); it's buggy or what ?
+* void input_use(boolean is);
+* void input_use(String type, boolean is);
+* String input_path();
+* String input_path(String type);
+* void reset_input();
+* void reset_input(String type);
+* File input_file();
+* File input_file(String type);
+* void set_filter_input(String type, String... extension);
+*/
 void setup() {
-  select_input("movie");
+	// select_input(); // you can select all file, no sorting
+  select_input("movie"); // give the possibility to select only file with a movie extension store in movie array
   print_extension_filter();
 }
 
 
 void draw() {
-  println(input_is("movie"));
-  println(input_file("movie"));
-  println(input("movie"));
+	println(input_path("media"));
+
+
+	// input_use() to set witch type of file you can select after this setting, after that this is the default setting
+	// but it's buggy or what ?
+	input_use("image", true); 
+	println(input_use_is("image"));
+  // println(input_file("movie"));
+  // println(input("movie"));
+	exit();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
