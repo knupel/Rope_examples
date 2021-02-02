@@ -28,9 +28,11 @@
 * void set_filter_input(String type, String... extension);
 */
 void setup() {
+	size(200,200,P3D);
+	print_extension_filter();
 	// select_input(); // you can select all file, no sorting
   select_input("movie"); // give the possibility to select only file with a movie extension store in movie array
-  print_extension_filter();
+  
 }
 
 
