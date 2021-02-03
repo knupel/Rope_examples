@@ -1,16 +1,18 @@
 /**
 * Rope COLOUR
-*v 0.11.2
-* Copyleft (c) 2016-2019 
+*v 0.11.5
+* Copyleft (c) 2016-2021
 * Stan le Punk > http://stanlepunk.xyz/
-* Processing 3.5.3
-* Library Rope 0.8.5.30
 * @author @stanlepunk
 * @see https://github.com/StanLepunK/Rope_framework
 *
 * Pack of method to use colour, palette and method conversion
 *
 */
+/**
+* util colour
+*/
+
 
 
 
@@ -692,9 +694,30 @@ float gradient_value(float origin, float destination, float threshold) {
 
 /**
 * plot
-* v 0.0.2
+* v 0.2.0
 * set pixel color with alpha and PGraphics management 
 */
+boolean use_plot_x2_is = false;
+void use_plot_x2(boolean is) {
+	use_plot_x2_is = is;
+}
+
+void plot(vec2 pos, int colour) {
+	plot((int)pos.x(), (int)pos.y(), colour, 1.0, g);
+}
+
+void plot(vec2 pos, int colour, PGraphics pg) {
+	plot((int)pos.x(), (int)pos.y(), colour, 1.0, pg);
+}
+
+void plot(vec2 pos, int colour, float alpha) {
+	plot((int)pos.x(), (int)pos.y(), colour, alpha, g);
+}
+
+void plot(vec2 pos, int colour, float alpha, PGraphics pg) {
+	plot((int)pos.x(), (int)pos.y(), colour, alpha, pg);
+}
+
 void plot(int x, int y, int colour) {
 	plot(x, y, colour, 1.0, g);
 }
@@ -708,15 +731,45 @@ void plot(int x, int y, int colour, float alpha) {
 }
 
 void plot(int x, int y, int colour, float alpha, PGraphics pg) {
-	int bg = pg.get(x,y);
-	int col = colour;
-	if(alpha < 1) {
-		col = mixer(bg,colour,alpha);
-	} 
-	int rank = x + y * pg.width;
-	if(rank >= 0 && rank < pg.pixels.length && x >= 0 && x < pg.width) {
-		pg.pixels[rank] = col; 
-	}  
+	int index = index_pixel_array(x, y, pg.width);
+	if(index >= 0 && index < pg.pixels.length && x >= 0 && x < pg.width) {
+		int bg = pg.pixels[index];
+		int col = colour;
+		if(alpha < 1) {
+			col = mixer(bg,colour,alpha);
+		} 
+		pg.pixels[index] = col;
+		if(use_plot_x2_is) {
+			Integer [] arr = new Integer[calc_plot_neighbourhood(index, x, y, pg.width, pg.height).size()];
+			arr = calc_plot_neighbourhood(index, x, y, pg.width, pg.height).toArray(arr);
+			for(int which_one : arr) {
+				pg.pixels[which_one] = col;
+			}
+		}
+	}
+}
+
+ArrayList<Integer> calc_plot_neighbourhood(int index_base, int x, int y, int w, int h) {
+	ArrayList<Integer> arr = new ArrayList<Integer>();
+	int index, tx, ty = 0;
+
+	if(x < w -1) {
+		index = index_base + 1;
+		arr.add(index);
+	}
+	if(x > 0) {
+		index = index_base - 1;
+		arr.add(index);
+	}
+	if(y < h -1) {
+		index = index_base + w;
+		arr.add(index);
+	}
+	if(y > 0) {
+		index = index_base - w;
+		arr.add(index);
+	}
+	return arr;
 }
 
 
