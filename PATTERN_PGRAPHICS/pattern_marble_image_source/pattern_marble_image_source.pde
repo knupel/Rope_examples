@@ -9,7 +9,7 @@
 /**
 * pattern marble example
 * 2021-2021
-* v 0.0.2
+* v 0.0.3
 *
 * based on Lode Vandevenne algorithm
 * https://lodev.org/cgtutor/randomnoise.html
@@ -83,5 +83,11 @@ void mousePressed() {
 		println("pattern_marble is HSB mode");
 		pattern_marble = pattern_marble_hsb(img_src, width,height, x_period, y_period, turb_power, turb_size, turbulence, scale);
 	}
+	println("x_period", x_period);
+	println("y_period", y_period);
+	println("turb_power", turb_power);
+	println("turb_size", turb_size);
+	println("turbulence", turbulence);
+	println("scale", scale);
 	image(pattern_marble);
 }

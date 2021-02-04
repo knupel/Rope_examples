@@ -9,7 +9,7 @@
 /**
 * pattern marble example 2
 * 2021-2021
-* v 0.0.3
+* v 0.0.4
 *
 * from Lode Vandevenne algorithm
 * https://lodev.org/cgtutor/randomnoise.html
@@ -58,6 +58,18 @@ void mousePressed() {
 	int height_mat = floor(random(1,height));
 	float min_val = random(1);
 	float max_val = random(min_val,1);
+
+	println("x_period", x_period);
+	println("y_period", y_period);
+	println("turb_power", turb_power);
+	println("turb_size", turb_size);
+	println("turbulence", turbulence);
+	println("scale", scale);
+	println("width_mat", width_mat);
+	println("height_mat", height_mat);
+	println("min_val", min_val);
+	println("max_val", max_val);
+
 	float [][] mat2D = generate_matrix_2D(width_mat, height_mat, min_val, max_val);
 	pattern_marble = pattern_marble(mat2D, width,height, x_period, y_period, turb_power, turb_size, turbulence, scale);
 	image(pattern_marble);
