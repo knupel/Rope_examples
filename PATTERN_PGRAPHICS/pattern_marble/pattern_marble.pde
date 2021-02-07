@@ -9,11 +9,7 @@
 /**
 * pattern marble example
 * 2021-2021
-* v 0.1.0
-*
-* based on Lode Vandevenne algorithm
-* https://lodev.org/cgtutor/randomnoise.html
-*
+* v 0.1.1
 * methods
 * void init_pattern();
 * void reset_pattern();
@@ -38,11 +34,11 @@
 * PGraphics pattern_marble_rgb(PImage src, int w, int h);
 * PGraphics pattern_marble_hsb(PImage src, int w, int h);
 * PGraphics pattern_marble(int w, int h);
+*
 */
 
 
 PGraphics pattern_marble;
-PImage img_src;
 // x_period and y_period together define the angle of the lines
 // x_period and y_period both 0 ==> it becomes a normal clouds or turbulence pattern
 float x_period = 5.0; //defines repetition of marble lines in x direction
@@ -54,40 +50,33 @@ float smooth = 32.0; //initial size of the turbulence
 
 
 void setup() {
-	size(800,512);
+	size(800,512,P2D);
 	colorMode(HSB,360,100,100,100);
 	rope_version();
-	img_src = loadImage("jpg file/small_dame_hermine.jpg");
-	surface.setSize(img_src.width, img_src.height);
-	pattern_marble = pattern_marble_brightness(img_src, width,height);
+	background(r.RED);
+	pattern_marble = pattern_marble(width,height);
 	image(pattern_marble);
 }
 
 void draw() {}
 
 void mousePressed() {
+	background(r.RED);
 	x_period = random(0,10);
 	y_period = random(0,10);
 	turb_power = random(0,10.0);
 	smooth = random(0,64.0);
-	set_pattern_smooth(smooth);
-	set_pattern_turbulence(turb_power);
-	set_pattern_period(x_period,y_period);
 
-	float which_one = random(1);
-	if(which_one < 0.3) {
-		println("pattern_marble is brightness mode");
-		pattern_marble = pattern_marble_brightness(img_src, width,height);
-	} else if(which_one >=0.3 && which_one < 0.6) {
-		println("pattern_marble is RGB mode");
-		pattern_marble = pattern_marble_rgb(img_src, width,height);
-	} else {
-		println("pattern_marble is HSB mode");
-		pattern_marble = pattern_marble_hsb(img_src, width,height);
-	}
-	println("x_period", x_period);
-	println("y_period", y_period);
-	println("turbulence", turb_power);
-	println("smooth", smooth);
+	set_pattern_turbulence(turb_power);
+	set_pattern_smooth(smooth);
+	set_pattern_period(x_period, y_period);
+	println(ANSI_RED+"new draw"+ANSI_WHITE);
+	println(ANSI_YELLOW+"x_period"+ANSI_WHITE, x_period);
+	println(ANSI_YELLOW+"y_period"+ANSI_WHITE, y_period);
+	println(ANSI_YELLOW+"turbulance"+ANSI_WHITE, turb_power);
+	println(ANSI_YELLOW+"smooth"+ANSI_WHITE, smooth);
+
+	
+	pattern_marble = pattern_marble(width,height);
 	image(pattern_marble);
 }
