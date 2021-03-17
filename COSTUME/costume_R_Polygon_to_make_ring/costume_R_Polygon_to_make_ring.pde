@@ -24,13 +24,13 @@ void setup() {
   beginShape();
   // for some reason the count must a countdown
   for(int i = main.get_summits()-1 ; i >= 0 ; i--) {
-    vertex(main.get_final_point(i));
+    vertex(main.get_point(i));
   }
 
   beginContour();
   // for some reason the count must normal
   for(int i = 0 ; i < contour.get_summits() ; i++) {
-    vertex(contour.get_final_point(i));
+    vertex(contour.get_point(i));
   }
   
   endContour();

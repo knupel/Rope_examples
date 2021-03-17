@@ -1,14 +1,13 @@
 /**
 * Rope Framework
 *
-* Copyleft (c) 2014-2019
+* Copyleft (c) 2014-2021
 * @author @stanlepunk
 * @see https://github.com/StanLepunK/Rope_framework
 * 
 * work with
-* Rope frame Work 1.1.3
 * Processing 3.5.3
-* Rope library 0.8.4.29
+* Rope library 0.9.1.36
 */
 
 import rope.costume.R_Line2D;
@@ -17,7 +16,7 @@ R_Line2D main_line;
 void setup() {
   size(400,400);
   background(r.BLANC);
-  border(width/4);
+  border(width/3);
 }
 
 
