@@ -7,13 +7,16 @@
 *
 */
 
+/**
+ * Virus exemple use with costume
+ * it's very buggy... like a the coronavirus
+ * 2019-2021
+ * v 0.2.0
+ */
 
 void setup() {
   size(500,500,P3D);
-  // frameRate(1000);
-
 }
-
 
 vec3 dir = vec3();
 void draw() {
@@ -26,9 +29,10 @@ void draw() {
   float thickness =1;
   aspect(fill,stroke,thickness);
 
-  
-  virus_mutation(2);
-  virus_node(4);
-  virus_num(36);
-  costume(pos,size,dir,VIRUS);
+  costume(pos,size,dir,r.VIRUS);
+
+	aspect(r.BLANC,r.GREEN,3.0);
+	R_Costume virus = new R_Costume(this,r.VIRUS);
+	virus.set_summits(60);
+	costume(pos,size,dir,virus);
 }

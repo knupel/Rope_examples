@@ -803,7 +803,7 @@ PGraphics fx_dither_bayer_8(PImage source, boolean on_g, boolean filter_is, vec3
 
 		// external parameter
     fx_dither_bayer_8.set("level_source",level.x,level.y,level.z);
-    fx_dither_bayer_8.set("mode",mode); // mode 3 : hsb / 1 is rgb
+    fx_dither_bayer_8.set("mode",mode); // mode 0 : gray / 1 is rgb
 
     // rendering
 		render_shader(fx_dither_bayer_8,pg_dither_bayer_8,source,on_g,filter_is);

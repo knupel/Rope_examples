@@ -6,11 +6,10 @@
 *
 * R_Megabloc && R_BLoc
 * example : create save blocs and load them
-* v 0.0.2
-* 2019-2019
+* v 0.0.3
+* 2019-2021
 */
 
-// R_Bloc [] bloc;
 R_Megabloc megabloc;
 R_Megabloc megabloc_from_save;
 
@@ -66,7 +65,7 @@ void create_bloc(R_Megabloc megabloc) {
 	int num = 3;
 	for(int i = 0 ; i < num ; i++) {
 		R_Bloc bloc = new R_Bloc(this,width,height);
-		bloc.set_fill(fill);
+		bloc.fill(fill);
 		int complexity = (int)random(3,5);
 		for(int k = 0 ; k < complexity ; k++) {
 			float x = random(width);
@@ -76,7 +75,6 @@ void create_bloc(R_Megabloc megabloc) {
 		megabloc.add(bloc);
 	}
 }
-
 
 
 

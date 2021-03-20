@@ -9,9 +9,11 @@
 
 /**
 * STAR example
+* 2019-2021
+* v 0.2.0
 */
 
-
+import rope.costume.R_Costume;
 void setup() {
   size(500,500,P3D);
 }
@@ -22,19 +24,17 @@ void draw() {
   background_rope(0);
   vec3 pos = vec3(width/2,height/2,0);
   vec3 size = vec3(200,200,40);
-  dir.add(.01,.02,.05);
+  dir.add(.005,.003,.001);
   int fill = color(255,0,0,25);
   int stroke = color(255,0,0);
   float thickness =1;
   aspect(fill,stroke,thickness);
-  //costume(pos,size,dir,STAR_ROPE);
-  star_summits(36);
-  star_ratio(.1,.2,.3,.4,.5,.6,.7,.8,.9);
-  Costume c = new Costume(this,STAR_3D);
-  costume(pos,size,dir,c);
+  R_Costume star = new R_Costume(this,r.STAR_3D);
+	star.set_summits(36);
+	star.set_ratio(.1,.2,.3,.4,.5,.6,.7,.8,.9);
+	// println(star.get_ratio());
+  costume(pos,size,dir,star);
 
-
-  star_ratio(0.1f,2.0f);
   aspect(r.WHITE,r.WHITE,thickness);
-  costume(pos,size,dir,STAR_3D);
+  costume(pos,size,dir,r.STAR);
 }

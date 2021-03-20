@@ -6,8 +6,8 @@
 *
 * R_Bloc example
 * example : create bloc, set bloc and catch bloc setting
-* v 0.0.1
-* 2019-2019
+* v 0.0.2
+* 2019-2021
 */
 
 R_Bloc bloc;
@@ -25,9 +25,9 @@ void setup() {
 void draw() {
 	background(r.SANG);
 	if(mousePressed) {
-		bloc.set_fill(r.ORANGE);
+		bloc.fill(r.ORANGE);
 	} else {
-		bloc.set_fill(r.YELLOW);
+		bloc.fill(r.YELLOW);
 	}
 	bloc.show();
 }

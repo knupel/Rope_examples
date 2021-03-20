@@ -9,6 +9,10 @@
 * Pack of method to use colour, palette and method conversion
 *
 */
+/**
+* util colour
+*/
+
 
 
 
@@ -690,12 +694,28 @@ float gradient_value(float origin, float destination, float threshold) {
 
 /**
 * plot
-* v 0.1.3
+* v 0.2.0
 * set pixel color with alpha and PGraphics management 
 */
 boolean use_plot_x2_is = false;
 void use_plot_x2(boolean is) {
 	use_plot_x2_is = is;
+}
+
+void plot(vec2 pos, int colour) {
+	plot((int)pos.x(), (int)pos.y(), colour, 1.0, g);
+}
+
+void plot(vec2 pos, int colour, PGraphics pg) {
+	plot((int)pos.x(), (int)pos.y(), colour, 1.0, pg);
+}
+
+void plot(vec2 pos, int colour, float alpha) {
+	plot((int)pos.x(), (int)pos.y(), colour, alpha, g);
+}
+
+void plot(vec2 pos, int colour, float alpha, PGraphics pg) {
+	plot((int)pos.x(), (int)pos.y(), colour, alpha, pg);
 }
 
 void plot(int x, int y, int colour) {
@@ -729,9 +749,6 @@ void plot(int x, int y, int colour, float alpha, PGraphics pg) {
 	}
 }
 
-int index_pixel_array(int x, int y, int w) {
-	return (x + y * w);
-}
 ArrayList<Integer> calc_plot_neighbourhood(int index_base, int x, int y, int w, int h) {
 	ArrayList<Integer> arr = new ArrayList<Integer>();
 	int index, tx, ty = 0;

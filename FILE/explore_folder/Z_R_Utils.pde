@@ -1,6 +1,6 @@
 /**
 * Rope UTILS 
-* v 1.64.4
+* v 1.64.6
 * Copyleft (c) 2014-2021
 * Rope – Romanesco Processing Environment – 
 * @author @stanlepunk
@@ -18,6 +18,15 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 // EXPORT PDF
 import processing.pdf.*;
+
+
+
+/**
+* pixel larray
+*/
+int index_pixel_array(int x, int y, int w) {
+	return (x + y * w);
+}
 
 
 /**
@@ -2518,8 +2527,8 @@ boolean research_in_String(String research, String target) {
 
 /**
 String file utils
-2014-2018
-v 0.2.3
+2014-2021
+v 0.2.4
 */
 /**
 * remove element of the sketch path
@@ -2543,9 +2552,9 @@ String sketchPath(int minus) {
 
 
 // remove the path of your file
-String file_name(String s) {
+String file_name(String file_path) {
 	String file_name = "" ;
-	String [] split_path = s.split("/") ;
+	String [] split_path = file_path.split("/") ;
 	file_name = split_path[split_path.length -1] ;
 	return file_name ;
 }

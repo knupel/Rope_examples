@@ -6,8 +6,8 @@
 *
 * R_Bloc R_Megabloc and method full implementation
 * example : create save blocs and load them
-* v 0.0.1
-* 2019-2019
+* v 0.0.2
+* 2019-2021
 */
 
 R_Megabloc megabloc;
@@ -112,9 +112,9 @@ void keyPressed() {
 	if(key == 'l') {
 		megabloc = read_megabloc(load_megabloc("bloc.blc"));
 		int fill = color(random(g.colorModeX),random(g.colorModeY), random(g.colorModeZ));
-		megabloc.set_fill(fill);
-		megabloc.set_stroke(r.NOIR);
-		megabloc.set_thickness(3);
+		megabloc.fill(fill);
+		megabloc.stroke(r.NOIR);
+		megabloc.thickness(3);
 	}
 }
 
