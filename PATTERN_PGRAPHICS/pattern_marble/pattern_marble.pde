@@ -9,7 +9,7 @@
 /**
 * pattern marble example
 * 2021-2021
-* v 0.1.1
+* v 0.1.2
 *
 * methods
 * void init_pattern();
@@ -73,11 +73,11 @@ void mousePressed() {
 	set_pattern_turbulence(turb_power);
 	set_pattern_smooth(smooth);
 	set_pattern_period(x_period, y_period);
-	println(ANSI_RED+"new draw"+ANSI_WHITE);
-	println(ANSI_YELLOW+"x_period"+ANSI_WHITE, x_period);
-	println(ANSI_YELLOW+"y_period"+ANSI_WHITE, y_period);
-	println(ANSI_YELLOW+"turbulance"+ANSI_WHITE, turb_power);
-	println(ANSI_YELLOW+"smooth"+ANSI_WHITE, smooth);
+	println(r.ANSI_RED+"new draw"+r.ANSI_WHITE);
+	println(r.ANSI_YELLOW+"x_period"+r.ANSI_WHITE, x_period);
+	println(r.ANSI_YELLOW+"y_period"+r.ANSI_WHITE, y_period);
+	println(r.ANSI_YELLOW+"turbulance"+r.ANSI_WHITE, turb_power);
+	println(r.ANSI_YELLOW+"smooth"+r.ANSI_WHITE, smooth);
 
 	
 	pattern_marble = pattern_marble(width,height);
