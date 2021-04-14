@@ -1,12 +1,10 @@
 /**
 * ROPE PROCESSING METHOD
-* v 2.8.1
+* v 2.9.0
 * Copyleft (c) 2014-2021
-* Stan le Punk > http://stanlepunk.xyz/
 * @author @stanlepunk
 * @see https://github.com/StanLepunK/Rope_framework
-* Processing 3.5.3.269
-* Rope library 0.8.5.30
+* Processing 3.5.4.270
 */
 import rope.costume.R_Shape;
 
@@ -17,6 +15,44 @@ All advanced ghost push Processing method further.
 Processing and vec, ivec and bvec method
 the idea here is create method directly insprating from Processing to simplify the coder life
 */
+
+
+
+/**
+* color
+* WARNING is not possible because the color is a type defin Processing
+* so we use colour instead
+*/
+int colour(vec4 xyza) {
+  return color(xyza.x(),xyza.y(),xyza.z(),xyza.w());
+}
+
+int colour(vec3 xyz) {
+  return color(xyz.x(),xyz.y(),xyz.z());
+}
+
+int colour(vec2 gray) {
+  return color(gray.x(),gray.y());
+}
+
+
+int colour(float gray) {
+  return color(gray,gray,gray);
+}
+
+int colour(float gray, float alpha) {
+  return color(gray,gray,gray, alpha);
+}
+
+int colour(float x, float y, float z) {
+  return color(x,y,z);
+}
+
+int colour(float x, float y, float z, float a) {
+  return color(x,y,z,a);
+}
+
+
 
 /**
 * colorMode(int mode, vec4 color_component)
@@ -1749,7 +1785,7 @@ void pop(PGraphics other) {
 /**
 * GHOST METHODS for PROCESSING
 * 2018-2019
-* v 0.3.0
+* v 0.3.1
 */
 boolean get_layer_is_correct() {
   if(get_layer() != null && get_layer().width > 0 && get_layer().height > 0) {
@@ -1758,6 +1794,23 @@ boolean get_layer_is_correct() {
     return false;
   }
 }
+
+/**
+* color
+* WARNING is not possible because the color is a type defin Processing
+*/
+// int color(vec4 xyza) {
+//   return color(xyza.x(),xyza.y(),xyza.z(),xyza.w());
+// }
+
+// int color(vec3 xyz) {
+//   return color(xyza.x(),xyza.y(),xyza.z());
+// }
+
+// int color(vec2 gray) {
+//   return color(gray.x(),gray.y());
+// }
+
 
 // colorMode
 void colorMode(int mode) {
