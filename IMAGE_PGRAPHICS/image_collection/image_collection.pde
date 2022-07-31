@@ -12,8 +12,10 @@
 *
 * image collection
 * v 0.2.0
-* 2017-2019
+* 2017-2022
 */
+import rope.image.R_Image_Manager;
+import rope.image.R_Image;
 
 
 R_Image_Manager collection;
@@ -22,7 +24,7 @@ PGraphics buffer;
 void setup() {
   size(100,100,P2D);
   rope_version();
-  collection = new R_Image_Manager();  
+  collection = new R_Image_Manager(this);  
   // 
   collection.load("jpg file/petite_puros_girl.jpg", "jpg file/pirate_small.jpg","jpg file/pirate_small.jpg");
   PImage img = loadImage("jpg file/banc_public_small.jpg");
@@ -35,7 +37,7 @@ void draw() {
   if(mousePressed) {
     R_Image img = collection.rand();
     println(img.get_id(),img.get_name());
-    background(img.get_image());
+    background(img.get_PImage());
   } else {
     background(collection.get(0));
   }
