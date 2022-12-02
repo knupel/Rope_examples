@@ -1,7 +1,7 @@
 /**
 * Rope framework image
-* v 0.6.2
-* Copyleft (c) 2014-2021
+* v 0.6.4
+* Copyleft (c) 2014-2022
 *
 * dependencies
 * Processing 4.0.0
@@ -433,7 +433,7 @@ void select_layer(int target) {
 
 /**
 resize image
-v 0.0.3
+v 0.1.0
 */
 /**
 * resize your picture proportionaly to the window sketch of the a specificic PGraphics
@@ -460,11 +460,7 @@ void image_resize(PImage src, int target_width, int target_height, boolean fullf
       src.resize(ceil(src.width *ratio_h), ceil(src.height *ratio_h));  
     }
   } else {
-    if(ratio_w > ratio_h) {
-      src.resize(ceil(src.width *ratio_h), ceil(src.height *ratio_h));
-    } else {
-      src.resize(ceil(src.width *ratio_w), ceil(src.height *ratio_w));  
-    }
+    src.resize(ceil(src.width *ratio_w), ceil(src.height *ratio_h));
   }
 }
 
@@ -514,8 +510,8 @@ PImage image_copy_window(PImage src, PGraphics pg, int where) {
 
 /**
 IMAGE
-v 0.2.2
-2016-2018
+v 0.2.3
+2016-2022
 */
 /**
 * additionnal method for image
@@ -523,7 +519,7 @@ v 0.2.2
 */
 void image(PImage img) {
   if(img != null) image(img, 0, 0);
-  else print_err("Object PImage pass to method image() is null");
+  else print_err_tempo(30,"void image(PImage img): the argument PImage img is null");
 }
 
 void image(PImage img, int what) {

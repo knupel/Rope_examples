@@ -1,19 +1,21 @@
 /**
 * POST FX shader collection
 *
-* 2019-2021
-* v 0.2.15
+* 2019-2022
+* v 0.3.2
 * all filter bellow has been tested.
 * @author @stanlepunk
 * @see https://github.com/StanLepunK/Shader
 */
 
 
+
+
 /**
 * Template by Stan le punk
 * this template can be used for texture or direct filtering
-v 0.2.2
-2018-2019
+v 0.2.3
+2018-2022
 */
 // setting by class FX
 PGraphics fx_template(PImage source, FX fx) {
@@ -24,12 +26,16 @@ PGraphics fx_template(PImage source, FX fx) {
 PShader fx_template;
 PGraphics pg_template;
 PGraphics fx_template(PImage source, boolean on_g, boolean filter_is, vec4 level_source) {
-	if(!on_g && (pg_template == null 
-								|| (source.width != pg_template.width 
-								|| source.height != pg_template.height))) {
-		pg_template = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_template == null || (fx_canvas.x() != pg_template.width || fx_canvas.y() != pg_template.height))) {
+		pg_template = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_template == null) {
 		String path = get_fx_post_path()+"template_fx_post.glsl";
 		if(fx_post_rope_path_exists) {
@@ -43,7 +49,6 @@ PGraphics fx_template(PImage source, boolean on_g, boolean filter_is, vec4 level
 		fx_template.set("texture_source",source);
 		fx_template.set("resolution",(float)source.width,(float)source.height);
 
-  
     // fx_template.set("color_mode",3); // mode 0 RGB / mode 3 HSB
 
     // fx_template.set("hue",cx); // value from 0 to 1
@@ -67,6 +72,42 @@ PGraphics fx_template(PImage source, boolean on_g, boolean filter_is, vec4 level
 
 
 
+/**
+* Constrain the entry PImage to window size
+*
+* this method can be use to avoid the memory leak when a lot sources with different size is used
+* Because in this case for each iteration the an the PGraphics is create and if it's the frequancy is too high
+* there is not enought time to clean the garbage collector and after few time Processing can be crash
+* v 0.0.2
+* 2022-2022
+*/
+ boolean fx_constrain_is = false;
+ivec2 fx_canvas = new ivec2(width, height);
+
+public void fx_constrain_is(boolean is) {
+	fx_constrain_is = is;
+}
+
+private PImage fx_constrain_main_impl(PImage src) {
+	fx_canvas.set(src.width, src.height);
+	if(fx_canvas.x() != width || fx_canvas.y() != height) {
+		fx_canvas.x(width);
+		fx_canvas.y(height);
+		src = image_copy_window(src, CENTER);
+	} 
+	return src;
+}
+
+private PImage fx_constrain_next_impl(PImage next) {
+	if(next.width != width || next.height != height) {
+		next = image_copy_window(next, CENTER);
+	}
+	return next;
+}
+
+
+
+
 
 
 
@@ -84,8 +125,8 @@ PGraphics fx_template(PImage source, boolean on_g, boolean filter_is, vec4 level
 
 /**
 * Antialiasing FXAA by Stan le punk
-* v 0.0.2
-* 2019-2019
+* v 0.0.3
+* 2019-2022
 */
 // setting by class FX
 PGraphics fx_fxaa(PImage source, FX fx) {
@@ -96,12 +137,16 @@ PGraphics fx_fxaa(PImage source, FX fx) {
 PShader fx_fxaa;
 PGraphics pg_fxaa;
 PGraphics fx_fxaa(PImage source, boolean on_g, boolean filter_is, float sub_pix_cap, float sub_pix_trim) {
-	if(!on_g && (pg_fxaa == null 
-								|| (source.width != pg_fxaa.width 
-								|| source.height != pg_fxaa.height))) {
-		pg_fxaa = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_fxaa == null || (fx_canvas.x() != pg_fxaa.width || fx_canvas.y() != pg_fxaa.height))) {
+		pg_fxaa = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_fxaa == null) {
 		String path = get_fx_post_path()+"AA_FXAA.glsl";
 		if(fx_post_rope_path_exists) {
@@ -135,8 +180,6 @@ PGraphics fx_fxaa(PImage source, boolean on_g, boolean filter_is, float sub_pix_
 
 		//float sub_pix_trim = -0.5; //something happen from -1 to 1 
 		fx_fxaa.set("sub_pix_trim",sub_pix_trim);
-
-
 
     // rendering
 		render_shader(fx_fxaa,pg_fxaa,source,on_g,filter_is);
@@ -184,8 +227,8 @@ PGraphics fx_fxaa(PImage source, boolean on_g, boolean filter_is, float sub_pix_
 
 /**
 * Blur circular
-* v 0.2.2
-* 2018-2019
+* v 0.2.3
+* 2018-2022
 */
 // use fx setting
 PGraphics fx_blur_circular(PImage source, FX fx) {
@@ -196,11 +239,16 @@ PGraphics fx_blur_circular(PImage source, FX fx) {
 PShader fx_blur_circular;
 PGraphics pg_blur_circular;
 PGraphics fx_blur_circular(PImage source, boolean on_g, boolean filter_is, vec3 strength, int num) {
-	if(!on_g && (pg_blur_circular == null || (source.width != pg_blur_circular.width 
-																				|| source.height != pg_blur_circular.height))) {
-		pg_blur_circular = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-	
+	if(!on_g && (pg_blur_circular == null || (fx_canvas.x() != pg_blur_circular.width || fx_canvas.y() != pg_blur_circular.height))) {
+		pg_blur_circular = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_blur_circular == null) {
 		String path = get_fx_post_path()+"blur_circular.glsl";
 		if(fx_post_rope_path_exists) {
@@ -238,8 +286,8 @@ PGraphics fx_blur_circular(PImage source, boolean on_g, boolean filter_is, vec3 
 
 /**
 * gaussian blur
-* v 0.2.5
-* 2018-2019
+* v 0.2.6
+* 2018-2022
 */
 // setting by class FX
 PGraphics fx_blur_gaussian(PImage source, FX fx) {
@@ -252,11 +300,16 @@ PGraphics fx_blur_gaussian(PImage source, FX fx) {
 PShader fx_blur_gaussian;
 PGraphics pg_blur_gaussian;
 PGraphics fx_blur_gaussian(PImage source, boolean on_g, boolean filter_is, boolean second_pass, ivec2 resolution, float strength) {
-	if(!on_g && (pg_blur_gaussian == null || (source.width != pg_blur_gaussian.width 
-																				|| source.height != pg_blur_gaussian.height))) {
-		pg_blur_gaussian = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-  
+	if(!on_g && (pg_blur_gaussian == null || (fx_canvas.x() != pg_blur_gaussian.width || fx_canvas.y() != pg_blur_gaussian.height))) {
+		pg_blur_gaussian = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
   if(pg_blur_gaussian == null) {
   	// security, because that's return problem consol with too much waring message for PImage source
   	if(resolution != null && !all(equal(ivec2(-1),resolution))) {
@@ -302,12 +355,10 @@ PGraphics fx_blur_gaussian(PImage source, boolean on_g, boolean filter_is, boole
 			} 
 		}
 
-
 		if(resolution != null) {
 			fx_blur_gaussian.set("resolution",resolution.x,resolution.y);
 			fx_blur_gaussian.set("resolution_source",resolution.x,resolution.y);
 		}
-
 
 		// external parameter
 		if(strength <= 0.001) strength = 0.001;
@@ -315,8 +366,6 @@ PGraphics fx_blur_gaussian(PImage source, boolean on_g, boolean filter_is, boole
 		fx_blur_gaussian.set("sigma",.5); // better between 0 and 1
 		fx_blur_gaussian.set("horizontal_pass",true);
 	  
-
-
 	  // rendering 
 	  if(!on_g) {
 	  	pg.beginDraw();            
@@ -353,8 +402,7 @@ PGraphics fx_blur_gaussian(PImage source, boolean on_g, boolean filter_is, boole
 			return pg_2; 
 		} else {
 			return pg;
-		}
-		
+		}	
 	}
 }
 
@@ -376,8 +424,8 @@ PGraphics fx_blur_gaussian(PImage source, boolean on_g, boolean filter_is, boole
 
 /**
 * Blur radial
-v 0.3.2
-2018-2019
+v 0.3.3
+2018-2022
 */
 // setting by class FX
 PGraphics fx_blur_radial(PImage source, FX fx) {
@@ -397,12 +445,16 @@ PGraphics fx_blur_radial(PImage source, FX fx) {
 PShader fx_blur_radial;
 PGraphics pg_blur_radial;
 PGraphics fx_blur_radial(PImage source, boolean on_g, boolean filter_is, vec2 pos, float strength, float scale) {
-	if(!on_g && (pg_blur_radial == null 
-								|| (source.width != pg_blur_radial.width 
-								|| source.height != pg_blur_radial.height))) {
-		pg_blur_radial = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-	
+	if(!on_g && (pg_blur_radial == null || (fx_canvas.x() != pg_blur_radial.width || fx_canvas.y() != pg_blur_radial.height))) {
+		pg_blur_radial = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_blur_radial == null) {
 		String path = get_fx_post_path()+"blur_radial.glsl";
 		if(fx_post_rope_path_exists) {
@@ -444,8 +496,8 @@ PGraphics fx_blur_radial(PImage source, boolean on_g, boolean filter_is, vec2 po
 
 /**
 * Colour change A by Stan le punk
-v 0.3.2
-2018-2019
+v 0.3.3
+2018-2022
 */
 // setting by class FX
 PGraphics fx_colour_change_a(PImage source, FX fx) {
@@ -456,12 +508,16 @@ PGraphics fx_colour_change_a(PImage source, FX fx) {
 PShader fx_colour_change_a;
 PGraphics pg_colour_change_a;
 PGraphics fx_colour_change_a(PImage source, boolean on_g, boolean filter_is, int num, vec3... mat) {
-	if(!on_g && (pg_colour_change_a == null 
-								|| (source.width != pg_colour_change_a.width 
-								|| source.height != pg_colour_change_a.height))) {
-		pg_colour_change_a = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-	
+	if(!on_g && (pg_colour_change_a == null || (fx_canvas.x() != pg_colour_change_a.width || fx_canvas.y() != pg_colour_change_a.height))) {
+		pg_colour_change_a = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_colour_change_a == null) {
 		String path = get_fx_post_path()+"colour_change_A.glsl";
 		if(fx_post_rope_path_exists) {
@@ -470,9 +526,7 @@ PGraphics fx_colour_change_a(PImage source, boolean on_g, boolean filter_is, int
 		}
 	} else {
 		fx_shader_flip(fx_colour_change_a,on_g,filter_is,source,null);
-
 		fx_colour_change_a.set("texture_source",source);
-
 		// external param
 		if(mat != null && mat.length == 1) {
 			if(mat[0] != null) fx_colour_change_a.set("mat_col_0",mat[0].x,mat[0].y,mat[0].z);
@@ -486,9 +540,7 @@ PGraphics fx_colour_change_a(PImage source, boolean on_g, boolean filter_is, int
 		}
 
 		fx_colour_change_a.set("num",num);
-
 		render_shader(fx_colour_change_a,pg_colour_change_a,source,on_g,filter_is);
-
 	}
 	
 	// return
@@ -514,8 +566,8 @@ PGraphics fx_colour_change_a(PImage source, boolean on_g, boolean filter_is, int
 
 /**
 * colour change B
-* v 0.1.2
-* 2018-2019
+* v 0.1.3
+* 2018-2022
 */
 
 // setting by class FX
@@ -535,12 +587,16 @@ PGraphics fx_colour_change_b(PImage source, FX fx) {
 PShader fx_colour_change_b;
 PGraphics pg_colour_change_b;
 PGraphics fx_colour_change_b(PImage source, boolean on_g, boolean filter_is, float angle, float strength) {
-	if(!on_g && (pg_colour_change_b == null 
-								|| (source.width != pg_colour_change_b.width 
-								|| source.height != pg_colour_change_b.height))) {
-		pg_colour_change_b = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_colour_change_b == null || (fx_canvas.x() != pg_colour_change_b.width || fx_canvas.y() != pg_colour_change_b.height))) {
+		pg_colour_change_b = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_colour_change_b == null) {
 		String path = get_fx_post_path()+"colour_change_B.glsl";
 		if(fx_post_rope_path_exists) {
@@ -595,8 +651,8 @@ PGraphics fx_colour_change_b(PImage source, boolean on_g, boolean filter_is, flo
 /**
 * Datamosh inpired by an algorithm of Alexandre Rivaux 
 * @see https://github.com/alexr4/datamoshing-GLSL
-* v 0.0.4
-*2019-2019
+* v 0.0.5
+*2019-2022
 */
 // setting by class FX
 PGraphics fx_datamosh(PImage source, FX fx) {
@@ -608,12 +664,16 @@ PShader fx_datamosh;
 PShader fx_flip_datamosh;
 PGraphics pg_datamosh;
 PGraphics fx_datamosh(PImage source, boolean on_g, boolean filter_is, float threshold, float strength, vec2 offset_red, vec2 offset_green, vec2 offset_blue) {
-	if(!on_g && (pg_datamosh == null 
-								|| (source.width != pg_datamosh.width 
-								|| source.height != pg_datamosh.height))) {
-		pg_datamosh = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_datamosh == null || (fx_canvas.x() != pg_datamosh.width || fx_canvas.y() != pg_datamosh.height))) {
+		pg_datamosh = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_datamosh == null) {
 		// main glsl
 		String path = get_fx_post_path()+"datamosh.glsl";
@@ -692,8 +752,8 @@ PGraphics fx_datamosh(PImage source, boolean on_g, boolean filter_is, float thre
 
 /**
 * Derivative by Stan le punk
-* v 0.0.1
-* 2019-2019
+* v 0.0.2
+* 2019-2022
 */
 // setting by class FX
 PGraphics fx_derivative(PImage source, FX fx) {
@@ -704,12 +764,16 @@ PGraphics fx_derivative(PImage source, FX fx) {
 PShader fx_derivative;
 PGraphics pg_derivative;
 PGraphics fx_derivative(PImage source, boolean on_g, boolean filter_is) {
-	if(!on_g && (pg_derivative == null 
-								|| (source.width != pg_derivative.width 
-								|| source.height != pg_derivative.height))) {
-		pg_derivative = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_derivative == null || (fx_canvas.x() != pg_derivative.width || fx_canvas.y() != pg_derivative.height))) {
+		pg_derivative = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_derivative == null) {
 		String path = get_fx_post_path()+"derivative.glsl";
 		if(fx_post_rope_path_exists) {
@@ -727,7 +791,6 @@ PGraphics fx_derivative(PImage source, boolean on_g, boolean filter_is) {
 
     // rendering
 		render_shader(fx_derivative,pg_derivative,source,on_g,filter_is);
-
 	}
 
 	// return
@@ -769,8 +832,8 @@ PGraphics fx_derivative(PImage source, boolean on_g, boolean filter_is) {
 
 /**
 * Dither bayer 8
-* v 0.3.2
-* 2018-2019
+* v 0.3.3
+* 2018-2022
 */
 // setting by class FX
 PGraphics fx_dither_bayer_8(PImage source, FX fx) {
@@ -780,14 +843,17 @@ PGraphics fx_dither_bayer_8(PImage source, FX fx) {
 // main
 PShader fx_dither_bayer_8;
 PGraphics pg_dither_bayer_8;
-PGraphics fx_dither_bayer_8(PImage source, boolean on_g, boolean filter_is, vec3 level, int mode) {
-	if(!on_g && (pg_dither_bayer_8 == null 
-								|| (source.width != pg_dither_bayer_8.width 
-								|| source.height != pg_dither_bayer_8.height))) {
-		pg_dither_bayer_8 = createGraphics(source.width,source.height,get_renderer());
+PGraphics fx_dither_bayer_8(PImage source, boolean on_g, boolean filter_is, vec3 level, int mode) {	
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
-	
+	if(!on_g && (pg_dither_bayer_8 == null || (fx_canvas.x() != pg_dither_bayer_8.width || fx_canvas.y() != pg_dither_bayer_8.height))) {
+		pg_dither_bayer_8 = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_dither_bayer_8 == null) {
 		String path = get_fx_post_path()+"dither_bayer_8.glsl";
 		if(fx_post_rope_path_exists) {
@@ -799,7 +865,6 @@ PGraphics fx_dither_bayer_8(PImage source, boolean on_g, boolean filter_is, vec3
 
 		fx_dither_bayer_8.set("texture_source",source);
 		fx_dither_bayer_8.set("resolution_source",source.width,source.height);
-
 
 		// external parameter
     fx_dither_bayer_8.set("level_source",level.x,level.y,level.z);
@@ -831,8 +896,8 @@ PGraphics fx_dither_bayer_8(PImage source, boolean on_g, boolean filter_is, vec3
 
 /**
 * Flip
-* v 0.1.1
-*2019-2019
+* v 0.1.2
+*2019-2022
 */
 // setting by class FX
 PGraphics fx_flip(PImage source, FX fx) {
@@ -843,12 +908,16 @@ PGraphics fx_flip(PImage source, FX fx) {
 PShader fx_flip;
 PGraphics pg_flip;
 PGraphics fx_flip(PImage source, boolean on_g, boolean filter_is, bvec2 flip) {
-	if(!on_g && (pg_flip == null 
-								|| (source.width != pg_flip.width 
-								|| source.height != pg_flip.height))) {
-		pg_flip = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_flip == null || (fx_canvas.x() != pg_flip.width || fx_canvas.y() != pg_flip.height))) {
+		pg_flip = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_flip == null) {
 		// main glsl
 		String path = get_fx_post_path()+"flip.glsl";
@@ -896,8 +965,8 @@ PGraphics fx_flip(PImage source, boolean on_g, boolean filter_is, bvec2 flip) {
 
 /**
 * Glitch FXAA by Stan le punk
-* v 0.0.1
-* 2019-2019
+* v 0.0.2
+* 2019-2022
 */
 // setting by class FX
 PGraphics fx_glitch_fxaa(PImage source, FX fx) {
@@ -908,12 +977,16 @@ PGraphics fx_glitch_fxaa(PImage source, FX fx) {
 PShader fx_glitch_fxaa;
 PGraphics pg_glitch_fxaa;
 PGraphics fx_glitch_fxaa(PImage source, boolean on_g, boolean filter_is, vec4 cardinal) {
-	if(!on_g && (pg_glitch_fxaa == null 
-								|| (source.width != pg_glitch_fxaa.width 
-								|| source.height != pg_glitch_fxaa.height))) {
-		pg_glitch_fxaa = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_glitch_fxaa == null || (fx_canvas.x() != pg_glitch_fxaa.width || fx_canvas.y() != pg_glitch_fxaa.height))) {
+		pg_glitch_fxaa = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_glitch_fxaa == null) {
 		String path = get_fx_post_path()+"AA_FXAA_glitch.glsl";
 		if(fx_post_rope_path_exists) {
@@ -926,7 +999,6 @@ PGraphics fx_glitch_fxaa(PImage source, boolean on_g, boolean filter_is, vec4 ca
 
 		fx_glitch_fxaa.set("texture_source",source);
 		fx_glitch_fxaa.set("resolution_source",(float)source.width,(float)source.height);
-
 
 		fx_glitch_fxaa.set("nw",cardinal.x(),cardinal.w()); // value from -1 to 1
 		fx_glitch_fxaa.set("ne",cardinal.x(),cardinal.y()); // value from -1 to 1
@@ -956,8 +1028,8 @@ PGraphics fx_glitch_fxaa(PImage source, boolean on_g, boolean filter_is, vec4 ca
 
 /**
 * Grain 
-v 0.2.1
-2018-2019
+v 0.2.2
+2018-2022
 */
 
 // setting by class FX
@@ -978,12 +1050,16 @@ PGraphics fx_grain(PImage source, FX fx) {
 PShader fx_grain;
 PGraphics pg_grain;
 PGraphics fx_grain(PImage source, boolean on_g, boolean filter_is, float offset, int mode) {
-	if(!on_g && (pg_grain == null 
-								|| (source.width != pg_grain.width 
-								|| source.height != pg_grain.height))) {
-		pg_grain = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_grain == null || (fx_canvas.x() != pg_grain.width || fx_canvas.y() != pg_grain.height))) {
+		pg_grain = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_grain == null) {
 		String path = get_fx_post_path()+"grain.glsl";
 		if(fx_post_rope_path_exists) {
@@ -1002,7 +1078,6 @@ PGraphics fx_grain(PImage source, boolean on_g, boolean filter_is, float offset,
 		fx_grain.set("mode",mode); // mode 0 is for black and white, and mode 1 for RVB
 
 		render_shader(fx_grain,pg_grain,source,on_g,filter_is);
-
 	}
 
 	// return
@@ -1033,8 +1108,8 @@ PGraphics fx_grain(PImage source, boolean on_g, boolean filter_is, float offset,
 
 /**
 * Grain scatter
-v 0.2.2
-2018-2019
+v 0.2.3
+2018-2022
 */
 // setting by class FX
 PGraphics fx_grain_scatter(PImage source, FX fx) {
@@ -1049,12 +1124,16 @@ PGraphics fx_grain_scatter(PImage source, FX fx) {
 PShader fx_grain_scatter;
 PGraphics pg_grain_scatter;
 PGraphics fx_grain_scatter(PImage source, boolean on_g, boolean filter_is, float strength) {
-	if(!on_g && (pg_grain_scatter == null 
-								|| (source.width != pg_grain_scatter.width 
-								|| source.height != pg_grain_scatter.height))) {
-		pg_grain_scatter = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_grain_scatter == null || (fx_canvas.x() != pg_grain_scatter.width || fx_canvas.y() != pg_grain_scatter.height))) {
+		pg_grain_scatter = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_grain_scatter == null) {
 		String path = get_fx_post_path()+"grain_scatter.glsl";
 		if(fx_post_rope_path_exists) {
@@ -1073,7 +1152,6 @@ PGraphics fx_grain_scatter(PImage source, boolean on_g, boolean filter_is, float
 
 		// rendering
 		render_shader(fx_grain_scatter,pg_grain_scatter,source,on_g,filter_is);
-
 	}
 	// return
 	reset_reverse_g(false);
@@ -1104,8 +1182,8 @@ PGraphics fx_grain_scatter(PImage source, boolean on_g, boolean filter_is, float
 
 /**
 * halftone dot
-* v 0.1.2
-* 2018-2019
+* v 0.1.3
+* 2018-2022
 */
 // setting by class FX
 PGraphics fx_halftone_dot(PImage source, FX fx) {
@@ -1136,12 +1214,16 @@ PGraphics fx_halftone_dot(PImage source, FX fx) {
 PShader fx_halftone;
 PGraphics pg_halftone_dot;
 PGraphics fx_halftone_dot(PImage source, boolean on_g, boolean filter_is, vec2 pos, float size, float angle, float threshold) {
-	if(!on_g && (pg_halftone_dot == null 
-								|| (source.width != pg_halftone_dot.width 
-								|| source.height != pg_halftone_dot.height))) {
-		pg_halftone_dot = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_halftone_dot == null || (fx_canvas.x() != pg_halftone_dot.width || fx_canvas.y() != pg_halftone_dot.height))) {
+		pg_halftone_dot = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_halftone == null) {
 		String path = get_fx_post_path()+"halftone_dot.glsl";
 		if(fx_post_rope_path_exists) {
@@ -1162,12 +1244,10 @@ PGraphics fx_halftone_dot(PImage source, boolean on_g, boolean filter_is, vec2 p
     }
     fx_halftone.set("position",pos.x,pos.y);
 
-		
 		fx_halftone.set("size",size);
 		fx_halftone.set("threshold",threshold);
 
 		render_shader(fx_halftone,pg_halftone_dot,source,on_g,filter_is);
-
 	}
 
 	// return
@@ -1190,8 +1270,8 @@ PGraphics fx_halftone_dot(PImage source, boolean on_g, boolean filter_is, vec2 p
 
 /**
 * halftone line
-* v 0.1.2
-* 2018-2019
+* v 0.1.3
+* 2018-2022
 */
 // use setting
 PGraphics fx_halftone_line(PImage source, FX fx) {
@@ -1220,12 +1300,16 @@ PGraphics fx_halftone_line(PImage source, FX fx) {
 PShader fx_halftone_line;
 PGraphics result_halftone_line;
 PGraphics fx_halftone_line(PImage source, boolean on_g, boolean filter_is, vec2 pos, vec3 angle, int mode, int num, float quality, vec3 threshold) {
-	if(!on_g && (result_halftone_line == null 
-								|| (source.width != result_halftone_line.width 
-								|| source.height != result_halftone_line.height))) {
-		result_halftone_line = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (result_halftone_line == null || (fx_canvas.x() != result_halftone_line.width || fx_canvas.y() != result_halftone_line.height))) {
+		result_halftone_line = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_halftone_line == null) {
 		String path = get_fx_post_path()+"halftone_line.glsl";
 		if(fx_post_rope_path_exists) {
@@ -1268,8 +1352,8 @@ PGraphics fx_halftone_line(PImage source, boolean on_g, boolean filter_is, vec2 
 /**
 * Halftone Multi
 * refactoring from 
-* v 0.1.1
-* 2019-2019
+* v 0.1.2
+* 2019-2022
 */
 // use setting
 PGraphics fx_halftone_multi(PImage source, FX fx) {
@@ -1280,12 +1364,16 @@ PGraphics fx_halftone_multi(PImage source, FX fx) {
 PShader fx_halftone_multi;
 PGraphics pg_halftone_multi;
 PGraphics fx_halftone_multi(PImage source, boolean on_g, boolean filter_is, vec2 pos, float size, float angle, float quality, float threshold, float saturation, int mode) {
-	if(!on_g && (pg_halftone_multi == null 
-								|| (source.width != pg_halftone_multi.width 
-								|| source.height != pg_halftone_multi.height))) {
-		pg_halftone_multi = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_halftone_multi == null || (fx_canvas.x() != pg_halftone_multi.width || fx_canvas.y() != pg_halftone_multi.height))) {
+		pg_halftone_multi = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_halftone_multi == null) {
 		String path = get_fx_post_path()+"halftone_multi.glsl";
 		if(fx_post_rope_path_exists) {
@@ -1312,7 +1400,7 @@ PGraphics fx_halftone_multi(PImage source, boolean on_g, boolean filter_is, vec2
 		fx_halftone_multi.set("sharpness",threshold); // from 0 to 2 is good
 		fx_halftone_multi.set("mode",mode); // from 0 to 3 dot, circle and line
 
-		 // rendering
+		// rendering
     render_shader(fx_halftone_multi,pg_halftone_multi,source,on_g,filter_is);
 	}
 
@@ -1337,7 +1425,8 @@ PGraphics fx_halftone_multi(PImage source, boolean on_g, boolean filter_is, vec2
 
 /**
 * IMAGE
-* v 0.2.2
+* v 0.2.3
+* 2019-2022
 */
 // setting by class FX
 PGraphics fx_image(PImage source, FX fx) {
@@ -1348,12 +1437,16 @@ PGraphics fx_image(PImage source, FX fx) {
 PShader fx_image;
 PGraphics pg_image_rendering;
 PGraphics fx_image(PImage source, boolean on_g, boolean filter_is, vec2 pos, vec2 scale, vec3 colour_background, vec4 pos_curtain, int mode) {
-	if(!on_g && (pg_image_rendering == null 
-								|| (source.width != pg_image_rendering.width 
-								|| source.height != pg_image_rendering.height))) {
-		pg_image_rendering = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_image_rendering == null || (fx_canvas.x() != pg_image_rendering.width || fx_canvas.y() != pg_image_rendering.height))) {
+		pg_image_rendering = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_image == null) {
 		String path = get_fx_post_path()+"image.glsl";
 		if(fx_post_rope_path_exists) {
@@ -1383,7 +1476,6 @@ PGraphics fx_image(PImage source, boolean on_g, boolean filter_is, vec2 pos, vec
 	  }
 
 	  if(pos_curtain != null) {
-	  	// printTempo(60,"curtain",pos_curtain);
 	    fx_image.set("curtain",pos_curtain.x,pos_curtain.y,pos_curtain.z,pos_curtain.w); // definr RGB color from 0 to 1
 	  }
 
@@ -1406,7 +1498,6 @@ PGraphics fx_image(PImage source, boolean on_g, boolean filter_is, vec2 pos, vec
 	  } else if(mode == r.SCALE) {
 	    shader_mode = 2;
 	  }
-	  // println("mode",shader_mode);
 	  fx_image.set("mode",shader_mode);
 
     // rendering
@@ -1445,8 +1536,10 @@ PGraphics fx_image(PImage source, boolean on_g, boolean filter_is, vec2 pos, vec
 
 /**
 * Level
-v 0.1.1
-2019-2019
+* v 0.1.2
+* 2019-2022
+
+* Uniforme problem need to be fix
 */
 // direct filtering
 PGraphics fx_level(PImage source, FX fx) {
@@ -1461,12 +1554,16 @@ PGraphics fx_level(PImage source, FX fx) {
 PShader fx_level;
 PGraphics pg_level;
 PGraphics fx_level(PImage source, boolean on_g, boolean filter_is, int mode, float... level) {
-	if(!on_g && (pg_level == null 
-								|| (source.width != pg_level.width 
-								|| source.height != pg_level.height))) {
-		pg_level = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_level == null || (fx_canvas.x() != pg_level.width || fx_canvas.y() != pg_level.height))) {
+		pg_level = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_level == null) {
 		String path = get_fx_post_path()+"level.glsl";
 		if(fx_post_rope_path_exists) {
@@ -1475,7 +1572,6 @@ PGraphics fx_level(PImage source, boolean on_g, boolean filter_is, int mode, flo
 		}
 	} else {
 		fx_shader_flip(fx_level,on_g,filter_is,source,null);
-
 		fx_level.set("texture_source",source);
 		fx_level.set("resolution_source",source.width,source.height);
 		if(level.length == 1) {
@@ -1494,10 +1590,8 @@ PGraphics fx_level(PImage source, boolean on_g, boolean filter_is, int mode, flo
 			fx_level.set("mode",mode); // 0 black / 1 white
 		} 
 
-
     // rendering
 		render_shader(fx_level,pg_level,source,on_g,filter_is);
-
 	}
 
 	// return
@@ -1518,8 +1612,8 @@ PGraphics fx_level(PImage source, boolean on_g, boolean filter_is, int mode, flo
 
 /**
 * Level advanced with gamma correction, black and white point
-v 0.0.1
-2021-2021
+v 0.0.2
+2021-2022
 */
 // direct filtering
 PGraphics fx_level_adv(PImage source, FX fx) {
@@ -1547,12 +1641,16 @@ PGraphics fx_level_adv(PImage source, boolean on_g, boolean filter_is, float min
 PShader fx_level_adv;
 PGraphics pg_level_adv;
 PGraphics fx_level_adv(PImage source, boolean on_g, boolean filter_is, vec3 min, vec3 gamma, vec3 max) {
-	if(!on_g && (pg_level_adv == null 
-								|| (source.width != pg_level_adv.width 
-								|| source.height != pg_level_adv.height))) {
-		pg_level_adv = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_level_adv == null || (fx_canvas.x() != pg_level_adv.width || fx_canvas.y() != pg_level_adv.height))) {
+		pg_level_adv = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// Algorithm
 	if(fx_level_adv == null) {
 		String path = get_fx_post_path()+"level_adv.glsl";
 		if(fx_post_rope_path_exists) {
@@ -1570,7 +1668,6 @@ PGraphics fx_level_adv(PImage source, boolean on_g, boolean filter_is, vec3 min,
 
     // rendering
 		render_shader(fx_level_adv,pg_level_adv,source,on_g,filter_is);
-
 	}
 
 	// return
@@ -1592,12 +1689,10 @@ PGraphics fx_level_adv(PImage source, boolean on_g, boolean filter_is, vec3 min,
 
 
 
-
-
 /**
 * Mask
-v 0.2.3
-2019-2019
+v 0.3.0
+2019-2022
 */
 PGraphics fx_mask(PImage source, PImage mask, FX fx) {
 	return fx_mask(source,mask,fx.on_g(),fx.pg_filter_is(),fx.get_mode(),fx.get_num(),fx.get_threshold().xy(),fx.get_level_layer());
@@ -1607,12 +1702,17 @@ PGraphics fx_mask(PImage source, PImage mask, FX fx) {
 PShader fx_mask;
 PGraphics pg_mask;
 PGraphics fx_mask(PImage source, PImage mask, boolean on_g, boolean filter_is, int mode, int num, vec2 threshold, vec4 level_layer) {
-	if(!on_g && (pg_mask == null 
-								|| (source.width != pg_mask.width 
-								|| source.height != pg_mask.height))) {
-		pg_mask = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+		mask = fx_constrain_next_impl(mask);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_mask == null || (fx_canvas.x() != pg_mask.width || fx_canvas.y() != pg_mask.height))) {
+		pg_mask = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// algorithm
 	if(fx_mask == null) {
 		String path = get_fx_post_path()+"mask.glsl";
 		if(fx_post_rope_path_exists) {
@@ -1632,20 +1732,17 @@ PGraphics fx_mask(PImage source, PImage mask, boolean on_g, boolean filter_is, i
 		if(num < 2) num = 2;
 		fx_mask.set("num",num); // define the num of step separation
     
-
     if(threshold.min() > threshold.max()) {
     	threshold.x(0);
     }
     threshold.constrain(0,1);
 		fx_mask.set("threshold",threshold.min(),threshold.max()); // from 0 to 1, that's born the sensibility from the minium to the maximum
 
-
 		level_layer.constrain(0,6);
 		fx_mask.set("level_layer",level_layer.x(),level_layer.y(),level_layer.z(),level_layer.w()); // strength 1 is the classic strength
 		  
     // rendering
     render_shader(fx_mask,pg_mask,source,on_g,filter_is);
- 
 	}
 
 	// end
@@ -1670,8 +1767,8 @@ PGraphics fx_mask(PImage source, PImage mask, boolean on_g, boolean filter_is, i
 
 /**
 * mix
-* v 0.1.2
-* 2019-2019
+* v 0.1.5
+* 2019-2022
 *
 * -2 main
 * -1 layer 
@@ -1690,7 +1787,7 @@ PGraphics fx_mask(PImage source, PImage mask, boolean on_g, boolean filter_is, i
 * 12 linear_light
 * 13 pin_light
 * 14 hard_mix
-*  15 subtract
+* 15 subtract
 * 16 divide
 * 17 addition
 * 18 difference
@@ -1713,19 +1810,23 @@ PGraphics fx_mix(PImage source, PImage layer, FX fx) {
 		level_layer = vec3(fx.get_level_layer());
 	}
   return fx_mix(source,layer,fx.on_g(),fx.pg_filter_is(),fx.get_mode(),level_source,level_layer);
-	
 }
 
 // main
 PShader fx_mix;
 PGraphics pg_mix;
 PGraphics fx_mix(PImage source, PImage layer, boolean on_g, boolean filter_is, int mode, vec3 level_source, vec3 level_layer) {
-	if(!on_g && (pg_mix == null 
-								|| (source.width != pg_mix.width 
-								|| source.height != pg_mix.height))) {
-		pg_mix = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+		layer = fx_constrain_next_impl(layer);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_mix == null || (fx_canvas.x() != pg_mix.width || fx_canvas.y() != pg_mix.height))) {
+		pg_mix = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// algorithm
 	if(fx_mix == null) {
 		String path = get_fx_post_path()+"mix.glsl";
 		if(fx_post_rope_path_exists) {
@@ -1747,16 +1848,13 @@ PGraphics fx_mix(PImage source, PImage layer, boolean on_g, boolean filter_is, i
 			}
 		}
 		
-
     // external paramer
-    fx_mix.set("level_source",level_source.x,level_source.y,level_source.z);
-		fx_mix.set("level_layer",level_layer.x,level_layer.y,level_layer.z);
-
+    fx_mix.set("level_source",level_source.x(),level_source.y(),level_source.z());
+		fx_mix.set("level_layer",level_layer.x(),level_layer.y(),level_layer.z());
 		fx_mix.set("mode",mode); 
     
     // rendering
     render_shader(fx_mix,pg_mix,source,on_g,filter_is);
- 
 	}
 
 	// end
@@ -1788,8 +1886,8 @@ PGraphics fx_mix(PImage source, PImage layer, boolean on_g, boolean filter_is, i
 
 /**
 * Pixel 
-* v 0.1.1
-* 2018-2019
+* v 0.1.2
+* 2018-2022
 */
 // setting by class FX
 PGraphics fx_pixel(PImage source, FX fx) {
@@ -1808,12 +1906,16 @@ PGraphics fx_pixel(PImage source, FX fx) {
 PShader fx_pixel;
 PGraphics pg_pixel;
 PGraphics fx_pixel(PImage source, boolean on_g, boolean filter_is, ivec2 size, int num, vec3 level_source, boolean effect_is) {
-	if(!on_g && (pg_pixel == null 
-								|| (source.width != pg_pixel.width 
-								|| source.height != pg_pixel.height))) {
-		pg_pixel = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_pixel == null || (fx_canvas.x() != pg_pixel.width || fx_canvas.y() != pg_pixel.height))) {
+		pg_pixel = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// algorithm
 	if(fx_pixel == null) {
 		String path = get_fx_post_path()+"pixel.glsl";
 		if(fx_post_rope_path_exists) {
@@ -1836,7 +1938,6 @@ PGraphics fx_pixel(PImage source, boolean on_g, boolean filter_is, ivec2 size, i
 
     // rendering
 		render_shader(fx_pixel,pg_pixel,source,on_g,filter_is);
-
 	}
 
 	// return
@@ -1858,8 +1959,8 @@ PGraphics fx_pixel(PImage source, boolean on_g, boolean filter_is, ivec2 size, i
 
 /**
 * Posterize by Stan le punk
-* v 0.0.1
-* 2019-2019
+* v 0.0.2
+* 2019-2022
 */
 // setting by class FX
 PGraphics fx_posterization(PImage source, FX fx) {
@@ -1870,12 +1971,16 @@ PGraphics fx_posterization(PImage source, FX fx) {
 PShader fx_posterization;
 PGraphics pg_posterization;
 PGraphics fx_posterization(PImage source, boolean on_g, boolean filter_is, vec3 threshold, int num) {
-	if(!on_g && (pg_posterization == null 
-								|| (source.width != pg_posterization.width 
-								|| source.height != pg_posterization.height))) {
-		pg_posterization = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_posterization == null || (fx_canvas.x() != pg_posterization.width || fx_canvas.y() != pg_posterization.height))) {
+		pg_posterization = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// algorithm
 	if(fx_posterization == null) {
 		String path = get_fx_post_path()+"posterization.glsl";
 		if(fx_post_rope_path_exists) {
@@ -1889,14 +1994,12 @@ PGraphics fx_posterization(PImage source, boolean on_g, boolean filter_is, vec3 
 		fx_posterization.set("texture_source",source);
 		fx_posterization.set("resolution_source",(float)source.width,(float)source.height);
 
-
 		fx_posterization.set("threshold",threshold.x(),threshold.y(),threshold.z()); // value 0 to 1
 		if(num < 2) num = 2;
 		fx_posterization.set("num",num);
 
     // rendering
 		render_shader(fx_posterization,pg_posterization,source,on_g,filter_is);
-
 	}
 
 	// return
@@ -1925,8 +2028,8 @@ PGraphics fx_posterization(PImage source, boolean on_g, boolean filter_is, vec3 
 
 /**
 * Reaction diffusion
-* v 0.0.6
-* 2018-2019
+* v 0.0.7
+* 2018-2022
 */
 /**
 WARNING
@@ -1942,12 +2045,16 @@ PGraphics pg_reac_diff;
 boolean start;
 PImage buffer_reac_diff;
 PGraphics fx_reaction_diffusion(PImage source, boolean on_g, vec2 conc_uv, vec2 kf, vec2 scale, vec3 rgb, int num, boolean event) {
-	if(pg_reac_diff == null 
-								|| (source.width != pg_reac_diff.width 
-								|| source.height != pg_reac_diff.height)) {
-		pg_reac_diff = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_reac_diff == null || (fx_canvas.x() != pg_reac_diff.width || fx_canvas.y() != pg_reac_diff.height))) {
+		pg_reac_diff = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// algorithm
 	// init
 	if(source != null) {
 		if(fx_reac_diff == null) {
@@ -1975,7 +2082,6 @@ PGraphics fx_reaction_diffusion(PImage source, boolean on_g, vec2 conc_uv, vec2 
 			buffer_reac_diff.updatePixels();
 		}
 	}
-
 
 	// reset part
 	if(!start || event) {
@@ -2036,7 +2142,6 @@ PGraphics fx_reaction_diffusion(PImage source, boolean on_g, vec2 conc_uv, vec2 
 			fx_reac_diff.set("f",0.047f);
 		}
 
-
 		// in progress
 		/*
 		if(rgb != null) {
@@ -2049,7 +2154,6 @@ PGraphics fx_reaction_diffusion(PImage source, boolean on_g, vec2 conc_uv, vec2 
 			fx_reac_diff.set("blue",0);
 		}
 		*/
-
 
 		fx_reac_diff.set("scale",scale.x(),scale.y());
 
@@ -2091,28 +2195,10 @@ PGraphics fx_reaction_diffusion(PImage source, boolean on_g, vec2 conc_uv, vec2 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
 * split rgb
-* v 0.1.1
-* 2019-2019
+* v 0.1.2
+* 2019-2022
 */
 // use setting
 PGraphics fx_split_rgb(PImage source, FX fx) {
@@ -2123,12 +2209,16 @@ PGraphics fx_split_rgb(PImage source, FX fx) {
 PShader fx_split_rgb;
 PGraphics pg_split_rgb;
 PGraphics fx_split_rgb(PImage source, boolean on_g, boolean filter_is, vec2 offset_red, vec2 offset_green, vec2 offset_blue) {
-	if(!on_g && (pg_split_rgb == null 
-								|| (source.width != pg_split_rgb.width 
-								|| source.height != pg_split_rgb.height))) {
-		pg_split_rgb = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_split_rgb == null || (fx_canvas.x() != pg_split_rgb.width || fx_canvas.y() != pg_split_rgb.height))) {
+		pg_split_rgb = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// algorithm
 	if(fx_split_rgb == null) {
 		String path = get_fx_post_path()+"split_rgb_simple.glsl";
 		if(fx_post_rope_path_exists) {
@@ -2154,7 +2244,6 @@ PGraphics fx_split_rgb(PImage source, boolean on_g, boolean filter_is, vec2 offs
 			fx_split_rgb.set("offset_blue",offset_blue.x,offset_blue.y);
 		} 
 		
-
 		 // rendering
     render_shader(fx_split_rgb,pg_split_rgb,source,on_g,filter_is);
 	}
@@ -2176,8 +2265,8 @@ PGraphics fx_split_rgb(PImage source, boolean on_g, boolean filter_is, vec2 offs
 
 /**
 * Threshold
-* v 0.3.1
-* 2018-2019
+* v 0.3.2
+* 2018-2022
 */
 // setting by class FX
 PGraphics fx_threshold(PImage source, FX fx) {
@@ -2188,13 +2277,16 @@ PGraphics fx_threshold(PImage source, FX fx) {
 PShader fx_threshold;
 PGraphics pg_threshold;
 PGraphics fx_threshold(PImage source, boolean on_g, boolean filter_is, vec3 level, int mode) {
-	if(!on_g && (pg_threshold == null 
-								|| (source.width != pg_threshold.width 
-								|| source.height != pg_threshold.height))) {
-		pg_threshold = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
-	
+	if(!on_g && (pg_threshold == null || (fx_canvas.x() != pg_threshold.width || fx_canvas.y() != pg_threshold.height))) {
+		pg_threshold = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// algorithm
 	if(fx_threshold == null) {
 		String path = get_fx_post_path()+"threshold.glsl";
 		if(fx_post_rope_path_exists) {
@@ -2247,8 +2339,8 @@ PGraphics fx_threshold(PImage source, boolean on_g, boolean filter_is, vec3 leve
 * warp procedural line by Stan le punk
 * @see http://stanlepunk.xyz
 * @see https://github.com/StanLepunK/Filter
-* v 0.1.1
-* 2018-2019
+* v 0.1.2
+* 2018-2022
 */
 PGraphics fx_warp_proc(PImage source, FX fx) {
 	return fx_warp_proc(source,fx.on_g(),fx.pg_filter_is(),fx.get_strength().x);
@@ -2257,12 +2349,16 @@ PGraphics fx_warp_proc(PImage source, FX fx) {
 PShader fx_warp_proc;
 PGraphics pg_warp_proc;
 PGraphics fx_warp_proc(PImage source, boolean on_g, boolean filter_is, float strength) {
-	if(!on_g && (pg_warp_proc == null 
-								|| (source.width != pg_warp_proc.width 
-								|| source.height != pg_warp_proc.height))) {
-		pg_warp_proc = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_warp_proc == null || (fx_canvas.x() != pg_warp_proc.width || fx_canvas.y() != pg_warp_proc.height))) {
+		pg_warp_proc = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// algorithm
 	if(fx_warp_proc == null) {
 		String path = get_fx_post_path()+"warp_proc.glsl";
 		if(fx_post_rope_path_exists) {
@@ -2304,8 +2400,8 @@ PGraphics fx_warp_proc(PImage source, boolean on_g, boolean filter_is, float str
 
 /**
 * warp texture type A
-* v 0.3.2
-* 2018-2019
+* v 0.3.3
+* 2018-2022
 */
 // use setting
 PGraphics fx_warp_tex_a(PImage source, PImage velocity, PImage direction, FX fx) {
@@ -2316,13 +2412,17 @@ PGraphics fx_warp_tex_a(PImage source, PImage velocity, PImage direction, FX fx)
 PShader fx_warp_tex_a;
 PGraphics pg_warp_tex_a;
 PGraphics fx_warp_tex_a(PImage source, PImage velocity, PImage direction, boolean on_g, boolean filter_is, int mode, float strength) {
-	if(!on_g && (pg_warp_proc == null 
-								|| (source.width != pg_warp_proc.width 
-								|| source.height != pg_warp_proc.height))) {
-		pg_warp_proc = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+		velocity = fx_constrain_next_impl(velocity);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-  
-
+	if(!on_g && (pg_warp_tex_a == null || (fx_canvas.x() != pg_warp_tex_a.width || fx_canvas.y() != pg_warp_tex_a.height))) {
+		pg_warp_tex_a = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// algorithm
 	if(fx_warp_tex_a == null) {
 		String path = get_fx_post_path()+"warp_tex_a.glsl";
 		if(fx_post_rope_path_exists) {
@@ -2334,7 +2434,6 @@ PGraphics fx_warp_tex_a(PImage source, PImage velocity, PImage direction, boolea
 
 		fx_warp_tex_a.set("texture_source",source);
 		fx_warp_tex_a.set("resolution_source",source.width,source.height);
-
 		
 		// external parameter
 		// warp sources
@@ -2372,8 +2471,8 @@ PGraphics fx_warp_tex_a(PImage source, PImage velocity, PImage direction, boolea
 
 /**
 * warp texture type B
-* v 0.1.2
-* 2019-2019
+* v 0.1.3
+* 2019-2022
 */
 // use setting
 PGraphics fx_warp_tex_b(PImage source, PImage layer, FX fx) {
@@ -2384,12 +2483,17 @@ PGraphics fx_warp_tex_b(PImage source, PImage layer, FX fx) {
 PShader fx_warp_tex_b;
 PGraphics pg_warp_tex_b;
 PGraphics fx_warp_tex_b(PImage source, PImage layer, boolean on_g, boolean filter_is, float strength) {
-	if(!on_g && (pg_warp_tex_b == null 
-								|| (source.width != pg_warp_tex_b.width 
-								|| source.height != pg_warp_tex_b.height))) {
-		pg_warp_tex_b = createGraphics(source.width,source.height,get_renderer());
+	// Preparation
+	if(fx_constrain_is) {
+		source = fx_constrain_main_impl(source);
+		layer = fx_constrain_next_impl(layer);
+	} else {
+		fx_canvas.set(source.width, source.height);
 	}
-
+	if(!on_g && (pg_warp_tex_b == null || (fx_canvas.x() != pg_warp_tex_b.width || fx_canvas.y() != pg_warp_tex_b.height))) {
+		pg_warp_tex_b = createGraphics(fx_canvas.x(),fx_canvas.y(),get_renderer());
+	}
+	// algorithm
 	if(fx_warp_tex_b == null) {
 		String path = get_fx_post_path()+"warp_tex_b.glsl";
 		if(fx_post_rope_path_exists) {

@@ -1,10 +1,10 @@
 /**
 * ROPE FRAMEWORK - Romanesco processing environment – 
-* Copyleft (c) 2014-2021
+* Copyleft (c) 2014-2022
 * @author @stanlepunk
 * @see https://github.com/StanLepunK/Rope_framework
 * ROPE core
-* v 0.2.2.0
+* v 0.2.7
 */
 import rope.core.*;
 import rope.vector.*;
@@ -44,24 +44,18 @@ import java.awt.Rectangle;
 
 
 
-/**
-Something weird, now it's not necessary to use the method init_rope()
-to use the interface Rope_constants...
-that's cool but that's very weird !!!!!
-*/
-Rope r;
+Rope r = new Rope();
 
-String rope_framework_version = "1.4.5.83";
+String rope_framework_version = "1.5.2.93";
 public void rope_version() {
 	init_rope();
 }
 
 public void init_rope() {
-	r = new Rope();
-	println("Romanesco Processing Environment - 2015-2021");
-	println("Processing: 4.0b1");
-	println("Rope library: " +r.VERSION);
-  println("Rope framework: " + rope_framework_version);
+	println("Romanesco Processing Environment - 2015-2022");
+	println("Processing: 4.0b7");
+	println("Rope library: " + r.VERSION);
+	println("Rope framework: " + rope_framework_version);
 }
 
 
@@ -70,8 +64,8 @@ public void init_rope() {
 
 
 /**
-event
-v 0.0.2
+* event
+* v 0.0.2
 */
 vec2 scroll_event;
 public void scroll(MouseEvent e) {
