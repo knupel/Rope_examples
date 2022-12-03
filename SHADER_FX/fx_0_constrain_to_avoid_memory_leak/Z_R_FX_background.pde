@@ -1,13 +1,16 @@
 /**
 * BACKGROUND FX
 * Rope background shader fx collection
-* 2019-2019
-* v 0.1.7
+* 2019-2022
+* v 0.1.8
 * all filter bellow has been tested.
-* @see http://stanlepunk.xyz
-* @see https://github.com/StanLepunK/Shader
+* @see http://knupel.art
+* @see https://github.com/knupel/Shader
 */
 
+import rope.utils.R_FX;
+import rope.vector.vec3;
+import rope.vector.ivec2;
 
 
 /**
@@ -17,14 +20,14 @@
 * 2019-2019
 */
 // setting by class FX
-PGraphics fx_bg_template(FX fx) {
-	return fx_bg_template(fx.get_canvas(),fx.on_g(),vec3(fx.get_colour()));
+PGraphics fx_bg_template(R_FX fx) {
+	return fx_bg_template(fx.get_canvas(),fx.on_g(), new vec3(fx.get_colour()));
 }
 
 
 // test setting
 PGraphics fx_bg_template() {
-  vec3 colour = abs(vec3().sin_wave(frameCount,.01,.02,.03));
+  vec3 colour = r.abs(new vec3().sin_wave(frameCount,.01,.02,.03));
 	return fx_bg_template(null,true,colour);
 }
 
@@ -37,7 +40,7 @@ PGraphics fx_bg_template(ivec2 canvas, boolean on_g, vec3 colour) {
 	if(!on_g && (pg_template_fx_bg == null
 								|| (canvas.x != pg_template_fx_bg.width 
 								&& canvas.y != pg_template_fx_bg.height))) {
-		pg_template_fx_bg = createGraphics(canvas.x,canvas.y,get_renderer());
+		pg_template_fx_bg = createGraphics(canvas.x,canvas.y,r.get_renderer(g));
 	}
   // setting
 	if(fx_bg_template == null) {
@@ -82,8 +85,8 @@ PGraphics fx_bg_template(ivec2 canvas, boolean on_g, vec3 colour) {
 * 2019-2019
 */
 // setting by class FX
-PGraphics fx_bg_cellular(FX fx) {
-	return fx_bg_cellular(fx.get_canvas(),fx.on_g(),fx.get_colour(),fx.get_num(),vec2(fx.get_speed()),fx.get_quality());
+PGraphics fx_bg_cellular(R_FX fx) {
+	return fx_bg_cellular(fx.get_canvas(),fx.on_g(),fx.get_colour(),fx.get_num(),new vec2(fx.get_speed()),fx.get_quality());
 }
 
 
@@ -96,7 +99,7 @@ PGraphics fx_bg_cellular(ivec2 canvas, boolean on_g, vec4 colour, int num, vec2 
 	if(!on_g && (pg_cellular_fx_bg == null
 								|| (canvas.x != pg_cellular_fx_bg.width 
 								&& canvas.y != pg_cellular_fx_bg.height))) {
-		pg_cellular_fx_bg = createGraphics(canvas.x,canvas.y,get_renderer());
+		pg_cellular_fx_bg = createGraphics(canvas.x,canvas.y,r.get_renderer(g));
 	}
   // setting
 	if(fx_bg_cellular == null) {
@@ -145,8 +148,8 @@ PGraphics fx_bg_cellular(ivec2 canvas, boolean on_g, vec4 colour, int num, vec2 
 * 2019-2019
 */
 // setting by class FX
-PGraphics fx_bg_heart(FX fx) {
-	return fx_bg_heart(fx.get_canvas(),fx.on_g(),vec3(fx.get_colour()),fx.get_num(),fx.get_speed().x,fx.get_quality(),fx.get_strength().x);
+PGraphics fx_bg_heart(R_FX fx) {
+	return fx_bg_heart(fx.get_canvas(),fx.on_g(),new vec3(fx.get_colour()),fx.get_num(),fx.get_speed().x,fx.get_quality(),fx.get_strength().x);
 }
 
 
@@ -159,7 +162,7 @@ PGraphics fx_bg_heart(ivec2 canvas, boolean on_g, vec3 colour, int num, float sp
 	if(!on_g && (pg_heart_fx_bg == null
 								|| (canvas.x != pg_heart_fx_bg.width 
 								&& canvas.y != pg_heart_fx_bg.height))) {
-		pg_heart_fx_bg = createGraphics(canvas.x,canvas.y,get_renderer());
+		pg_heart_fx_bg = createGraphics(canvas.x,canvas.y,r.get_renderer(g));
 	}
   // setting
 	if(fx_bg_heart == null) {
@@ -209,8 +212,8 @@ PGraphics fx_bg_heart(ivec2 canvas, boolean on_g, vec3 colour, int num, float sp
 * 2019-2019
 */
 // setting by class FX
-PGraphics fx_bg_necklace(FX fx) {
-	return fx_bg_necklace(fx.get_canvas(),fx.on_g(),vec2(fx.get_pos()),vec2(fx.get_size()),fx.get_colour().x,fx.get_num(),fx.get_speed().x);
+PGraphics fx_bg_necklace(R_FX fx) {
+	return fx_bg_necklace(fx.get_canvas(),fx.on_g(),new vec2(fx.get_pos()),new vec2(fx.get_size()),fx.get_colour().x,fx.get_num(),fx.get_speed().x);
 }
 
 
@@ -223,7 +226,7 @@ PGraphics fx_bg_necklace(ivec2 canvas, boolean on_g, vec2 pos, vec2 size, float 
 	if(!on_g && (pg_necklace_fx_bg == null
 								|| (canvas.x != pg_necklace_fx_bg.width 
 								&& canvas.y != pg_necklace_fx_bg.height))) {
-		pg_necklace_fx_bg = createGraphics(canvas.x,canvas.y,get_renderer());
+		pg_necklace_fx_bg = createGraphics(canvas.x,canvas.y,r.get_renderer(g));
 	}
   // setting
 	if(fx_bg_necklace == null) {
@@ -271,8 +274,8 @@ PGraphics fx_bg_necklace(ivec2 canvas, boolean on_g, vec2 pos, vec2 size, float 
 * 2019-2019
 */
 // setting by class FX
-PGraphics fx_bg_neon(FX fx) {
-	return fx_bg_neon(fx.get_canvas(),fx.on_g(),vec2(fx.get_pos()),fx.get_speed().x);
+PGraphics fx_bg_neon(R_FX fx) {
+	return fx_bg_neon(fx.get_canvas(),fx.on_g(),new vec2(fx.get_pos()),fx.get_speed().x);
 }
 
 
@@ -285,7 +288,7 @@ PGraphics fx_bg_neon(ivec2 canvas, boolean on_g, vec2 pos, float speed) {
 	if(!on_g && (pg_neon_fx_bg == null
 								|| (canvas.x != pg_neon_fx_bg.width 
 								&& canvas.y != pg_neon_fx_bg.height))) {
-		pg_neon_fx_bg = createGraphics(canvas.x,canvas.y,get_renderer());
+		pg_neon_fx_bg = createGraphics(canvas.x,canvas.y,r.get_renderer(g));
 	}
   // setting
 	if(fx_bg_neon == null) {
@@ -334,7 +337,7 @@ PGraphics fx_bg_neon(ivec2 canvas, boolean on_g, vec2 pos, float speed) {
 * 2019-2019
 */
 // setting by class FX
-PGraphics fx_bg_psy(FX fx) {
+PGraphics fx_bg_psy(R_FX fx) {
 	return fx_bg_psy(fx.get_canvas(),fx.on_g(),fx.get_num(),fx.get_speed().x);
 }
 
@@ -347,7 +350,7 @@ PGraphics fx_bg_psy(ivec2 canvas, boolean on_g, int num, float speed) {
 	if(!on_g && (pg_psy_fx_bg == null
 								|| (canvas.x != pg_psy_fx_bg.width 
 								&& canvas.y != pg_psy_fx_bg.height))) {
-		pg_psy_fx_bg = createGraphics(canvas.x,canvas.y,get_renderer());
+		pg_psy_fx_bg = createGraphics(canvas.x,canvas.y,r.get_renderer(g));
 	}
   // setting
 	if(fx_bg_psy == null) {
@@ -390,8 +393,8 @@ PGraphics fx_bg_psy(ivec2 canvas, boolean on_g, int num, float speed) {
 * 2019-2019
 */
 // setting by class FX
-PGraphics fx_bg_snow(FX fx) {
-	return fx_bg_snow(fx.get_canvas(),fx.on_g(),vec2(fx.get_pos()),vec3(fx.get_colour()),fx.get_speed().x,fx.get_quality());
+PGraphics fx_bg_snow(R_FX fx) {
+	return fx_bg_snow(fx.get_canvas(),fx.on_g(), new vec2(fx.get_pos()), new vec3(fx.get_colour()),fx.get_speed().x,fx.get_quality());
 }
 
 
@@ -403,7 +406,7 @@ PGraphics fx_bg_snow(ivec2 canvas, boolean on_g, vec2 pos, vec3 colour, float sp
 	if(!on_g && (pg_snow_fx_bg == null
 								|| (canvas.x != pg_snow_fx_bg.width 
 								&& canvas.y != pg_snow_fx_bg.height))) {
-		pg_snow_fx_bg = createGraphics(canvas.x,canvas.y,get_renderer());
+		pg_snow_fx_bg = createGraphics(canvas.x,canvas.y,r.get_renderer(g));
 	}
   // setting
 	if(fx_bg_snow == null) {
@@ -460,8 +463,8 @@ PGraphics fx_bg_snow(ivec2 canvas, boolean on_g, vec2 pos, vec3 colour, float sp
 * 2019-2019
 */
 // setting by class FX
-PGraphics fx_bg_voronoi_hex(FX fx) {
-	return fx_bg_voronoi_hex(fx.get_canvas(),fx.on_g(),fx.get_size().x,vec3(fx.get_colour()),fx.get_speed().x,fx.get_speed().y,fx.get_strength().x,fx.get_threshold().x,fx.get_mode());
+PGraphics fx_bg_voronoi_hex(R_FX fx) {
+	return fx_bg_voronoi_hex(fx.get_canvas(),fx.on_g(),fx.get_size().x, new vec3(fx.get_colour()),fx.get_speed().x,fx.get_speed().y,fx.get_strength().x,fx.get_threshold().x,fx.get_mode());
 }
 
 
@@ -472,7 +475,7 @@ PGraphics fx_bg_voronoi_hex(ivec2 canvas, boolean on_g, float size, vec3 colour,
 	if(!on_g && (pg_voronoi_hex_fx_bg == null
 								|| (canvas.x != pg_voronoi_hex_fx_bg.width 
 								&& canvas.y != pg_voronoi_hex_fx_bg.height))) {
-		pg_voronoi_hex_fx_bg = createGraphics(canvas.x,canvas.y,get_renderer());
+		pg_voronoi_hex_fx_bg = createGraphics(canvas.x,canvas.y,r.get_renderer(g));
 	}
   // setting
 	if(fx_bg_voronoi_hex == null) {

@@ -87,7 +87,7 @@ void pass_render(PGraphics temp) {
 float angle_shape;
 void set_shape() {
 	if(render == null) {
-		render = createGraphics(g.width,g.height,get_renderer());
+		render = createGraphics(g.width,g.height,r.get_renderer(g));
 	} else {
 		render.beginDraw();
 		render.background(255,0,0,100);

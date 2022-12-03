@@ -8,7 +8,7 @@
 
 // use setting
 PGraphics fx_split_rgb_noise(PImage source, FX fx) {
-	return fx_split_rgb_noise(source,fx.on_g(),vec2(fx.get_offset()));
+	return fx_split_rgb_noise(source,fx.on_g(),new vec2(fx.get_offset()));
 }
 
 
@@ -20,7 +20,7 @@ PGraphics fx_split_rgb_noise(PImage source, boolean on_g, vec2 offset) {
 	if(!on_g && (pg_split_rgb_noise == null 
 								|| (source.width != pg_split_rgb_noise.width 
 								&& source.height != pg_split_rgb_noise.height))) {
-		pg_split_rgb_noise = createGraphics(source.width,source.height,get_renderer());
+		pg_split_rgb_noise = createGraphics(source.width,source.height,r.get_renderer(g));
 	}
 
 	if(fx_split_rgb_noise == null) {

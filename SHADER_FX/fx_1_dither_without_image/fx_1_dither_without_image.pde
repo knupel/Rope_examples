@@ -1,18 +1,20 @@
 /**
 * Rope framework
-* Copyleft (c) 2014-2021
-* @author @stanlepunk
-* @see https://github.com/StanLepunK/Rope_framework
+* Copyleft (c) 2014-2022
+* @author @knupel
+* @see https://github.com/knupel/Rope_framework
 *
 * fx exemple without image
-* v 0.0.2
+* v 0.1.0
 *
 */
+import rope.vector.*;
+import rope.core.Rope;
+Rope r = new Rope();
 
 PImage img_a;
 void setup() {
 	size(600,600,P2D);
-	init_rope();
 }
 
 
@@ -38,7 +40,7 @@ void draw() {
 	}
 	
 	if(keyPressed)
-		level = abs(vec3().sin_wave(frameCount,0.01,0.02,0.03));
+		level = r.abs(new vec3().sin_wave(frameCount,0.01,0.02,0.03));
 
 	boolean on_g_is = true;
 	boolean filter_is = true;

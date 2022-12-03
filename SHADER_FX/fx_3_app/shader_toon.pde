@@ -1,6 +1,6 @@
 /**
-* TOON by Stan le punk
-* @see http://stanlepunk.xyz
+* TOON
+* @see http://knupel.art
 * @see https://github.com/StanLepunK/Shader
 * v 0.0.6
 * 2018-2019
@@ -22,7 +22,7 @@ PGraphics fx_toon(PImage source, boolean on_g) {
 	if(!on_g && (result_toon == null 
 								|| (source.width != result_toon.width 
 								&& source.height != result_toon.height))) {
-		result_toon = createGraphics(source.width,source.height,get_renderer());
+		result_toon = createGraphics(source.width,source.height,r.get_renderer(g));
 	}
 	
 	if(fx_toon == null) {

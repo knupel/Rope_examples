@@ -1,9 +1,8 @@
 /**
 * Rope framework
-* Copyleft (c) 2014-2021
-* @author @stanlepunk
-* @see https://github.com/StanLepunK/Rope_framework
-* @see https://github.com/StanLepunK/Rope/tree/master/Guide
+* Copyleft (c) 2014-2022
+* @author @knupel
+* @see https://github.com/knupel/Rope_framework
 *
 */
 
@@ -13,7 +12,9 @@
 * v 0.1.0
 * 2021-2021
 */
-
+import rope.vector.*;
+import rope.core.Rope;
+Rope r = new Rope();
 
 PShader shader;
 PGraphics pg;

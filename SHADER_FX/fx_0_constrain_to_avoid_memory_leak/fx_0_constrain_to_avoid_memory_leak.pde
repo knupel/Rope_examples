@@ -13,7 +13,11 @@
 * 
 * 
 */
+import rope.vector.vec2;
+import rope.vector.vec4;
+import rope.core.Rope;
 
+Rope r = new Rope();
 PImage result;
 PImage [] img;
 
@@ -25,7 +29,6 @@ void setup() {
 	size(300,400,P2D);
 	frameRate(12);
 	surface.setResizable(true);
-	rope_version();
 	// various image with different size
 	img = new PImage[6];
 	img[0] = loadImage("jpg file/petite_puros_girl.jpg");
@@ -77,9 +80,5 @@ void draw() {
 									num_separation, 
 									threshold_mask, level_mask);
 
-	image(result);
+	image(result, 0, 0);
 }
-
-
-
-

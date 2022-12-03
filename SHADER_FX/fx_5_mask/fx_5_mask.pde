@@ -1,20 +1,16 @@
-/**
-* Rope framework
-* Copyleft (c) 2014-2021
-* @author @stanlepunk
-* @see https://github.com/StanLepunK/Rope_framework
-* @see https://github.com/StanLepunK/Rope/tree/master/Guide
-*
-*/
+
 
 /**
 * Rope framework
 * Copyleft (c) 2014-2022
-* @author @stanlepunk
-* @see https://github.com/StanLepunK/Rope_framework
-* @see https://github.com/StanLepunK/Rope/tree/master/Guide
+* @author @knupel
+* @see https://github.com/knupel/Rope_framework
 *
 */
+import rope.vector.*;
+import rope.core.Rope;
+Rope r = new Rope();
+
 
 PImage result;
 PImage img_a, img_b;
@@ -26,7 +22,6 @@ vec4 level_mask = new vec4(1);
 void setup() {
 	size(400,400,P2D);
 	surface.setResizable(true);
-	rope_version();
 	img_a = loadImage("jpg file/petite_puros_girl.jpg");
 	img_b = loadImage("jpg file/damier_petit_gradient.jpg");
 	surface.setSize(img_a.width, img_a.height);
@@ -84,11 +79,12 @@ void draw() {
 
 import rope.gui.button.R_Button;
 // import rope.gui.button.R_Knob;
-import rope.R_State.State;
-import rope.vector.vec2;
+import rope.utils.R_State.State;
 import rope.core.Rope;
 // import rope.core.Rope;
 import rope.gui.R_Mol;
+import rope.gui.button.R_Knob;
+
 
 
 // Rope r = new Rope();
@@ -304,9 +300,6 @@ public class vec1 extends Rope {
 	public boolean zone_north_east() {
 		return all(zone_north(), zone_east());
 	}
-
-
-
 
 }
 

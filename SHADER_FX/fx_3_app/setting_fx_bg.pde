@@ -4,7 +4,7 @@
 * 2019-2019
 */
 
-void setting_fx_bg(ArrayList<FX> fx_list) {
+void setting_fx_bg(ArrayList<R_FX> fx_list) {
   setting_template_fx_bg(fx_list);
   setting_cellular_fx_bg(fx_list);
   setting_heart_fx_bg(fx_list);
@@ -19,7 +19,7 @@ void setting_fx_bg(ArrayList<FX> fx_list) {
 
 // template
 String set_template_fx_bg = "template fx background";
-void setting_template_fx_bg(ArrayList<FX> fx_list) {
+void setting_template_fx_bg(ArrayList<R_FX> fx_list) {
   init_fx(fx_list,set_template_fx_bg,FX_BG_TEMPLATE);
   vec3 colour = abs(vec3().sin_wave(frameCount,.1,.02,.03));
   fx_set_colour(fx_list,set_template_fx_bg,colour.array());
@@ -29,7 +29,7 @@ void setting_template_fx_bg(ArrayList<FX> fx_list) {
 
 // cellular
 String set_cellular_fx_bg = "cellular fx background";
-void setting_cellular_fx_bg(ArrayList<FX> fx_list) {
+void setting_cellular_fx_bg(ArrayList<R_FX> fx_list) {
   init_fx(fx_list,set_cellular_fx_bg,FX_BG_CELLULAR);
   vec4 colour = abs(vec4().sin_wave(frameCount,.1,.02,.03,.04));
   fx_set_colour(fx_list,set_cellular_fx_bg,colour.array());
@@ -48,7 +48,7 @@ void setting_cellular_fx_bg(ArrayList<FX> fx_list) {
 
 // heart
 String set_heart_fx_bg = "heart fx background";
-void setting_heart_fx_bg(ArrayList<FX> fx_list) {
+void setting_heart_fx_bg(ArrayList<R_FX> fx_list) {
   init_fx(fx_list,set_heart_fx_bg,FX_BG_HEART);
   vec4 colour = abs(vec4().sin_wave(frameCount,.1,.02,.03,.04));
   fx_set_colour(fx_list,set_heart_fx_bg,colour.array());
@@ -67,7 +67,7 @@ void setting_heart_fx_bg(ArrayList<FX> fx_list) {
 
 // necklace
 String set_necklace_fx_bg = "necklace fx background";
-void setting_necklace_fx_bg(ArrayList<FX> fx_list) {
+void setting_necklace_fx_bg(ArrayList<R_FX> fx_list) {
   init_fx(fx_list,set_necklace_fx_bg,FX_BG_NECKLACE);
 
 
@@ -101,7 +101,7 @@ void setting_necklace_fx_bg(ArrayList<FX> fx_list) {
 
 // neon
 String set_neon_fx_bg = "neon fx background";
-void setting_neon_fx_bg(ArrayList<FX> fx_list) {
+void setting_neon_fx_bg(ArrayList<R_FX> fx_list) {
   init_fx(fx_list,set_neon_fx_bg,FX_BG_NEON);
 
   if(mousePressed) {
@@ -121,7 +121,7 @@ void setting_neon_fx_bg(ArrayList<FX> fx_list) {
 
 // psy
 String set_psy_fx_bg = "psy fx background";
-void setting_psy_fx_bg(ArrayList<FX> fx_list) {
+void setting_psy_fx_bg(ArrayList<R_FX> fx_list) {
   init_fx(fx_list,set_psy_fx_bg,FX_BG_PSY);
 
   if(mousePressed) {
@@ -144,7 +144,7 @@ void setting_psy_fx_bg(ArrayList<FX> fx_list) {
 
 // snow
 String set_snow_fx_bg = "snow fx background";
-void setting_snow_fx_bg(ArrayList<FX> fx_list) {
+void setting_snow_fx_bg(ArrayList<R_FX> fx_list) {
   init_fx(fx_list,set_snow_fx_bg,FX_BG_SNOW);
 
   if(mousePressed) {
@@ -175,7 +175,7 @@ void setting_snow_fx_bg(ArrayList<FX> fx_list) {
 
 // voronoi three p
 String set_voronoi_hex_fx_bg = "voronoi hex fx background";
-void setting_voronoi_hex_fx_bg(ArrayList<FX> fx_list) {
+void setting_voronoi_hex_fx_bg(ArrayList<R_FX> fx_list) {
   init_fx(fx_list,set_voronoi_hex_fx_bg,FX_BG_VORONOI_HEX);
 
   if(mousePressed) {

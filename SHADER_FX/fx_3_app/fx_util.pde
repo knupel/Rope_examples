@@ -1,8 +1,8 @@
 /**
 UTILS FILTER SHADER
 /**
-* @see http://stanlepunk.xyz
-* @see https://github.com/StanLepunK/Filter
+* @see http://knupel.art
+* @see https://github.com/knupel/Filter
 * v 0.0.5
 * 2019-2019
 *
@@ -198,7 +198,7 @@ PGraphics to_pgraphics(Object obj, int target) {
 		pg_temp_list = new ArrayList<PGraphics>();
 	}
 	if(pg_temp_list.size() < target+1) {
-		PGraphics pg = createGraphics(0,0,get_renderer());
+		PGraphics pg = createGraphics(0,0,r.get_renderer(g));
 		pg_temp_list.add(pg);
 	} 
 
@@ -225,7 +225,7 @@ PGraphics to_pgraphics(Object obj, int target) {
 			pg_temp.endDraw();	
 		}
 	} else {
-		printErr("method to_pgraphics() wait for Object from class Movie, PImage or PGraphics");
+		r.print_err("method to_pgraphics() wait for Object from class Movie, PImage or PGraphics");
 	}
 
 	// image(pg_temp);
@@ -236,7 +236,7 @@ ArrayList <PGraphics> pg_temp_list;
 
 PGraphics set_pgraphics_temp(PGraphics pg, int w, int h) {
 	if(pg == null || pg.width != w || pg.height != h) {
-		pg = createGraphics(w,h,get_renderer());
+		pg = createGraphics(w,h,r.get_renderer(g));
 	}
 	return pg; 
 }

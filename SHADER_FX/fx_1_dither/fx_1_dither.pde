@@ -1,15 +1,18 @@
 /**
-* Copyleft (c) 2019-2021
-* @author @stanlepunk
-* @see https://github.com/StanLepunK/Shader
+* Copyleft (c) 2019-2022
+* @author @knupel
+* @see https://github.com/knupel/Shader
 * 
 * Processing 4.0.2b
 */
 
+import rope.vector.*;
+import rope.core.Rope;
+Rope r = new Rope();
+
 PImage img_a;
 void setup() {
 	size(640,480,P2D);
-	init_rope();
 	img_a = loadImage("medium_puros_girl.jpg");
 	surface.setResizable(true);
 	surface.setSize(img_a.width,img_a.height);
@@ -30,7 +33,7 @@ void draw() {
 	}
 	
 	if(keyPressed)
-		level = abs(vec3().sin_wave(frameCount,0.01,0.02,0.03));
+		level = r.abs(new vec3().sin_wave(frameCount,0.01,0.02,0.03));
 
 	fx_dither_bayer_8(g,true,true, level, mode);
 }

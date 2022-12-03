@@ -63,7 +63,7 @@ void fx_inc(PImage src) {
 
 
 // CLASSIC POST FX
-void setting_fx_post(ArrayList<FX> fx_list, boolean on_g) {
+void setting_fx_post(ArrayList<R_FX> fx_list, boolean on_g) {
   setting_blur_circular(fx_list,on_g);
   setting_blur_gaussian(fx_list,on_g);
   setting_blur_radial(fx_list,on_g);
@@ -107,7 +107,7 @@ void setting_fx_post(ArrayList<FX> fx_list, boolean on_g) {
 
 // blur circular
 String set_blur_circular = "blur circular";
-void setting_blur_circular(ArrayList<FX> fx_list, boolean on_g) {
+void setting_blur_circular(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_blur_circular,FX_BLUR_CIRCULAR);
   fx_set_on_g(fx_list,set_blur_circular,on_g);
   fx_set_pg_filter(fx_list,set_blur_circular,true);
@@ -119,7 +119,7 @@ void setting_blur_circular(ArrayList<FX> fx_list, boolean on_g) {
 
 // blur gaussian
 String set_blur_gaussian = "blur gaussian";
-void setting_blur_gaussian(ArrayList<FX> fx_list, boolean on_g) {
+void setting_blur_gaussian(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_blur_gaussian,FX_BLUR_GAUSSIAN);
   fx_set_on_g(fx_list,set_blur_gaussian,on_g);
   fx_set_pg_filter(fx_list,set_blur_gaussian,true);
@@ -133,7 +133,7 @@ void setting_blur_gaussian(ArrayList<FX> fx_list, boolean on_g) {
 // blur radial
 String set_blur_radial = "blur radial";
 float current_scale_blur_radial;
-void setting_blur_radial(ArrayList<FX> fx_list, boolean on_g) {
+void setting_blur_radial(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_blur_radial,FX_BLUR_RADIAL);
   fx_set_on_g(fx_list,set_blur_radial,on_g);
   fx_set_pg_filter(fx_list,set_blur_radial,true);
@@ -171,7 +171,7 @@ void setting_blur_radial(ArrayList<FX> fx_list, boolean on_g) {
 
 // colour change
 String set_colour_change_a = "colour change A";
-void setting_colour_change_a(ArrayList<FX> fx_list, boolean on_g) {
+void setting_colour_change_a(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_colour_change_a,FX_COLOUR_CHANGE_A);
   fx_set_on_g(fx_list,set_colour_change_a,on_g);
   fx_set_pg_filter(fx_list,set_colour_change_a,true);
@@ -195,7 +195,7 @@ void setting_colour_change_a(ArrayList<FX> fx_list, boolean on_g) {
 
 // line
 String set_colour_change_b = "colour change B";
-void setting_colour_change_b(ArrayList<FX> fx_list, boolean on_g) {
+void setting_colour_change_b(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_colour_change_b,FX_COLOUR_CHANGE_B);
   fx_set_on_g(fx_list,set_colour_change_b,on_g);
   fx_set_pg_filter(fx_list,set_colour_change_b,true);
@@ -214,7 +214,7 @@ void setting_colour_change_b(ArrayList<FX> fx_list, boolean on_g) {
 
 // dither bayer 8
 String set_datamosh = "datamosh";
-void setting_datamosh(ArrayList<FX> fx_list, boolean on_g) {
+void setting_datamosh(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_datamosh,FX_DATAMOSH);
   fx_set_on_g(fx_list,set_datamosh,on_g);
   fx_set_pg_filter(fx_list,set_datamosh,true);
@@ -241,7 +241,7 @@ void setting_datamosh(ArrayList<FX> fx_list, boolean on_g) {
 
 // dither bayer 8
 String set_dither_bayer_8 = "dither bayer 8";
-void setting_dither_bayer_8(ArrayList<FX> fx_list, boolean on_g) {
+void setting_dither_bayer_8(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_dither_bayer_8,FX_DITHER_BAYER_8);
   fx_set_on_g(fx_list,set_dither_bayer_8,on_g);
   fx_set_pg_filter(fx_list,set_dither_bayer_8,true);
@@ -265,7 +265,7 @@ void setting_dither_bayer_8(ArrayList<FX> fx_list, boolean on_g) {
 
 // grain
 String set_flip = "flip";
-void setting_flip(ArrayList<FX> fx_list, boolean on_g) {
+void setting_flip(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_flip,FX_FLIP);
   fx_set_on_g(fx_list,set_flip,on_g);
   fx_set_pg_filter(fx_list,set_flip,true);
@@ -280,7 +280,7 @@ void setting_flip(ArrayList<FX> fx_list, boolean on_g) {
 
 // grain
 String set_grain = "grain";
-void setting_grain(ArrayList<FX> fx_list, boolean on_g) {
+void setting_grain(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_grain,FX_GRAIN);
   fx_set_on_g(fx_list,set_grain,on_g);
   fx_set_pg_filter(fx_list,set_grain,true);
@@ -298,7 +298,7 @@ void setting_grain(ArrayList<FX> fx_list, boolean on_g) {
 
 // grain scatter
 String set_grain_scatter = "grain scatter";
-void setting_grain_scatter(ArrayList<FX> fx_list, boolean on_g) {
+void setting_grain_scatter(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_grain_scatter,FX_GRAIN_SCATTER);
   fx_set_on_g(fx_list,set_grain_scatter,on_g);
   fx_set_pg_filter(fx_list,set_grain_scatter,true);
@@ -315,7 +315,7 @@ void setting_grain_scatter(ArrayList<FX> fx_list, boolean on_g) {
 
 // halftone dot
 String set_halftone_dot = "haltone dot";
-void setting_haltone_dot(ArrayList<FX> fx_list, boolean on_g) {
+void setting_haltone_dot(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_halftone_dot,FX_HALFTONE_DOT);
   fx_set_on_g(fx_list,set_halftone_dot,on_g);
   fx_set_pg_filter(fx_list,set_halftone_dot,true);
@@ -335,7 +335,7 @@ void setting_haltone_dot(ArrayList<FX> fx_list, boolean on_g) {
 
 // halftone line
 String set_halftone_line = "halftone line";
-void setting_haltone_line(ArrayList<FX> fx_list, boolean on_g) {
+void setting_haltone_line(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_halftone_line,FX_HALFTONE_LINE);
   fx_set_on_g(fx_list,set_halftone_line,on_g);
   fx_set_pg_filter(fx_list,set_halftone_line,true);
@@ -365,7 +365,7 @@ void setting_haltone_line(ArrayList<FX> fx_list, boolean on_g) {
 
 // halftone multi
 String set_halftone_multi = "halftone multi";
-void setting_haltone_multi(ArrayList<FX> fx_list, boolean on_g) {
+void setting_haltone_multi(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_halftone_multi,FX_HALFTONE_MULTI);
   fx_set_on_g(fx_list,set_halftone_multi,on_g);
   fx_set_pg_filter(fx_list,set_halftone_multi,true);
@@ -407,7 +407,7 @@ void setting_haltone_multi(ArrayList<FX> fx_list, boolean on_g) {
 
 // image
 String set_image = "image";
-void setting_image(ArrayList<FX> fx_list, boolean on_g) {
+void setting_image(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_image,FX_IMAGE);
   fx_set_on_g(fx_list,set_image,on_g);
   fx_set_pg_filter(fx_list,set_image,true);
@@ -439,7 +439,7 @@ void setting_image(ArrayList<FX> fx_list, boolean on_g) {
 
 // level
 String set_level = "level";
-void setting_level(ArrayList<FX> fx_list, boolean on_g) {
+void setting_level(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_level,FX_LEVEL);
   fx_set_on_g(fx_list,set_level,on_g);
   fx_set_pg_filter(fx_list,set_level,true);
@@ -454,7 +454,7 @@ void setting_level(ArrayList<FX> fx_list, boolean on_g) {
 
 // mask
 String set_mask = "mask";
-void setting_mask(ArrayList<FX> fx_list, boolean on_g) {
+void setting_mask(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_mask,FX_MASK);
   fx_set_on_g(fx_list,set_mask,on_g);
   fx_set_pg_filter(fx_list,set_mask,true);
@@ -492,7 +492,7 @@ void setting_mask(ArrayList<FX> fx_list, boolean on_g) {
 * 24 layer
 */
 String set_mix = "mix";
-void setting_mix(ArrayList<FX> fx_list, boolean on_g) {
+void setting_mix(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_mix,FX_MIX);
   fx_set_on_g(fx_list,set_mix,on_g);
   fx_set_pg_filter(fx_list,set_mix,true);
@@ -517,7 +517,7 @@ void setting_mix(ArrayList<FX> fx_list, boolean on_g) {
 // pixel
 String set_pixel = "pixel";
 boolean effect_pixel_is;
-void setting_pixel(ArrayList<FX> fx_list, boolean on_g) {
+void setting_pixel(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_pixel,FX_PIXEL);
   fx_set_on_g(fx_list,set_pixel,on_g);
   fx_set_pg_filter(fx_list,set_pixel,true);
@@ -529,7 +529,7 @@ void setting_pixel(ArrayList<FX> fx_list, boolean on_g) {
 
   if(mousePressed) {
     if(frameCount%10 == 0) {
-      vec2 pix_size = vec2().rand(vec2(1,width/10),vec2(1,height/10));
+      vec2 pix_size = vec2().rand(new vec2(1,width/10), new vec2(1,height/10));
       fx_set_size(fx_list,set_pixel,pix_size.array());
       int num = ceil(random(2,16));
       fx_set_num(fx_list,set_pixel,num);
@@ -552,7 +552,7 @@ void setting_pixel(ArrayList<FX> fx_list, boolean on_g) {
 
 
 String set_reac_diff = "reaction diffusion";
-void setting_reac_diff(ArrayList<FX> fx_list, boolean on_g) {
+void setting_reac_diff(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_reac_diff,FX_REAC_DIFF);
   fx_set_on_g(fx_list,set_reac_diff,on_g);
   fx_set_pg_filter(fx_list,set_reac_diff,true);
@@ -574,7 +574,7 @@ void setting_reac_diff(ArrayList<FX> fx_list, boolean on_g) {
   boolean event = mousePressed;
   fx_set_event(fx_list,set_reac_diff,0,event);
 
-   vec2 scale = vec2(.6);
+   vec2 scale = new vec2(.6);
    fx_set_scale(fx_list,set_reac_diff,scale.array());
 
   int rd_iteration = 20;
@@ -591,7 +591,7 @@ void setting_reac_diff(ArrayList<FX> fx_list, boolean on_g) {
 
 
 String set_split = "split rgb";
-void setting_split(ArrayList<FX> fx_list, boolean on_g) {
+void setting_split(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_split,FX_SPLIT_RGB);
   fx_set_on_g(fx_list,set_split,on_g);
   fx_set_pg_filter(fx_list,set_split,true);
@@ -601,9 +601,9 @@ void setting_split(ArrayList<FX> fx_list, boolean on_g) {
     float ox_red = map(mouseX,0,width,0,1);
     float oy_red = map(mouseY,0,height,0,1);
     */
-    vec2 offset_red = vec2().cos_wave(frameCount,.01,.02);
-    vec2 offset_green = vec2().sin_wave(frameCount,.01,.02);
-    vec2 offset_blue = vec2().cos_wave(frameCount,.004,.01);
+    vec2 offset_red = new vec2().cos_wave(frameCount,.01,.02);
+    vec2 offset_green = new vec2().sin_wave(frameCount,.01,.02);
+    vec2 offset_blue = new vec2().cos_wave(frameCount,.004,.01);
     fx_set_pair(fx_list,set_split,0,offset_red.array());
     fx_set_pair(fx_list,set_split,1,offset_green.array());
     fx_set_pair(fx_list,set_split,2,offset_blue.array());
@@ -614,7 +614,7 @@ void setting_split(ArrayList<FX> fx_list, boolean on_g) {
 
 // dither
 String set_threshold = "threshold";
-void setting_threshold(ArrayList<FX> fx_list, boolean on_g) {
+void setting_threshold(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_threshold,FX_THRESHOLD);
   fx_set_on_g(fx_list,set_threshold,on_g);
   fx_set_pg_filter(fx_list,set_threshold,true);
@@ -637,7 +637,7 @@ void setting_threshold(ArrayList<FX> fx_list, boolean on_g) {
 
 // WARP setting
 String set_warp_proc = "warp procedural";
-void setting_warp_proc(ArrayList<FX> fx_list, boolean on_g) {
+void setting_warp_proc(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_warp_proc,FX_WARP_PROC);
   fx_set_on_g(fx_list,set_warp_proc,on_g);
   fx_set_pg_filter(fx_list,set_warp_proc,true);
@@ -648,7 +648,7 @@ void setting_warp_proc(ArrayList<FX> fx_list, boolean on_g) {
 
 
 String set_warp_tex_a = "warp textural A";
-void setting_warp_tex_a(ArrayList<FX> fx_list, boolean on_g) {
+void setting_warp_tex_a(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_warp_tex_a,FX_WARP_TEX_A);
   fx_set_on_g(fx_list,set_warp_tex_a,on_g);
   fx_set_pg_filter(fx_list,set_warp_tex_a,true);
@@ -664,7 +664,7 @@ void setting_warp_tex_a(ArrayList<FX> fx_list, boolean on_g) {
 
 
 String set_warp_tex_b = "warp textural B";
-void setting_warp_tex_b(ArrayList<FX> fx_list, boolean on_g) {
+void setting_warp_tex_b(ArrayList<R_FX> fx_list, boolean on_g) {
   init_fx(fx_list,set_warp_tex_b,FX_WARP_TEX_B);
   fx_set_on_g(fx_list,set_warp_tex_b,on_g);
   fx_set_pg_filter(fx_list,set_warp_tex_b,true);

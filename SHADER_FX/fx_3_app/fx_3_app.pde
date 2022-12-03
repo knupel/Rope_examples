@@ -21,23 +21,25 @@
 * by class FX to manage and set all shaders.
 
 * You can use easily the class and method FX without the framework part, just use the tab start by Y_ and Z_ and make your own shader world.
-* @see https://github.com/StanLepunK/Shader
+* @see https://github.com/knupel/Shader
 * v 0.0.7
-* 2018-2021
-* This little framework use Rope Library and Rope framework.
-* More about Rope Library 
-* @see https://github.com/StanLepunK/Rope
-* More about Rope framework
-* @see https://github.com/StanLepunK/Rope_method
+* 2018-2022
+* @see https://github.com/knupel/Rope
+* @see https://github.com/knupel/Rope_method
 
 * 
 * Enjoy, share, copy, paste, improve and blahblah
 * Processing 4.0.2b
 */
+
+import rope.vector.*;
+import rope.core.Rope;
+
+
 PGraphics render;
 
-ArrayList<FX> fx_manager = new ArrayList<FX>();
-ArrayList<FX> fx_bg_manager = new ArrayList<FX>();
+ArrayList<R_FX> fx_manager = new ArrayList<R_FX>();
+ArrayList<R_FX> fx_bg_manager = new ArrayList<R_FX>();
 
 PImage img_a,img_b;
 
@@ -73,7 +75,7 @@ float total_fps;
 float avg_fps;
 
 void draw() {	
-	set_pattern(16,16,RGB,reset_is());
+	set_pattern(16, 16, RGB, reset_is());
 
 	String rate = "instant rate"+(int)frameRate + " | average rate:" + (int)avg_fps;
 	surface.setTitle(rate);

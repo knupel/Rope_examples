@@ -1,14 +1,13 @@
 /**
 * Rope Framework
 * mix shader filter
-* Copyleft (c) 2014-2021
-* @author @stanlepunk
-* @see https://github.com/StanLepunK/Rope_framework
-* @see https://github.com/StanLepunK/Rope/tree/master/Guide
+* Copyleft (c) 2014-2022
+* @author @knupel
+* @see https://github.com/knupel/Rope_framework
 *
 * Work on PGraphics;
 * Processing 4.0.2b
-* v 0.0.1
+* v 0.1.0
 
 * mode
 * -2 main > show main
@@ -39,7 +38,9 @@
 * 23 main
 * 24 layer
 */
-
+import rope.vector.*;
+import rope.core.Rope;
+Rope r = new Rope();
 
 PImage img_a, img_b;
 PGraphics pg_a, pg_b;
@@ -63,8 +64,8 @@ void draw() {
 	pg_b.image(img_b,0,0);
 	pg_b.endDraw();
 
-	vec3 level_src = vec3().sin_wave(frameCount,0.001,0.005,0.002);
-	vec3 level_dst = vec3().sin_wave(frameCount,0.002,0.003,0.004);
+	vec3 level_src = new vec3().sin_wave(frameCount,0.001,0.005,0.002);
+	vec3 level_dst = new vec3().sin_wave(frameCount,0.002,0.003,0.004);
 	int mode = 3;
 	pass_render(pg_final, fx_mix(pg_a,pg_b,false,false,mode, level_src, level_dst));
 	image(pg_final);
