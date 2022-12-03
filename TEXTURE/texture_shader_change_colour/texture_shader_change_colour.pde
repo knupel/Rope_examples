@@ -1,7 +1,8 @@
 /**
 TEXTURE
-* @see https://github.com/StanLepunK/Rope_examples
-2018-2019
+* @see https://github.com/knupel/Rope_examples
+  *2018-2022
+  * v 0.1.1
 */
 PImage img ;
 void setup() {
@@ -65,9 +66,9 @@ PGraphics plan(PImage src, String renderer){
   pg.texture(src);
   pg.tint(g.colorModeX, g.colorModeY, g.colorModeZ, g.colorModeA);
   pg.vertex(0,0,            0,0);
-  pg.vertex(0,size.y,       0,uv.v);
-  pg.vertex(size.x, size.y, uv.u,uv.v);
-  pg.vertex(size.x, 0,      uv.u,0);
+  pg.vertex(0,size.y(),       0,uv.v());
+  pg.vertex(size.x(), size.y(), uv.u(),uv.v());
+  pg.vertex(size.x(), 0,      uv.u(),0);
   pg.endShape();
   
   pg.endShape();

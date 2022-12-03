@@ -1,17 +1,13 @@
 /**
 * Line2D echoes
 *
-* Copyleft (c) 2014-2019
-* @author @stanlepunk
-* @see https://github.com/StanLepunK/Rope_framework
+* Copyleft (c) 2014-2022
+* @author @knupel
+* @see https://github.com/knupel/Rope_framework
 * 
-* work with
-* Rope frame Work 1.1.3
-* Processing 3.5.3
-* Rope library 0.8.4.29
 */
 
-import rope.costume.R_Line2D;
+import rope.mesh.R_Line2D;
 
 R_Line2D main_line;
 

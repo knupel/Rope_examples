@@ -1,19 +1,20 @@
 /**
 * Costume method
-* Copyleft (c) 2014-2019
-* v 1.10.0
+* Copyleft (c) 2014-2022
+* v 1.10.3
 * @author @stanlepunk
 * @see https://github.com/StanLepunK/Rope_framework
 */
 import rope.costume.R_Circle;
 import rope.costume.R_House;
-import rope.costume.R_Bezier;
+import rope.utils.R_Bezier;
 import rope.costume.R_Star;
 import rope.costume.R_Virus;
-import rope.costume.R_Line2D;
 import rope.costume.R_Icosahedron;
 import rope.costume.R_Costume;
 import rope.costume.R_Costume_Pict;
+
+import rope.mesh.R_Line2D;
 /**
 Costume selection in shape catalogue
 */
@@ -288,7 +289,7 @@ void costume_rotate(vec rotate) {
 }
 
 void costume_rotate(vec rotate, PGraphics other) {
-	if(get_renderer() == P3D) {
+	if(r.get_renderer(g) == P3D) {
 		if(costume_rot_x && rotate.x() != 0) {
 			rotateX(rotate.x(),other);
 			costume_rot_x = false;
