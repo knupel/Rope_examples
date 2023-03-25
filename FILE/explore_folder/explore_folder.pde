@@ -1,8 +1,8 @@
 /**
 * Rope framework
-* Copyleft (c) 2014-2021
-* @author @stanlepunk
-* @see https://github.com/StanLepunK/Rope_framework
+* Copyleft (c) 2014-2023
+* @author @knupel
+* @see https://github.com/knupel/Rope_framework
 *
 */
 
@@ -20,11 +20,12 @@
 * boolean folder_input_default_is() ;
 */
 void setup() {
+	size(300,300);
 	rope_version();
+	String callback_function = "rope_select_folder";
+	select_folder(callback_function);
 }
-void keyPressed() {
-	if(key == 'o') select_folder();
-}
+
 
 void draw() {
 	boolean explore_sub_folder = true;
